@@ -1,123 +1,78 @@
 # PMS Frontend
 
-Property Management System (PMS) web client built with Angular 15, AG Grid, and Tabler UI. The application manages property portfolios, buildings, units, tenant leasing lifecycles, fee schedules, rent receipts, and financial ledgers.
+Property Management System (PMS) web client built with Angular 15, AG Grid, and Tabler UI.
 
----
+## Development server
 
-## Tech Stack
+Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-- **Framework:** Angular 15 (TypeScript)
-- **UI Kit & Styling:** Tabler Core, Bootstrap, SCSS
-- **Grid Engine:** AG Grid Angular (`ag-grid-community`)
-- **Data & Reactive Utilities:** RxJS, Moment.js
-- **Charts & Reports:** Chart.js, ng2-charts, html2pdf.js, xlsx
-- **Icons:** FontAwesome Free
+## Code scaffolding
 
----
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Key Modules
+## For First Time Users (VERSION error)
 
-- **Dashboard:** Portfolio metrics, real-time occupancy rates, revenue collection summary, and recent transactions.
-- **Property Master:** Hierarchical asset setup covering Properties, Buildings, Floors, and Units/Rooms with custom amenity configurations.
-- **Tenant Management:** Tenant onboarding, identity verification, room allotments, dynamic fee structuring, and service charge scheduling.
-- **Tenant Ledger & Accounts:** Real-time ledger balances, debit/credit tracking, date-filtered transaction history, Excel export, and printable tenant statements.
-- **Fee Receipts:** Rent collection, payment mode recording, and customizable PDF receipt generation.
-- **Room Release:** Tenancy termination, inspection checklist, and security deposit reconciliation.
-- **Reports:** Tenant registers, occupancy analytics, and collection reporting.
+Run `npm run app-version` (or `npm run build`) to generate the version file, then run `npm run start`.
 
----
+## Npm Scripts
 
-## Prerequisites
+`package.json` has following scripts:
 
-Ensure you have the following installed on your machine:
+### npm run start
 
-- **Node.js:** v18.x or v20.x
-- **npm:** v9.x or higher
-- **Angular CLI:** `@angular/cli@^15.2.0` (optional, can also run via `npx ng`)
+This command starts the project on local dev server.
 
----
+### npm run build
 
-## Getting Started
+This command builds the project.
 
-### 1. Install Dependencies
+### npm run lint
 
-```bash
-npm install
-```
+This command checks the format issues in the code using Prettier.
 
-### 2. Configure Environment
+### npm run prettier
 
-Update `src/environments/environment.ts` with your backend API base URL:
+This command formats the code using Prettier.
 
-```typescript
-export const environment = {
-  production: false,
-  apiBasePath: "http://localhost:5000/api/",
-  appName: "PMS",
-  env: "local",
-};
-```
+### npm run app-version
 
-### 3. Start Development Server
+This command updates the version in `scripts/version.js`.
 
-```bash
-npm start
-```
+### npm run release
 
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any source files.
+This command creates a release and updates versioning.
 
----
+### npm run test:unit
 
-## Available Scripts
+This command runs unit tests with Jest.
 
-| Command | Description |
-| :--- | :--- |
-| `npm start` | Runs local dev server on `http://localhost:4200/` |
-| `npm run build` | Compiles the production build into the `dist/` directory |
-| `npm run prettier` | Formats codebase using Prettier |
-| `npm run lint` | Checks code formatting and syntax |
-| `npm run test:unit` | Executes unit tests via Jest |
+### npm run test:unit:coverage
 
----
+This command runs unit tests and generates code coverage reports.
 
-## Project Structure
+### npm run test:unit:watch
 
-```text
-pms-frontend/
-├── src/
-│   ├── app/
-│   │   ├── landing/              # Public portal and property showcase
-│   │   ├── login/                # Authentication & session handling
-│   │   ├── main/                 # Shell layout (header, sidebar, navigation)
-│   │   ├── pages/
-│   │   │   ├── dashboard/        # Analytics & summary widgets
-│   │   │   ├── properties/       # Property portfolio configuration
-│   │   │   ├── buildings/        # Building management
-│   │   │   ├── floors/           # Floor layout configuration
-│   │   │   ├── units/            # Room & unit specifications
-│   │   │   ├── tenant-management # Tenant onboarding, allotments & ledger
-│   │   │   ├── fee-receipts/     # Payment entry & receipt generation
-│   │   │   ├── release-room/     # Tenancy exit & room release workflow
-│   │   │   └── reports/          # Tenant register & audit reports
-│   │   └── utils/
-│   │       ├── guards/           # Auth and route guards
-│   │       ├── interceptors/     # JWT token & error handling interceptors
-│   │       └── services/         # Core API services & toast utilities
-│   ├── assets/                   # Logos, imagery, and static files
-│   └── environments/             # Environment configs (local, QA, Prod)
-├── angular.json                  # Angular CLI configuration
-├── package.json                  # Dependencies and scripts
-└── tsconfig.json                 # TypeScript compiler configuration
-```
+This command runs unit tests in watch mode for local development.
 
----
+### npm run test:e2e
 
-## Production Build
+This command runs Playwright end-to-end tests in headless mode.
 
-To generate an optimized production bundle:
+### npm run test:e2e:headed
 
-```bash
-npm run build
-```
+This command runs Playwright end-to-end tests in headed mode.
 
-The output bundles will be located in the `dist/` directory, ready for deployment on Nginx, Apache, or static hosting providers (Vercel, AWS S3, Render).
+## Testing Flow
+
+### Before Creating a Pull Request
+
+Run following commands on your local machine:
+
+1. Check/fix formatting issues by running `npm run prettier`
+2. Check linting: `npm run lint`
+3. Run unit tests by running `npm run test:unit` or `npm run test:unit:watch`
+4. Verify build succeeds: `npm run build`
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or check out the [Angular CLI Documentation](https://angular.io/cli).
