@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle("Puma Group PMS - Login");
-    this.organizationLogoUrl = "assets/img/AdvantaRapidERP.png";
+    this.organizationLogoUrl = "assets/img/pms-logo.svg";
   }
 
   showLogoutReasonMessage(reason: string) {

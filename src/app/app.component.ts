@@ -8,7 +8,7 @@ import { ToastrMessage } from "./utils/services/toastrmessage.service";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-  title = "rapid-pms-client";
+  title = "PMS";
   openedModals = undefined;
 
   constructor(
