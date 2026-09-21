@@ -1,0 +1,152 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-city pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} City
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-sm-6 col-lg-4">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="selectedCountry"
+                >Country:</label
+              >
+              <select
+                class="form-select"
+                name="country"
+                id="selectedCountry"
+                (change)="onChangeCountry()"
+                [(ngModel)]="selectedCountryId"
+                [disabled]="true"
+                required
+                #country="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a country
+                </option>
+                <option
+                  [ngValue]="country.id"
+                  *ngFor="let country of countries"
+                >
+                  {{ country.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="selectedState"
+                >State:</label
+              >
+              <select
+                class="form-select"
+                name="state"
+                id="selectedState"
+                [(ngModel)]="selectedStateId"
+                [disabled]="true"
+                required
+                #state="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a state
+                </option>
+                <option [ngValue]="state.id" *ngFor="let state of states">
+                  {{ state.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="city">City:</label>
+              <input
+                type="text"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': city.invalid && (f.submitted || city.touched)
+                }"
+                name="city"
+                id="city"
+                [(ngModel)]="cityName"
+                placeholder="Enter city name"
+                required
+                #city="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="city.invalid && (f.submitted || city.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="city.errors?.required">
+                  Please enter a valid city name.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn me-auto"
+          type="button"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></i
+          ><i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

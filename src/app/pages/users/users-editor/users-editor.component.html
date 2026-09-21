@@ -1,0 +1,252 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-users pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} User
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="name">Full Name:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                id="name"
+                [ngClass]="{
+                  'is-invalid':
+                    nameInput.invalid && (f.submitted || nameInput.touched)
+                }"
+                [(ngModel)]="user.name"
+                placeholder="Enter full name"
+                required
+                #nameInput="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="nameInput.invalid && (f.submitted || nameInput.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="nameInput.errors?.required">
+                  Please enter a valid full name.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="email"
+                >Email / Username:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="email"
+                id="email"
+                [ngClass]="{
+                  'is-invalid':
+                    emailInput.invalid && (f.submitted || emailInput.touched)
+                }"
+                [(ngModel)]="user.email"
+                placeholder="Enter email address or username"
+                required
+                #emailInput="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="
+                  emailInput.invalid && (f.submitted || emailInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="emailInput.errors?.required">
+                  Please enter a valid email address or username.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone / Mobile No:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="phone"
+                id="phone"
+                [(ngModel)]="user.phone"
+                placeholder="Enter phone number"
+                maxlength="20"
+              />
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="userRoleCode"
+                >User Role:</label
+              >
+              <select
+                class="form-select"
+                name="userRoleCode"
+                id="userRoleCode"
+                [(ngModel)]="user.userRoleCode"
+                (change)="onRoleChange()"
+                [ngClass]="{
+                  'is-invalid':
+                    roleInput.invalid && (f.submitted || roleInput.touched)
+                }"
+                required
+                #roleInput="ngModel"
+              >
+                <option
+                  [ngValue]="roleOption.code"
+                  *ngFor="let roleOption of roles"
+                >
+                  {{ roleOption.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="roleInput.invalid && (f.submitted || roleInput.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="roleInput.errors?.required">
+                  Please select a user role.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label
+                class="form-label"
+                [ngClass]="{ required: formState === 'NEW' }"
+                for="password"
+              >
+                Password:
+              </label>
+              <div class="input-group">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  name="password"
+                  id="password"
+                  autocomplete="off"
+                  [ngClass]="{
+                    'is-invalid':
+                      passwordInput.invalid &&
+                      (f.submitted || passwordInput.touched)
+                  }"
+                  [(ngModel)]="user.password"
+                  [placeholder]="
+                    formState === 'EDIT'
+                      ? 'Leave blank to keep current password'
+                      : 'Enter password'
+                  "
+                  [required]="formState === 'NEW'"
+                  #passwordInput="ngModel"
+                  maxlength="50"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="showPassword = !showPassword"
+                  [title]="showPassword ? 'Hide password' : 'Show password'"
+                >
+                  <i
+                    class="fas"
+                    [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+                  ></i>
+                </button>
+              </div>
+              <div
+                *ngIf="
+                  passwordInput.invalid &&
+                  (f.submitted || passwordInput.touched)
+                "
+                class="invalid-feedback d-block text-break"
+              >
+                <div *ngIf="passwordInput.errors?.required">
+                  Please enter a password.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="status"
+                >Account Status:</label
+              >
+              <select
+                class="form-select"
+                name="status"
+                id="status"
+                [(ngModel)]="user.status"
+                [disabled]="user.userRoleCode === 'ADMIN'"
+                required
+              >
+                <option
+                  [ngValue]="statusOption"
+                  *ngFor="let statusOption of statuses"
+                >
+                  {{ statusOption }}
+                </option>
+              </select>
+              <small
+                *ngIf="user.userRoleCode === 'ADMIN'"
+                class="text-muted d-block mt-1"
+              >
+                <i class="fas fa-info-circle me-1"></i>Administrator is always
+                Active
+              </small>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isLoading">
+          <app-is-loading></app-is-loading>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          *ngIf="formState === 'NEW'"
+          class="btn btn-vk"
+          type="button"
+          (click)="f.form.valid && saveAndAddMore()"
+          [disabled]="isLoading"
+        >
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

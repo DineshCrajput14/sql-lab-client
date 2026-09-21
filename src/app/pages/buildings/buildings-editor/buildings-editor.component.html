@@ -1,0 +1,212 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-building pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} Building
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="selectedProperty"
+                >Property:</label
+              >
+              <select
+                class="form-select"
+                name="property"
+                id="selectedProperty"
+                [(ngModel)]="propertyId"
+                [ngClass]="{
+                  'is-invalid':
+                    property.invalid && (f.submitted || property.touched)
+                }"
+                required
+                #property="ngModel"
+                ngModel
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a property
+                </option>
+                <option
+                  [ngValue]="property.id"
+                  *ngFor="let property of properties"
+                >
+                  {{ property.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="property.invalid && (f.submitted || property.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="property.errors?.required">
+                  Please select a valid property.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="name">Block Name:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                id="name"
+                [ngClass]="{
+                  'is-invalid':
+                    nameInput.invalid && (f.submitted || nameInput.touched)
+                }"
+                [(ngModel)]="name"
+                placeholder="Enter block name"
+                required
+                #nameInput="ngModel"
+                maxlength="255"
+                ngModel
+              />
+              <div
+                *ngIf="nameInput.invalid && (f.submitted || nameInput.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="nameInput.errors?.required">
+                  Please enter a valid block name.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="propertyType"
+                >Property Type:</label
+              >
+              <select
+                class="form-select"
+                name="propertyType"
+                id="propertyType"
+                [(ngModel)]="propertyTypeId"
+                [ngClass]="{
+                  'is-invalid':
+                    propertyType.invalid &&
+                    (f.submitted || propertyType.touched)
+                }"
+                required
+                #propertyType="ngModel"
+                ngModel
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a property type
+                </option>
+                <option
+                  [ngValue]="typeOption.id"
+                  *ngFor="let typeOption of propertyTypes"
+                >
+                  {{ typeOption.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="
+                  propertyType.invalid && (f.submitted || propertyType.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="propertyType.errors?.required">
+                  Please select a valid property type.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label" for="totalFloors">Total Floors:</label>
+              <input
+                type="text"
+                min="0"
+                class="form-control"
+                name="totalFloors"
+                id="totalFloors"
+                [(ngModel)]="totalFloors"
+                placeholder="Enter total floors"
+                ngModel
+                maxlength="255"
+              />
+            </div>
+          </div>
+          <div class="col-12 mb-3">
+            <div class="form-group">
+              <label class="form-label" for="description">Description:</label>
+              <textarea
+                class="form-control"
+                rows="2"
+                name="description"
+                id="description"
+                [(ngModel)]="description"
+                placeholder="Enter description"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></i
+          ><i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

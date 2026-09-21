@@ -1,0 +1,129 @@
+<div class="page-header d-print-none mt-1">
+  <div class="container-xl p-0 pb-2">
+    <div class="row g-2 align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          Unit
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm">
+      <div class="row mb-3 form-group">
+        <label class="col-1 col-form-label required" for="property"
+          >Property:</label
+        >
+        <div class="col-sm-3">
+          <select
+            class="form-select"
+            name="property"
+            id="property"
+            [(ngModel)]="search.propertyId"
+            [ngClass]="{
+              'is-invalid':
+                property.invalid && (f.submitted || property.touched)
+            }"
+            required
+            #property="ngModel"
+            (change)="onPropertyChange()"
+          >
+            <option [ngValue]="undefined" disabled selected>
+              Select a property
+            </option>
+            <option [ngValue]="property.id" *ngFor="let property of properties">
+              {{ property.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="property.invalid && (f.submitted || property.touched)"
+            class="invalid-feedback text-break"
+          >
+            <div *ngIf="property.errors?.required">
+              Please select a valid property.
+            </div>
+          </div>
+        </div>
+
+        <label class="col-1 col-form-label required ms-3" for="building"
+          >Block:</label
+        >
+        <div class="col-sm-3">
+          <select
+            class="form-select"
+            name="building"
+            id="building"
+            [(ngModel)]="search.buildingId"
+            [ngClass]="{
+              'is-invalid':
+                building.invalid && (f.submitted || building.touched)
+            }"
+            required
+            #building="ngModel"
+            (change)="getUnits()"
+            [disabled]="!search.propertyId"
+          >
+            <option [ngValue]="undefined" disabled selected>
+              Select a block
+            </option>
+            <option [ngValue]="building.id" *ngFor="let building of buildings">
+              {{ building.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="building.invalid && (f.submitted || building.touched)"
+            class="invalid-feedback text-break"
+          >
+            <div *ngIf="building.errors?.required">
+              Please select a valid block.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="!(gridRowDataUnits || []).length && isLoading">
+        <app-is-loading></app-is-loading>
+      </div>
+      <div class="row" *ngIf="!(gridRowDataUnits || []).length && !isLoading">
+        <div class="col-12">
+          <div class="d-flex justify-content-center align-items-center">
+            <app-no-record-found-image
+              [masterName]="'Unit'"
+            ></app-no-record-found-image>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="(gridRowDataUnits || []).length">
+        <div class="col-12">
+          <ag-grid-angular
+            style="width: 100%; height: 58vh;"
+            class="ag-theme-alpine"
+            [enableCellTextSelection]="true"
+            (gridReady)="onGridReady($event)"
+            (filterChanged)="onFilterChanged($event)"
+            [columnDefs]="gridColumnDefsUnits"
+            [rowData]="gridRowDataUnits"
+            [defaultColDef]="defaultColDef"
+          >
+          </ag-grid-angular>
+          <div *ngIf="gridRowDataUnits?.length" class="ms-1 fw-bold">
+            <label>Total records: {{ rowCount }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row p-1 my-2">
+        <div class="col-12">
+          <button
+            type="button"
+            (click)="newUnitModal()"
+            class="btn btn-primary me-2"
+            [disabled]="!search.buildingId"
+          >
+            <i class="fas fa-door-open pe-1"></i> Add Unit
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

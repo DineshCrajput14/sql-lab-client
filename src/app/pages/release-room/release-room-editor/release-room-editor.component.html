@@ -1,0 +1,452 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && onSubmit()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-door-open pe-1"></i>
+          Release Room Editor
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body px-3 py-2">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="date" class="form-label required mt-1">
+                Date (DD-MM-YYYY):
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                name="date"
+                id="date"
+                [(ngModel)]="release.date"
+                [disabled]="formStatus === 'EDIT' || isLoading"
+                required
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+            </div>
+          </div>
+          <div [ngClass]="formStatus === 'EDIT' ? 'col-sm-3' : 'col-sm-4'">
+            <div class="form-group">
+              <label for="regNo" class="form-label required mt-1">
+                Registration Number:
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                name="regNo"
+                id="regNo"
+                placeholder="Enter registration number"
+                [(ngModel)]="release.regNo"
+                [disabled]="isRegNoFrozen || formStatus === 'EDIT' || isLoading"
+                (keydown.enter)="$event.preventDefault(); onSearchByRegNo()"
+                required
+              />
+            </div>
+          </div>
+          <div *ngIf="formStatus === 'EDIT'" class="col-sm-3">
+            <div class="form-group">
+              <label for="receiptNumber" class="form-label mt-1">
+                Receipt Number:
+              </label>
+              <input
+                type="text"
+                name="receiptNumber"
+                id="receiptNumber"
+                class="form-control font-monospace"
+                [value]="release.receiptNo"
+                disabled
+              />
+            </div>
+          </div>
+          <div class="col-auto ms-auto mt-4">
+            <div class="form-group">
+              <button
+                class="btn btn-dark me-2"
+                type="button"
+                [disabled]="isRegNoFrozen || formStatus === 'EDIT' || isLoading"
+                (click)="onSearchByRegNo()"
+              >
+                <i
+                  *ngIf="isLoading"
+                  class="spinner-border spinner-border-sm me-1"
+                ></i>
+                <i *ngIf="!isLoading" class="fas fa-search pe-1"></i>
+                Search
+              </button>
+              <button
+                [disabled]="isRegNoFrozen || isLoading"
+                *ngIf="formStatus !== 'EDIT'"
+                class="btn btn-info text-white"
+                type="button"
+                (click)="onClearRegNo()"
+              >
+                <i class="fas fa-times pe-1"></i>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <app-is-loading></app-is-loading>
+        </div>
+        <div class="row mt-2" [hidden]="isLoading">
+          <div class="col-sm-4">
+            <div class="row">
+              <label class="col-auto col-form-label text-break"
+                >Tenant Name:</label
+              >
+              <div class="col pt-2 text-break">
+                <span>{{ tenant?.name }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="row">
+              <label class="col-auto col-form-label text-break"
+                >Mobile Number:</label
+              >
+              <div class="col pt-2 text-break">
+                <span>{{ tenant?.mobileNo }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="row">
+              <label class="col-auto col-form-label text-break"
+                >Property - Unit:</label
+              >
+              <div class="col pt-2 text-break">
+                <span class="text-break">
+                  {{ allotment?.propertyName
+                  }}{{ allotment?.unitNo ? " - Unit " + allotment.unitNo : "" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row align-items-center mt-2 mb-1" [hidden]="isLoading">
+          <div class="col-sm-4">
+            <div class="d-flex align-items-center">
+              <label
+                class="form-check form-check-inline mb-0 me-2 cursor-pointer text-nowrap"
+                for="isReleaseDate"
+              >
+                <input
+                  type="checkbox"
+                  id="isReleaseDate"
+                  class="form-check-input"
+                  name="isReleaseDate"
+                  [(ngModel)]="release.isReleaseDate"
+                  (change)="onReleaseDateToggle()"
+                />
+                <span class="form-check-label fw-bold">Release Date:</span>
+              </label>
+              <div *ngIf="release.isReleaseDate" style="width: 140px;">
+                <input
+                  type="text"
+                  class="form-control font-monospace text-center"
+                  name="releaseDate"
+                  id="releaseDate"
+                  [(ngModel)]="release.releaseDate"
+                  placeholder="DD-MM-YYYY"
+                  bsDatepicker
+                  autocomplete="off"
+                  [outsideClick]="true"
+                  [container]="'body'"
+                  [bsConfig]="{
+                    dateInputFormat: 'DD-MM-YYYY',
+                    isAnimated: true,
+                    containerClass: 'theme-dark-blue',
+                    returnFocusToInput: true,
+                    showWeekNumbers: false
+                  }"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="d-flex align-items-center">
+              <label
+                class="form-check form-check-inline mb-0 me-2 cursor-pointer text-nowrap"
+                for="deleteDues"
+              >
+                <input
+                  type="checkbox"
+                  id="deleteDues"
+                  class="form-check-input"
+                  name="deleteDues"
+                  [(ngModel)]="release.deleteDues"
+                  (change)="onDeleteDuesToggle()"
+                />
+                <span class="form-check-label fw-bold">Delete Dues:</span>
+              </label>
+              <div
+                *ngIf="release.deleteDues"
+                class="input-group"
+                style="width: 200px;"
+              >
+                <span class="input-group-text fw-bold text-muted">From</span>
+                <input
+                  type="text"
+                  class="form-control font-monospace text-center"
+                  name="deleteDuesFromDate"
+                  id="deleteDuesFromDate"
+                  [(ngModel)]="release.deleteDuesFromDate"
+                  placeholder="DD-MM-YYYY"
+                  bsDatepicker
+                  autocomplete="off"
+                  [outsideClick]="true"
+                  [container]="'body'"
+                  [bsConfig]="{
+                    dateInputFormat: 'DD-MM-YYYY',
+                    isAnimated: true,
+                    containerClass: 'theme-dark-blue',
+                    returnFocusToInput: true,
+                    showWeekNumbers: false
+                  }"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="m-2" [hidden]="isLoading" />
+        <div class="row" [hidden]="isLoading">
+          <div class="col-sm-5">
+            <h5 class="mb-1">Due Fee Summary:</h5>
+            <ag-grid-angular
+              style="width: 100%; height: 26vh;"
+              class="ag-theme-alpine"
+              [enableCellTextSelection]="false"
+              [columnDefs]="columnDefsReceiptsSummary"
+              [rowData]="receiptsSummary"
+              [defaultColDef]="defaultColDef"
+              [rowSelection]="'multiple'"
+              (gridReady)="onReceiptsSummaryGridReady($event)"
+              (firstDataRendered)="onReceiptsSummaryFirstDataRendered($event)"
+              (selectionChanged)="onReceiptsSummarySelectionChanged()"
+            >
+            </ag-grid-angular>
+          </div>
+          <div class="col-sm-7">
+            <h5 class="mb-1">Fee Receipt Details:</h5>
+            <ag-grid-angular
+              style="width: 100%; height: 26vh;"
+              class="ag-theme-alpine"
+              [enableCellTextSelection]="true"
+              [columnDefs]="columnDefsRefundDetails"
+              [rowData]="refundDetails"
+              [defaultColDef]="defaultColDef"
+              (gridReady)="onRefundDetailsGridReady($event)"
+              (firstDataRendered)="onRefundDetailsFirstDataRendered($event)"
+            >
+            </ag-grid-angular>
+          </div>
+        </div>
+        <div class="row mt-2" [hidden]="isLoading">
+          <h5 class="mb-0">Total:</h5>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label mt-1">Selected:</label>
+              <input
+                type="text"
+                class="form-control text-end font-monospace"
+                style="background-color: #fff;"
+                [value]="release.selectedTotal | number: '1.2-2'"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label mt-1">Total Receivable:</label>
+              <input
+                type="text"
+                class="form-control text-end font-monospace"
+                style="background-color: #fff;"
+                [value]="release.totalRefundable | number: '1.2-2'"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label required mt-1">Refund Amount:</label>
+              <input
+                type="number"
+                class="form-control text-end font-monospace"
+                name="refundAmount"
+                id="refundAmount"
+                [(ngModel)]="release.refundAmount"
+                (input)="onRefundAmountInputChange()"
+                required
+                min="0"
+                [max]="release.totalRefundable"
+                [ngClass]="{
+                  'is-invalid':
+                    release.refundAmount > release.totalRefundable ||
+                    (refundAmountInput.invalid &&
+                      (f.submitted || refundAmountInput.touched))
+                }"
+                #refundAmountInput="ngModel"
+              />
+              <div
+                *ngIf="release.refundAmount > release.totalRefundable"
+                class="invalid-feedback text-break"
+                style="display: block;"
+              >
+                Refund amount cannot be greater than the refundable fee amount.
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label mt-1">Balance:</label>
+              <input
+                type="text"
+                class="form-control text-end font-monospace"
+                style="background-color: #fff;"
+                [value]="release.balance | number: '1.2-2'"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2" [hidden]="isLoading">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="receiptMode" class="form-label required"
+                >Receipt Mode:</label
+              >
+              <select
+                class="form-select"
+                name="receiptMode"
+                id="receiptMode"
+                [(ngModel)]="release.receiptMode"
+                required
+              >
+                <option *ngFor="let mode of receiptModeLists" [value]="mode.id">
+                  {{ mode.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div *ngIf="isChequeOrBankTransfer" class="col-sm-3">
+            <div class="form-group">
+              <label for="chequeDraftNumber" class="form-label required">
+                Cheque/Draft Number:
+              </label>
+              <input
+                type="text"
+                class="form-control font-monospace"
+                name="chequeDraftNumber"
+                id="chequeDraftNumber"
+                [(ngModel)]="release.chequeDraftNo"
+                placeholder="Enter cheque/draft number"
+                required
+              />
+            </div>
+          </div>
+          <div *ngIf="isChequeOrBankTransfer" class="col-sm-3">
+            <div class="form-group">
+              <label for="chequeDraftDate" class="form-label required">
+                Cheque/Draft Date (DD-MM-YYYY):
+              </label>
+              <input
+                type="text"
+                class="form-control font-monospace"
+                name="chequeDraftDate"
+                id="chequeDraftDate"
+                [(ngModel)]="release.chequeDraftDate"
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+            </div>
+          </div>
+          <div [ngClass]="isChequeOrBankTransfer ? 'col-sm-3' : 'col-sm-5'">
+            <div class="form-group">
+              <label for="remarks" class="form-label">Remarks:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="remarks"
+                id="remarks"
+                placeholder="Enter remarks"
+                [(ngModel)]="release.remarks"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer px-3 py-2">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          data-bs-dismiss="modal"
+          [disabled]="isLoading"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="
+            isLoading ||
+            !tenant?.id ||
+            release.refundAmount > release.totalRefundable ||
+            release.refundAmount < 0
+          "
+        >
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formStatus === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formStatus !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formStatus === "EDIT" ? "Update" : "Save" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

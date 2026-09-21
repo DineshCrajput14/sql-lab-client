@@ -1,0 +1,191 @@
+<div modalContentBorder class="container-fluid p-0">
+  <form #f="ngForm" (ngSubmit)="f.valid && submitFeedback()">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-message-dots me-1"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 11v.01" />
+          <path d="M8 11v.01" />
+          <path d="M16 11v.01" />
+          <path
+            d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z"
+          />
+        </svg>
+        Send Feedback or Comments
+      </h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+        [disabled]="isLoading"
+        (click)="cancel()"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row my-3" *ngIf="isLoading">
+        <div class="col-12">
+          <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+        </div>
+      </div>
+
+      <div class="row mb-3" *ngIf="!isLoading">
+        <div class="col-12">
+          <span class="fs-4 text-muted">
+            Please use this form to send your ideas, questions or feedback to
+            the {{ appName }} support team. We may use this information to
+            further improve this application.
+          </span>
+        </div>
+      </div>
+      <div class="row mb-3" *ngIf="!isLoading">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="name">Name:</label>
+            <input
+              id="name"
+              name="name"
+              class="form-control"
+              type="text"
+              [(ngModel)]="feedbackComments.name"
+              #name="ngModel"
+              placeholder="Enter your name"
+              maxlength="255"
+              ngModel
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-3" *ngIf="!isLoading">
+        <div class="col-sm-12 col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="mobile">Mobile:</label>
+            <input
+              id="mobile"
+              name="mobile"
+              type="text"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid': mobile.invalid && (f.submitted || mobile.touched)
+              }"
+              [(ngModel)]="feedbackComments.mobile"
+              #mobile="ngModel"
+              pattern="^\+?\d{10,15}$"
+              FilterNumericInput
+              placeholder="Enter your mobile number"
+              maxlength="15"
+              ngModel
+            />
+            <div
+              *ngIf="mobile.invalid && (f.submitted || mobile.touched)"
+              class="invalid-feedback text-break"
+            >
+              <div *ngIf="mobile.errors?.pattern">
+                Please enter a valid phone number with 10-15 digits.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+          <div class="form-group">
+            <label class="form-label" for="email">Email:</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid': email.invalid && (f.submitted || email.touched)
+              }"
+              [(ngModel)]="feedbackComments.email"
+              #email="ngModel"
+              placeholder="Enter your email address"
+              pattern="^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"
+              maxlength="255"
+              ngModel
+            />
+            <div
+              *ngIf="email.invalid && (f.submitted || email.touched)"
+              class="invalid-feedback text-break"
+            >
+              <div *ngIf="email.errors?.pattern">
+                Please enter a valid email address.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2" *ngIf="!isLoading">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label required" for="message">Message:</label>
+            <textarea
+              id="message"
+              name="message"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid':
+                  message.invalid && (f.submitted || message.touched)
+              }"
+              [(ngModel)]="feedbackComments.message"
+              #message="ngModel"
+              rows="5"
+              placeholder="Enter your feedback message"
+              maxlength="2000"
+              required
+            >
+            </textarea>
+
+            <div class="d-flex justify-content-between align-items-center mt-1">
+              <div
+                *ngIf="message.invalid && (f.submitted || message.touched)"
+                class="invalid-feedback"
+              >
+                <div *ngIf="message.errors?.required">
+                  Please enter a valid message.
+                </div>
+              </div>
+
+              <span class="fw-bold ms-auto">
+                {{ feedbackComments.message.length }} Characters, 2000 Max Limit
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn me-auto"
+        (click)="cancel()"
+        [disabled]="isLoading"
+      >
+        <i class="far fa-window-close pe-1"></i>
+        Close
+      </button>
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+        <span
+          *ngIf="isLoading"
+          class="spinner-border spinner-border-sm me-1"
+        ></span>
+        Submit
+      </button>
+    </div>
+  </form>
+</div>

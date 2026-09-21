@@ -1,0 +1,13 @@
+.expo
+.git
+.vscode
+bin
+node_modules
+package-lock.json
+yarn-lock.json
+dist
+src/assets/libs/**
+test/coverage
+.cache
+.angular
+/coverage

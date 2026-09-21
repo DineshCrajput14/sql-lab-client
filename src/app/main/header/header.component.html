@@ -1,0 +1,304 @@
+<header class="navbar navbar-expand-md d-print-none">
+  <div class="container-xl">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbar-menu"
+      aria-controls="navbar-menu"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <h1 class="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
+      <a [routerLink]="['/']">
+        <img
+          src="assets/img/AdvantaRapidERP.png"
+          width="110"
+          height="32"
+          class="navbar-brand-image"
+        />
+      </a>
+    </h1>
+    <div class="navbar-nav flex-row order-md-last">
+      <div class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle"
+          data-bs-toggle="dropdown"
+          data-bs-auto-close="outside"
+          role="button"
+          #helpAndSupport
+          aria-expanded="false"
+        >
+          <span class="nav-link-icon d-md-none d-lg-inline-block">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-help-hexagon"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M19.875 6.27c.7 .398 1.13 1.143 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033z"
+              />
+              <path d="M12 16v.01" />
+              <path
+                d="M12 13a2 2 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483"
+              />
+            </svg>
+          </span>
+          <span class="nav-link-title">
+            Help & Support
+          </span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-arrow" #helpAndSupportMenu>
+          <div class="dropdown-menu-columns width-max-content">
+            <div class="dropdown-menu-column">
+              <a
+                class="dropdown-item"
+                [routerLink]="['/']"
+                (click)="hideNavDropdownMenu()"
+                *ngIf="
+                  loginEnvironment === 'local' || loginEnvironment === 'dev'
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-message-chatbot ms-1 me-2"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"
+                  />
+                  <path d="M9.5 9h.01" />
+                  <path d="M14.5 9h.01" />
+                  <path d="M9.5 13a3.5 3.5 0 0 0 5 0" />
+                </svg>
+                Live Chat
+              </a>
+              <a
+                class="dropdown-item"
+                [routerLink]="['/']"
+                (click)="hideNavDropdownMenu()"
+                *ngIf="
+                  loginEnvironment === 'local' || loginEnvironment === 'dev'
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-phone-plus ms-1 me-2"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"
+                  />
+                  <path d="M15 6h6m-3 -3v6" />
+                </svg>
+                Request a Call Back
+              </a>
+              <a
+                class="dropdown-item"
+                [routerLink]="['/']"
+                (click)="hideNavDropdownMenu()"
+                *ngIf="
+                  loginEnvironment === 'local' || loginEnvironment === 'dev'
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-ticket ms-1 me-2"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M15 5l0 2" />
+                  <path d="M15 11l0 2" />
+                  <path d="M15 17l0 2" />
+                  <path
+                    d="M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2"
+                  />
+                </svg>
+                Support Tickets
+              </a>
+              <a class="dropdown-item" (click)="openFeedbackCommentsModal()">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-message-dots ms-1 me-2"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M12 11v.01" />
+                  <path d="M8 11v.01" />
+                  <path d="M16 11v.01" />
+                  <path
+                    d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3z"
+                  />
+                </svg>
+                Send Feedback or Comments
+              </a>
+              <a
+                class="dropdown-item"
+                [routerLink]="['/']"
+                (click)="hideNavDropdownMenu()"
+                *ngIf="
+                  loginEnvironment === 'local' || loginEnvironment === 'dev'
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-mood-plus ms-1 me-2"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M20.985 12.528a9 9 0 1 0 -8.45 8.456" />
+                  <path d="M16 19h6" />
+                  <path d="M19 16v6" />
+                  <path d="M9 10h.01" />
+                  <path d="M15 10h.01" />
+                  <path d="M9.5 15c.658 .64 1.56 1 2.5 1s1.842 -.36 2.5 -1" />
+                </svg>
+                What's New
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="d-none d-md-flex"
+        [ngClass]="{
+          'me-3': loginEnvironment === 'qa' || loginEnvironment === 'prod'
+        }"
+      >
+        <div
+          *ngIf="loginEnvironment === 'local' || loginEnvironment === 'dev'"
+          class="nav-item dropdown d-none d-md-flex me-3"
+        >
+          <a
+            class="nav-link px-0"
+            data-bs-toggle="dropdown"
+            tabindex="-1"
+            (click)="op.toggle($event, targetEl)"
+            aria-label="Show notifications"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"
+              />
+              <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+            </svg>
+            <span class="badge bg-red"></span>
+          </a>
+          <p-overlayPanel #op>
+            <ng-template pTemplate="content">
+              <app-notifications></app-notifications>
+            </ng-template>
+          </p-overlayPanel>
+        </div>
+      </div>
+      <div class="nav-item dropdown" id="openUserMenu">
+        <a
+          class="nav-link d-flex lh-1 text-reset p-0"
+          data-bs-toggle="dropdown"
+          aria-label="Open user menu"
+        >
+          <img
+            [src]="
+              authService.authentication?.user?.imageUrl ||
+              'assets/img/team.png'
+            "
+            class="avatar avatar-sm"
+            alt="User Image"
+          />
+          <div class="d-none d-xl-block ps-2">
+            <div>
+              {{ authService.authentication?.user?.name || "Admin" }}
+            </div>
+            <div class="mt-1 small text-muted">
+              {{ authService.authentication.userRoleCode | titlecase }}
+            </div>
+          </div>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+          <a
+            [routerLink]="['/profile']"
+            routerLinkActive="active"
+            id="profile"
+            class="dropdown-item"
+            >Profile</a
+          >
+          <a
+            [routerLink]="['/change-password']"
+            routerLinkActive="active"
+            class="dropdown-item"
+            id="changePassword"
+            >Change Password</a
+          >
+          <a
+            class="dropdown-item"
+            id="shareFeedback"
+            (click)="openFeedbackCommentsModal()"
+          >
+            Share Feedback
+          </a>
+          <div class="dropdown-divider my-0"></div>
+          <a class="dropdown-item" id="logOut" (click)="logout()">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

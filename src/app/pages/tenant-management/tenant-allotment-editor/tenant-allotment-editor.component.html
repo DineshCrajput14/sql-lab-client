@@ -1,0 +1,373 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()" autocomplete="off">
+      <div class="modal-header py-2">
+        <h5 class="modal-title">
+          <i class="fas fa-home pe-1"></i>
+          {{
+            formState === "EDIT" ? "Edit Unit Allotment" : "New Unit Allotment"
+          }}
+          <span *ngIf="tenantName" class="text-muted fs-6 fw-normal ms-1">
+            - {{ tenantName }}
+          </span>
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body py-2">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-md-4 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotDate"
+                >Date:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="allotDate"
+                id="allotDate"
+                [(ngModel)]="allotment.date"
+                required
+                #allotDate="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotDate.invalid && (f.submitted || allotDate.touched)
+                }"
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="allotDate.invalid && (f.submitted || allotDate.touched)"
+              >
+                <div *ngIf="allotDate.errors?.required">
+                  Please select a valid date.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotProperty"
+                >Property:</label
+              >
+              <select
+                class="form-select"
+                name="allotProperty"
+                id="allotProperty"
+                [(ngModel)]="allotment.propertyId"
+                (change)="onPropertyChange()"
+                required
+                #allotProperty="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotProperty.invalid &&
+                    (f.submitted || allotProperty.touched)
+                }"
+              >
+                <option [ngValue]="undefined" disabled selected
+                  >Select Property</option
+                >
+                <option
+                  *ngFor="let property of propertiesList"
+                  [ngValue]="property.id"
+                >
+                  {{ property.name }}
+                </option>
+              </select>
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="
+                  allotProperty.invalid &&
+                  (f.submitted || allotProperty.touched)
+                "
+              >
+                <div *ngIf="allotProperty.errors?.required">
+                  Please select a property.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotBlock"
+                >Block:</label
+              >
+              <select
+                class="form-select"
+                name="allotBlock"
+                id="allotBlock"
+                [(ngModel)]="allotment.buildingId"
+                (change)="onBuildingChange()"
+                [disabled]="!allotment.propertyId"
+                required
+                #allotBlock="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotBlock.invalid && (f.submitted || allotBlock.touched)
+                }"
+              >
+                <option [ngValue]="undefined" disabled selected
+                  >Select Block</option
+                >
+                <option
+                  *ngFor="let building of buildingsList"
+                  [ngValue]="building.id"
+                >
+                  {{ building.name }}
+                </option>
+              </select>
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="
+                  allotBlock.invalid && (f.submitted || allotBlock.touched)
+                "
+              >
+                <div *ngIf="allotBlock.errors?.required">
+                  Please select a block.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotUnit"
+                >Unit:</label
+              >
+              <select
+                class="form-select"
+                name="allotUnit"
+                id="allotUnit"
+                [(ngModel)]="allotment.unitId"
+                (change)="onUnitChange()"
+                [disabled]="!allotment.buildingId"
+                required
+                #allotUnit="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotUnit.invalid && (f.submitted || allotUnit.touched)
+                }"
+              >
+                <option [ngValue]="undefined" disabled selected
+                  >Select Unit</option
+                >
+                <option *ngFor="let unit of unitsList" [ngValue]="unit.id">
+                  {{ unit.unitNo }}
+                </option>
+              </select>
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="allotUnit.invalid && (f.submitted || allotUnit.touched)"
+              >
+                <div *ngIf="allotUnit.errors?.required">
+                  Please select a unit.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotCharges"
+                >Charges:</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                name="allotCharges"
+                id="allotCharges"
+                [(ngModel)]="allotment.charges"
+                required
+                min="0"
+                #allotCharges="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotCharges.invalid &&
+                    (f.submitted || allotCharges.touched)
+                }"
+              />
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="
+                  allotCharges.invalid && (f.submitted || allotCharges.touched)
+                "
+              >
+                <div *ngIf="allotCharges.errors?.required">
+                  Please enter unit charges.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotmentFrom"
+                >Allotment From:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="allotmentFrom"
+                id="allotmentFrom"
+                [(ngModel)]="allotment.allotmentFrom"
+                required
+                #allotmentFrom="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotmentFrom.invalid &&
+                    (f.submitted || allotmentFrom.touched)
+                }"
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="
+                  allotmentFrom.invalid &&
+                  (f.submitted || allotmentFrom.touched)
+                "
+              >
+                <div *ngIf="allotmentFrom.errors?.required">
+                  Please select from date.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotmentTo"
+                >To:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="allotmentTo"
+                id="allotmentTo"
+                [(ngModel)]="allotment.allotmentTo"
+                required
+                #allotmentTo="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotmentTo.invalid && (f.submitted || allotmentTo.touched)
+                }"
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="
+                  allotmentTo.invalid && (f.submitted || allotmentTo.touched)
+                "
+              >
+                <div *ngIf="allotmentTo.errors?.required">
+                  Please select to date.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 mt-2 mb-2">
+            <h6 class="fw-bold text-muted border-bottom pb-1 mb-2">
+              <i class="fas fa-layer-group pe-1"></i> Additional Charges
+            </h6>
+            <ag-grid-angular
+              style="width: 100%; height: 175px;"
+              class="ag-theme-alpine"
+              [enableCellTextSelection]="true"
+              [columnDefs]="columnDefsCharges"
+              [rowData]="amenitiesList"
+              [defaultColDef]="defaultColDef"
+              [rowSelection]="'multiple'"
+              [rowMultiSelectWithClick]="true"
+              (gridReady)="onChargesGridReady($event)"
+              (firstDataRendered)="onChargesFirstDataRendered($event)"
+              (selectionChanged)="onChargesSelectionChanged()"
+            >
+            </ag-grid-angular>
+          </div>
+          <div class="col-12 mb-2">
+            <div class="form-group">
+              <label class="form-label mb-1" for="allotRemarks">Remarks:</label>
+              <textarea
+                class="form-control"
+                name="allotRemarks"
+                id="allotRemarks"
+                rows="2"
+                [(ngModel)]="allotment.remarks"
+                placeholder="Enter remarks..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="isLoading">
+          <div class="col-12 py-4">
+            <app-is-loading></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

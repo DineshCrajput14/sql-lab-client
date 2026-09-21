@@ -1,0 +1,349 @@
+<div
+  class="modal-header d-print-none bg-light py-2 px-3 border-bottom d-flex align-items-center justify-content-between w-100"
+>
+  <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center">
+      <i class="fa fa-print fs-5 text-primary me-2"></i>
+      <h5 class="modal-title m-0 fw-bold text-dark">
+        Fee Receipt Print Preview
+      </h5>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm px-3 fw-bold"
+        (click)="print()"
+        [disabled]="isLoading"
+      >
+        <i class="fa fa-print me-1"></i> Print Receipt
+      </button>
+      <button
+        type="button"
+        class="btn btn-success btn-sm px-3 fw-bold"
+        (click)="downloadPdf()"
+        [disabled]="isLoading || isDownloadingPdf"
+      >
+        <i class="fa fa-file-pdf-o me-1"></i>
+        <span *ngIf="!isDownloadingPdf">Download PDF</span>
+        <span *ngIf="isDownloadingPdf">Generating PDF</span>
+      </button>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="btn-close ms-auto"
+    data-bs-dismiss="modal"
+    aria-label="Close"
+    (click)="close()"
+    aria-hidden="true"
+  >
+    &times;
+  </button>
+</div>
+
+<div class="modal-body p-2 p-md-3 bg-secondary bg-opacity-25 print-modal-body">
+  <div *ngIf="isLoading" class="text-center py-5 d-print-none">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading print data...</span>
+    </div>
+    <div class="text-muted mt-2 fw-semibold">Preparing fee receipt...</div>
+  </div>
+  <div
+    *ngIf="!isLoading && receiptData"
+    class="print-page-container"
+    id="printableReceiptSheet"
+  >
+    <div class="receipt-card">
+      <div class="receipt-header-box text-center">
+        <div class="company-name">{{ "PUMA GROUP OF COMPANIES LTD" }}</div>
+        <div class="company-subtitle">{{ "LWIPA PUMA PLAZA" }}</div>
+        <div class="company-address">{{ "NO. F701, PLOT NO. 36179/M/A" }}</div>
+        <div class="company-city">{{ "NDOLA-KITWE ROAD, NDOLA" }}</div>
+        <div class="company-contact">Contact No : {{ "+260977872947" }}</div>
+        <div class="company-email">Email : {{ "spuma1968@yahoo.com" }}</div>
+      </div>
+
+      <div class="receipt-title-box">
+        <span class="copy-tag-placeholder"></span>
+        <span class="receipt-title-text">RECEIPT</span>
+        <span class="receipt-copy-badge">TENANT COPY</span>
+      </div>
+
+      <div class="receipt-meta-box">
+        <table class="meta-table">
+          <tr>
+            <td class="meta-lbl">Month</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val">
+              <strong>{{ monthPeriod }}</strong>
+            </td>
+            <td colspan="3"></td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Receipt No.</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val">
+              <strong>{{ receiptData?.receiptNo }}</strong>
+            </td>
+            <td class="meta-lbl-right">Dated</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val-right">
+              <strong>{{ formattedReceiptDate }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Tenant Name</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong class="tenant-name">{{ receiptData?.tenantName }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Property</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong>{{ receiptData?.propertyName }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Block</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong>{{ receiptData?.buildingName }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Unit No.</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong>{{ receiptData?.unitNo }}</strong>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="receipt-table-box">
+        <table class="table-services">
+          <thead>
+            <tr>
+              <th class="col-services">Services</th>
+              <th class="col-due text-end">Due Amt</th>
+              <th class="col-rec text-end">Rec. Amt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of servicesList">
+              <td class="col-services">
+                {{ item.serviceName }}
+              </td>
+              <td class="col-due text-end">
+                {{ item.dueAmount | number: "1.2-2" }}
+              </td>
+              <td class="col-rec text-end">
+                {{ item.receivedAmount | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr class="spacer-row">
+              <td class="col-services"></td>
+              <td class="col-due"></td>
+              <td class="col-rec"></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td rowspan="3" class="mode-remarks-cell">
+                <div class="mode-text">
+                  <strong>Mode : By {{ paymentModeLabel }}</strong>
+                  <span *ngIf="receiptData?.chequeDraftNo" class="ms-1">
+                    ({{ receiptData?.chequeDraftNo
+                    }}<span *ngIf="formattedChequeDate">
+                      Dt: {{ formattedChequeDate }}</span
+                    >)
+                  </span>
+                </div>
+                <div *ngIf="receiptData?.remarks" class="remarks-text mt-1">
+                  <strong>Remarks :</strong> {{ receiptData.remarks }}
+                </div>
+              </td>
+              <td class="col-due text-end fw-bold">Sub Total</td>
+              <td class="col-rec text-end fw-bold">
+                {{ receiptData?.totalReceivable || 0 | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr class="total-row">
+              <td class="col-due text-end fw-bold">Received Amount</td>
+              <td class="col-rec text-end fw-bold">
+                {{ receiptData?.receivedAmount || 0 | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr class="total-row">
+              <td class="col-due text-end fw-bold">Balance Amount</td>
+              <td class="col-rec text-end fw-bold">
+                {{ receiptData?.balance || 0 | number: "1.2-2" }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="receipt-signature-box">
+        <div class="amount-in-words">
+          <strong>Received Amount in words :</strong>
+          {{ receivedAmountInWords }}
+        </div>
+        <div class="signatory-block text-center">
+          <div class="sign-line"></div>
+          <span class="auth-signatory">Auth. Signatory</span>
+        </div>
+      </div>
+    </div>
+    <div class="tear-divider text-center">
+      <span
+        >----------------------------------- ✂ Cut / Tear Along This Line ✂
+        -----------------------------------</span
+      >
+    </div>
+    <div class="receipt-card">
+      <div class="receipt-header-box text-center">
+        <div class="company-name">{{ "PUMA GROUP OF COMPANIES LTD" }}</div>
+        <div class="company-subtitle">{{ "LWIPA PUMA PLAZA" }}</div>
+        <div class="company-address">{{ "NO. F701, PLOT NO. 36179/M/A" }}</div>
+        <div class="company-city">{{ "NDOLA-KITWE ROAD, NDOLA" }}</div>
+        <div class="company-contact">Contact No : {{ "+260977872947" }}</div>
+        <div class="company-email">Email : {{ "spuma1968@yahoo.com" }}</div>
+      </div>
+      <div class="receipt-title-box">
+        <span class="copy-tag-placeholder"></span>
+        <span class="receipt-title-text">RECEIPT</span>
+        <span class="receipt-copy-badge">OFFICE COPY</span>
+      </div>
+      <div class="receipt-meta-box">
+        <table class="meta-table">
+          <tr>
+            <td class="meta-lbl">Month</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val">
+              <strong>{{ monthPeriod }}</strong>
+            </td>
+            <td colspan="3"></td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Receipt No.</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val">
+              <strong>{{ receiptData?.receiptNo }}</strong>
+            </td>
+            <td class="meta-lbl-right">Dated</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val-right">
+              <strong>{{ formattedReceiptDate }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Tenant Name</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong class="tenant-name">{{ receiptData?.tenantName }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Property</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong>{{ receiptData?.propertyName }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Block</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong>{{ receiptData?.buildingName }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <td class="meta-lbl">Unit No.</td>
+            <td class="meta-cln">:</td>
+            <td class="meta-val" colspan="4">
+              <strong>{{ receiptData?.unitNo }}</strong>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="receipt-table-box">
+        <table class="table-services">
+          <thead>
+            <tr>
+              <th class="col-services">Services</th>
+              <th class="col-due text-end">Due Amt</th>
+              <th class="col-rec text-end">Rec. Amt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of servicesList">
+              <td class="col-services">
+                {{ item.serviceName }}
+              </td>
+              <td class="col-due text-end">
+                {{ item.dueAmount | number: "1.2-2" }}
+              </td>
+              <td class="col-rec text-end">
+                {{ item.receivedAmount | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr class="spacer-row">
+              <td class="col-services"></td>
+              <td class="col-due"></td>
+              <td class="col-rec"></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td rowspan="3" class="mode-remarks-cell">
+                <div class="mode-text">
+                  <strong>Mode : By {{ paymentModeLabel }}</strong>
+                  <span *ngIf="receiptData?.chequeDraftNo" class="ms-1">
+                    ({{ receiptData?.chequeDraftNo
+                    }}<span *ngIf="formattedChequeDate">
+                      Dt: {{ formattedChequeDate }}</span
+                    >)
+                  </span>
+                </div>
+                <div *ngIf="receiptData?.remarks" class="remarks-text mt-1">
+                  <strong>Remarks :</strong> {{ receiptData.remarks }}
+                </div>
+              </td>
+              <td class="col-due text-end fw-bold">Sub Total</td>
+              <td class="col-rec text-end fw-bold">
+                {{ receiptData?.totalReceivable || 0 | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr class="total-row">
+              <td class="col-due text-end fw-bold">Received Amount</td>
+              <td class="col-rec text-end fw-bold">
+                {{ receiptData?.receivedAmount || 0 | number: "1.2-2" }}
+              </td>
+            </tr>
+            <tr class="total-row">
+              <td class="col-due text-end fw-bold">Balance Amount</td>
+              <td class="col-rec text-end fw-bold">
+                {{ receiptData?.balance || 0 | number: "1.2-2" }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="receipt-signature-box">
+        <div class="amount-in-words">
+          <strong>Received Amount in words :</strong>
+          {{ receivedAmountInWords }}
+        </div>
+        <div class="signatory-block text-center">
+          <div class="sign-line"></div>
+          <span class="auth-signatory">Auth. Signatory</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

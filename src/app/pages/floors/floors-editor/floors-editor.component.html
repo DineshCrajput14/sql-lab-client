@@ -1,0 +1,126 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-layer-group pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} Floor
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-12">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="floorName"
+                >Floor Name:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="floorName"
+                id="floorName"
+                [ngClass]="{
+                  'is-invalid':
+                    floorName.invalid && (f.submitted || floorName.touched)
+                }"
+                [(ngModel)]="floor.name"
+                placeholder="Enter floor name"
+                required
+                #floorName="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="floorName.invalid && (f.submitted || floorName.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="floorName.errors?.required">
+                  Please enter a valid floor name.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label required" for="floorNo">Floor No:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="floorNo"
+                id="floorNo"
+                [ngClass]="{
+                  'is-invalid':
+                    floorNo.invalid && (f.submitted || floorNo.touched)
+                }"
+                [(ngModel)]="floor.floorNo"
+                placeholder="Enter floor number"
+                required
+                #floorNo="ngModel"
+              />
+              <div
+                *ngIf="floorNo.invalid && (f.submitted || floorNo.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="floorNo.errors?.required">
+                  Please enter a valid floor number.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></i
+          ><i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

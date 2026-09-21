@@ -1,0 +1,13 @@
+<div
+  [ngClass]="
+    isExpanded
+      ? 'notifications__wrapper-expanded'
+      : 'notifications__wrapper-collapsed'
+  "
+>
+  <div class="notifications__wrapper">
+    <app-notifications-block
+      [notifications]="notifications"
+    ></app-notifications-block>
+  </div>
+</div>

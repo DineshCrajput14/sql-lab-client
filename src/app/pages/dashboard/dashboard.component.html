@@ -1,0 +1,893 @@
+<div class="page-header d-print-none mt-1 mb-3">
+  <div class="container-fluid p-0">
+    <div
+      class="d-flex flex-wrap align-items-center justify-content-between gap-2"
+    >
+      <div>
+        <h2 class="page-title m-0 fw-bold text-dark">
+          Dashboard
+        </h2>
+      </div>
+      <div class="dashboard-toolbar d-flex align-items-center flex-wrap gap-2">
+        <div
+          class="date-capsule d-none d-md-inline-flex align-items-center px-3 py-1 rounded-pill border bg-white shadow-xs"
+        >
+          <span class="badge-pulse-green me-2"></span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon text-primary me-2"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x="4" y="5" width="16" height="16" rx="2" />
+            <line x1="16" y1="3" x2="16" y2="7" />
+            <line x1="8" y1="3" x2="8" y2="7" />
+            <line x1="4" y1="11" x2="20" y2="11" />
+            <line x1="11" y1="15" x2="12" y2="15" />
+            <line x1="12" y1="15" x2="12" y2="18" />
+          </svg>
+          <span class="small fw-semibold text-secondary">
+            {{ currentDate | date: "fullDate" }}
+          </span>
+        </div>
+        <a
+          [routerLink]="['/tenants']"
+          class="btn btn-toolbar-item btn-allot px-3 fw-semibold"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon me-1.5"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+            <path d="M16 11h6m-3 -3v6" />
+          </svg>
+          <span>Allot Tenant</span>
+        </a>
+        <a
+          [routerLink]="['/fee-receipts']"
+          class="btn btn-toolbar-item btn-receipt px-3 fw-bold shadow-sm"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon me-1.5"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <rect x="3" y="5" width="18" height="14" rx="3" />
+            <circle cx="12" cy="12" r="2.5" />
+            <line x1="7" y1="9" x2="7" y2="9.01" />
+            <line x1="17" y1="15" x2="17" y2="15.01" />
+          </svg>
+          <span>New Fee Receipt</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <!-- Card 1: Total Properties -->
+  <div class="col-sm-6 col-xl-3">
+    <div class="card card-kpi h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span
+              class="text-uppercase tracking-wider fw-semibold text-muted small"
+              >Total Properties</span
+            >
+            <h2 class="kpi-value text-dark fw-bold my-0">
+              {{ stats.totalProperties }}
+            </h2>
+            <div class="kpi-subtext small text-muted">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon text-primary me-1"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <line x1="3" y1="21" x2="21" y2="21" />
+                <rect x="5" y="3" width="14" height="18" rx="1" />
+                <path d="M9 21v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4" />
+              </svg>
+              <span class="fw-semibold text-dark">{{
+                stats.totalBuildings
+              }}</span>
+              Buildings active
+            </div>
+          </div>
+          <div class="kpi-icon-wrapper bg-gradient-blue shadow-blue">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon text-white"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <line x1="3" y1="21" x2="21" y2="21" />
+              <rect x="5" y="3" width="14" height="18" rx="1" />
+              <path d="M9 21v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Total Units Capacity -->
+  <div class="col-sm-6 col-xl-3">
+    <div class="card card-kpi h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span
+              class="text-uppercase tracking-wider fw-semibold text-muted small"
+              >Total Units</span
+            >
+            <h2 class="kpi-value text-dark fw-bold my-0">
+              {{ stats.totalUnits }}
+            </h2>
+            <div class="kpi-subtext small text-muted">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon text-indigo me-1"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <rect x="3" y="3" width="18" height="4" rx="1" />
+                <rect x="3" y="11" width="18" height="4" rx="1" />
+                <rect x="3" y="19" width="18" height="4" rx="1" />
+              </svg>
+              <span class="fw-semibold text-dark">{{ stats.totalFloors }}</span>
+              Floors across portfolio
+            </div>
+          </div>
+          <div class="kpi-icon-wrapper bg-gradient-indigo shadow-indigo">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon text-white"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+              <path d="M19 21v-10l-7 -5l-7 5v10" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Occupancy Status -->
+  <div class="col-sm-6 col-xl-3">
+    <div class="card card-kpi h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span
+              class="text-uppercase tracking-wider fw-semibold text-muted small"
+              >Occupancy Rate</span
+            >
+            <h2 class="kpi-value text-dark fw-bold my-0">
+              {{ occupancyPercent }}%
+            </h2>
+            <div class="kpi-subtext small text-muted">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon text-success me-1"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+              </svg>
+              <span class="fw-semibold text-success">{{
+                stats.occupiedUnits
+              }}</span>
+              of {{ stats.totalUnits }} Units Leased
+            </div>
+          </div>
+          <div class="kpi-icon-wrapper bg-gradient-green shadow-green">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon text-white"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Total Revenue / Rent Collection -->
+  <div class="col-sm-6 col-xl-3">
+    <div class="card card-kpi h-100 shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <span
+              class="text-uppercase tracking-wider fw-semibold text-muted small"
+              >Rent Collected</span
+            >
+            <h2
+              class="kpi-value text-dark fw-bold my-0 text-truncate"
+              title="{{ currencySymbol }} {{
+                financials.totalRentCollected | number: '1.2-2'
+              }}"
+            >
+              {{ currencySymbol }}
+              {{ financials.totalRentCollected | number: "1.0-0" }}
+            </h2>
+            <div class="kpi-subtext small text-muted">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon text-teal me-1"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <polyline points="3 17 9 11 13 15 21 7" />
+                <polyline points="14 7 21 7 21 14" />
+              </svg>
+              <span class="fw-semibold text-dark"
+                >{{ financials.collectionEfficiency }}%</span
+              >
+              Collection rate
+            </div>
+          </div>
+          <div class="kpi-icon-wrapper bg-gradient-teal shadow-teal">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon text-white"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <rect x="3" y="5" width="18" height="14" rx="3" />
+              <circle cx="12" cy="12" r="2.5" />
+              <line x1="7" y1="9" x2="7" y2="9.01" />
+              <line x1="17" y1="15" x2="17" y2="15.01" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div
+        class="card-header bg-transparent py-3 border-bottom d-flex align-items-center justify-content-between"
+      >
+        <div class="d-flex align-items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon text-primary me-2"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M10 3.2a9 9 0 1 0 10.8 10.8a1 1 0 0 0 -1 -1h-6.8a1 1 0 0 1 -1 -1v-6.8a1 1 0 0 0 -1 -1z"
+            />
+            <path d="M15 3.5a9 9 0 0 1 5.5 5.5h-4.5a1 1 0 0 1 -1 -1v-4.5" />
+          </svg>
+          <h3 class="card-title m-0 fw-bold text-dark">
+            Occupancy & Unit Distribution
+          </h3>
+        </div>
+        <span class="badge bg-light text-dark border px-2 py-1">
+          Total {{ stats.totalUnits }} Units
+        </span>
+      </div>
+      <div class="card-body p-3 p-md-4">
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span
+              class="small fw-bold text-secondary text-uppercase tracking-wider"
+              >Portfolio Occupancy Split</span
+            >
+            <span class="small fw-semibold text-muted">
+              {{ stats.occupiedUnits }} Occupied &bull;
+              {{ stats.availableUnits }} Available &bull;
+              {{ stats.maintenanceUnits }} Maintenance
+            </span>
+          </div>
+          <div
+            class="progress progress-segmented shadow-sm"
+            style="height: 14px;"
+          >
+            <div
+              class="progress-bar bg-success"
+              role="progressbar"
+              [style.width.%]="occupancyPercent"
+              [attr.aria-valuenow]="occupancyPercent"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              title="Occupied: {{ occupancyPercent }}%"
+            ></div>
+            <div
+              class="progress-bar bg-info"
+              role="progressbar"
+              [style.width.%]="availablePercent"
+              [attr.aria-valuenow]="availablePercent"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              title="Available: {{ availablePercent }}%"
+            ></div>
+            <div
+              class="progress-bar bg-warning"
+              role="progressbar"
+              [style.width.%]="maintenancePercent"
+              [attr.aria-valuenow]="maintenancePercent"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              title="Maintenance / Reserved: {{ maintenancePercent }}%"
+            ></div>
+          </div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-4">
+            <div
+              class="occupancy-stat-box p-3 rounded text-center border bg-light-green"
+            >
+              <div class="status-indicator bg-success mb-1"></div>
+              <div class="small fw-semibold text-muted">Occupied</div>
+              <div class="fs-4 fw-bold text-success">
+                {{ stats.occupiedUnits }}
+              </div>
+              <div class="badge bg-success-lt mt-1">
+                {{ occupancyPercent }}%
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div
+              class="occupancy-stat-box p-3 rounded text-center border bg-light-blue"
+            >
+              <div class="status-indicator bg-info mb-1"></div>
+              <div class="small fw-semibold text-muted">Available</div>
+              <div class="fs-4 fw-bold text-info">
+                {{ stats.availableUnits }}
+              </div>
+              <div class="badge bg-info-lt mt-1">{{ availablePercent }}%</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div
+              class="occupancy-stat-box p-3 rounded text-center border bg-light-orange"
+            >
+              <div class="status-indicator bg-warning mb-1"></div>
+              <div class="small fw-semibold text-muted">Maintenance</div>
+              <div class="fs-4 fw-bold text-warning">
+                {{ stats.maintenanceUnits }}
+              </div>
+              <div class="badge bg-warning-lt mt-1">
+                {{ maintenancePercent }}%
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Portfolio Assets Snapshot -->
+        <div class="p-2.5 rounded-3 bg-light border mb-3">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span
+              class="extra-small fw-bold text-uppercase tracking-wider text-secondary"
+            >
+              Portfolio Assets
+            </span>
+            <span
+              class="badge bg-white text-secondary border extra-small py-0.5"
+            >
+              Infrastructure
+            </span>
+          </div>
+          <div class="row g-2 text-center">
+            <div class="col-3">
+              <div class="p-2 rounded-2 bg-white border shadow-xs h-100">
+                <div class="extra-small text-muted fw-semibold">Buildings</div>
+                <div class="fw-bold text-dark fs-6 mt-0.5">
+                  {{ stats.totalBuildings }}
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="p-2 rounded-2 bg-white border shadow-xs h-100">
+                <div class="extra-small text-muted fw-semibold">Floors</div>
+                <div class="fw-bold text-dark fs-6 mt-0.5">
+                  {{ stats.totalFloors }}
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="p-2 rounded-2 bg-white border shadow-xs h-100">
+                <div class="extra-small text-muted fw-semibold">Amenities</div>
+                <div class="fw-bold text-dark fs-6 mt-0.5">
+                  {{ stats.totalAmenities }}
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="p-2 rounded-2 bg-white border shadow-xs h-100">
+                <div class="extra-small text-muted fw-semibold">Categories</div>
+                <div class="fw-bold text-dark fs-6 mt-0.5">
+                  {{ stats.totalCategories }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div
+        class="card-header bg-transparent py-3 border-bottom d-flex align-items-center justify-content-between"
+      >
+        <div class="d-flex align-items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon text-success me-2"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <line x1="12" y1="20" x2="12" y2="10" />
+            <line x1="18" y1="20" x2="18" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="16" />
+          </svg>
+          <h3 class="card-title m-0 fw-bold text-dark">
+            Financial Performance
+          </h3>
+        </div>
+        <span
+          class="badge bg-success-lt px-2 py-1 d-inline-flex align-items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon me-1"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            stroke-width="2.5"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9 12l2 2l4 -4" />
+          </svg>
+          Live Ledger
+        </span>
+      </div>
+      <div
+        class="card-body p-3 p-md-4 d-flex flex-column justify-content-between"
+      >
+        <div class="financial-list">
+          <div
+            class="financial-item d-flex align-items-center justify-content-between py-2 border-bottom"
+          >
+            <div class="d-flex align-items-center">
+              <span class="badge-icon bg-blue-lt me-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon text-primary"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                  <path
+                    d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"
+                  />
+                  <line x1="9" y1="9" x2="10" y2="9" />
+                  <line x1="9" y1="13" x2="15" y2="13" />
+                  <line x1="9" y1="17" x2="15" y2="17" />
+                </svg>
+              </span>
+              <div>
+                <div class="fw-semibold text-dark small">
+                  Total Billed / Receivable
+                </div>
+                <div class="text-muted extra-small">
+                  Cumulative rent across all tenancies
+                </div>
+              </div>
+            </div>
+            <div class="fw-bold text-dark fs-5">
+              {{ currencySymbol }}
+              {{ financials.totalRentReceivable | number: "1.2-2" }}
+            </div>
+          </div>
+          <div
+            class="financial-item d-flex align-items-center justify-content-between py-2 border-bottom"
+          >
+            <div class="d-flex align-items-center">
+              <span class="badge-icon bg-green-lt me-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon text-success"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                  stroke="currentColor"
+                  fill="none"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M5 12l5 5l10 -10" />
+                </svg>
+              </span>
+              <div>
+                <div class="fw-semibold text-dark small">Total Received</div>
+                <div class="text-muted extra-small">
+                  Successfully cleared collections
+                </div>
+              </div>
+            </div>
+            <div class="fw-bold text-success fs-5">
+              {{ currencySymbol }}
+              {{ financials.totalRentCollected | number: "1.2-2" }}
+            </div>
+          </div>
+          <div
+            class="financial-item d-flex align-items-center justify-content-between py-2 border-bottom"
+          >
+            <div class="d-flex align-items-center">
+              <span class="badge-icon bg-danger-lt me-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon text-danger"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <circle cx="12" cy="12" r="9" />
+                  <polyline points="12 7 12 12 15 15" />
+                </svg>
+              </span>
+              <div>
+                <div class="fw-semibold text-dark small">
+                  Outstanding Balance
+                </div>
+                <div class="text-muted extra-small">
+                  Pending tenant dues & arrears
+                </div>
+              </div>
+            </div>
+            <div class="fw-bold text-danger fs-5">
+              {{ currencySymbol }}
+              {{ financials.totalOutstandingBalance | number: "1.2-2" }}
+            </div>
+          </div>
+          <div
+            class="financial-item d-flex align-items-center justify-content-between py-2 border-bottom"
+          >
+            <div class="d-flex align-items-center">
+              <span class="badge-icon bg-teal-lt me-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon text-teal"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <rect x="4" y="5" width="16" height="16" rx="2" />
+                  <line x1="16" y1="3" x2="16" y2="7" />
+                  <line x1="8" y1="3" x2="8" y2="7" />
+                  <line x1="4" y1="11" x2="20" y2="11" />
+                  <rect x="8" y="15" width="2" height="2" />
+                </svg>
+              </span>
+              <div>
+                <div class="fw-semibold text-dark small">
+                  Current Month Collection
+                </div>
+                <div class="text-muted extra-small">
+                  Realized revenue this month
+                </div>
+              </div>
+            </div>
+            <div class="fw-bold text-teal fs-5">
+              {{ currencySymbol }}
+              {{ financials.monthlyCollected | number: "1.2-2" }}
+            </div>
+          </div>
+
+          <!-- Today's Cashflow Pill Grid -->
+          <div
+            class="today-cashflow-box p-2.5 rounded-3 bg-light border mt-2.5 mb-1"
+          >
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span
+                class="extra-small fw-bold text-uppercase tracking-wider text-secondary d-flex align-items-center"
+              >
+                <span class="badge-pulse-green me-1.5"></span>
+                Today's Cashflow
+              </span>
+              <span
+                class="badge bg-white text-secondary border extra-small py-0.5"
+              >
+                {{ currentDate | date: "dd MMM yyyy" }}
+              </span>
+            </div>
+            <div class="row g-2 text-center">
+              <div class="col-4">
+                <div class="p-2 rounded-2 bg-white border h-100 shadow-xs">
+                  <div class="extra-small text-muted fw-semibold">Received</div>
+                  <div
+                    class="fw-bold text-success small text-truncate mt-0.5"
+                    title="{{ currencySymbol }} {{
+                      financials.todayCollected | number: '1.2-2'
+                    }}"
+                  >
+                    +{{ currencySymbol }}
+                    {{ financials.todayCollected | number: "1.0-0" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 rounded-2 bg-white border h-100 shadow-xs">
+                  <div class="extra-small text-muted fw-semibold">Refunded</div>
+                  <div
+                    class="fw-bold text-orange small text-truncate mt-0.5"
+                    title="{{ currencySymbol }} {{
+                      financials.todayRefunded | number: '1.2-2'
+                    }}"
+                  >
+                    -{{ currencySymbol }}
+                    {{ financials.todayRefunded | number: "1.0-0" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 rounded-2 bg-white border h-100 shadow-xs">
+                  <div class="extra-small text-muted fw-semibold">
+                    Net Inflow
+                  </div>
+                  <div
+                    class="fw-bold small text-truncate mt-0.5"
+                    [ngClass]="
+                      financials.todayNet >= 0 ? 'text-primary' : 'text-danger'
+                    "
+                    title="{{ currencySymbol }} {{
+                      financials.todayNet | number: '1.2-2'
+                    }}"
+                  >
+                    {{ currencySymbol }}
+                    {{ financials.todayNet | number: "1.0-0" }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="efficiency-meter mt-3 pt-3 border-top">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="small fw-semibold text-muted"
+              >Collection Efficiency</span
+            >
+            <span class="small fw-bold text-dark"
+              >{{ financials.collectionEfficiency }}%</span
+            >
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div
+              class="progress-bar"
+              [ngClass]="
+                financials.collectionEfficiency >= 75
+                  ? 'bg-success'
+                  : financials.collectionEfficiency >= 40
+                  ? 'bg-warning'
+                  : 'bg-danger'
+              "
+              role="progressbar"
+              [style.width.%]="financials.collectionEfficiency"
+              aria-valuenow="financials.collectionEfficiency"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row g-3" *ngIf="recentReceipts && recentReceipts.length > 0">
+  <div class="col-12">
+    <div class="card shadow-sm border-0">
+      <div
+        class="card-header bg-transparent py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2"
+      >
+        <div class="d-flex align-items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon text-primary me-2"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path
+              d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2m4 -14h6m-6 4h6m-2 4h2"
+            />
+          </svg>
+          <h3 class="card-title m-0 fw-bold text-dark">
+            Recent Receipts
+          </h3>
+          <span class="badge bg-blue-lt ms-2 font-monospace">Latest 5</span>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-vcenter table-hover card-table mb-0">
+            <thead class="bg-light text-muted small text-uppercase">
+              <tr>
+                <th class="ps-3">Receipt No</th>
+                <th>Tenant Name</th>
+                <th>Unit / Property</th>
+                <th>Receipt Date</th>
+                <th>Mode</th>
+                <th class="text-end">Total Billed</th>
+                <th class="text-end">Received Amt</th>
+                <th class="text-end pe-3">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let receipt of recentReceipts">
+                <td class="ps-3">
+                  <span class="badge bg-blue-lt fw-bold font-monospace">
+                    #{{ receipt.receiptNo }}
+                  </span>
+                </td>
+                <td>
+                  <div class="fw-bold text-dark">
+                    {{ receipt.tenantName }}
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-1">
+                    <span
+                      class="badge bg-light border text-secondary px-2 py-0.5"
+                    >
+                      Unit {{ receipt.unitNo }}
+                    </span>
+                    <span *ngIf="receipt.buildingName" class="text-muted small">
+                      {{ receipt.buildingName }}
+                    </span>
+                  </div>
+                </td>
+                <td class="text-muted small">
+                  {{ receipt.receiptDate | date: "mediumDate" }}
+                </td>
+                <td>
+                  <span
+                    class="badge"
+                    [ngClass]="{
+                      'bg-success-lt': receipt.receiptMode === 'Cash',
+                      'bg-info-lt':
+                        receipt.receiptMode === 'Bank' ||
+                        receipt.receiptMode === 'Online',
+                      'bg-warning-lt': receipt.receiptMode === 'Cheque'
+                    }"
+                  >
+                    {{ receipt.receiptMode }}
+                  </span>
+                </td>
+                <td class="text-end text-muted small">
+                  {{ currencySymbol }}
+                  {{ receipt.totalReceivable | number: "1.2-2" }}
+                </td>
+                <td class="text-end fw-bold text-success">
+                  {{ currencySymbol }}
+                  {{ receipt.receivedAmount | number: "1.2-2" }}
+                </td>
+                <td class="text-end pe-3">
+                  <span
+                    class="badge"
+                    [ngClass]="
+                      receipt.balance > 0
+                        ? 'bg-danger-lt text-danger'
+                        : 'bg-success-lt text-success'
+                    "
+                  >
+                    {{ currencySymbol }}
+                    {{ receipt.balance | number: "1.2-2" }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,166 @@
+<div class="page-header d-print-none mt-3">
+  <div class="container-xl p-0 pb-2">
+    <div class="row g-2 align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          Cities
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm">
+      <div class="row mb-3">
+        <div class="col-sm-5 col-md-4 col-lg-3">
+          <div class="form-group row align-items-center">
+            <label
+              class="col-sm-3 col-form-label required m-0 p-1"
+              for="country"
+              >Country:</label
+            >
+            <div class="col-sm-9">
+              <select
+                class="form-select"
+                name="country"
+                id="country"
+                (change)="onChangeCountry()"
+                [(ngModel)]="search.countryId"
+                [ngClass]="{
+                  'is-invalid':
+                    country.invalid && (f.submitted || country.touched)
+                }"
+                required
+                #country="ngModel"
+                ngModel
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a country
+                </option>
+                <option
+                  [ngValue]="country.id"
+                  *ngFor="let country of countries"
+                >
+                  {{ country.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="country.invalid && (f.submitted || country.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="country.errors.required">
+                  Please select a valid country.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5 col-md-4 col-lg-3">
+          <div class="form-group row align-items-center">
+            <label class="col-sm-3 col-form-label required m-0 p-1" for="state"
+              >State:</label
+            >
+            <div class="col-sm-9">
+              <select
+                class="form-select"
+                name="state"
+                id="state"
+                [(ngModel)]="search.stateId"
+                [ngClass]="{
+                  'is-invalid': state.invalid && (f.submitted || state.touched)
+                }"
+                required
+                #state="ngModel"
+                ngModel
+                (change)="getCities()"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a state
+                </option>
+                <option [ngValue]="state.id" *ngFor="let state of states">
+                  {{ state.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="state.invalid && (f.submitted || state.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="state.errors.required">
+                  Please select a valid state.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="!(gridRowDataCities || []).length && isLoading">
+        <app-is-loading></app-is-loading>
+      </div>
+
+      <div class="row" *ngIf="!(gridRowDataCities || []).length && !isLoading">
+        <div class="col-12">
+          <div class="d-flex justify-content-center align-items-center">
+            <div
+              *ngIf="
+                (!(countries || []).length || !(states || []).length) &&
+                !isLoading &&
+                stateLengthArrayIsEmpty
+              "
+            >
+              <app-no-record-found-image
+                [formType]="'PARENT_MASTER'"
+                [parentMasterName]="'State'"
+                [masterName]="'City'"
+                [permittedToAddNew]="true"
+              ></app-no-record-found-image>
+            </div>
+            <div
+              *ngIf="
+                !(gridRowDataCities || []).length &&
+                !isLoading &&
+                isGetCitiesCallComplete
+              "
+            >
+              <app-no-record-found-image
+                [masterName]="'City'"
+                [permittedToAddNew]="true"
+              ></app-no-record-found-image>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="!isLoading && (gridRowDataCities || []).length">
+        <div class="col-12">
+          <ag-grid-angular
+            style="width: 100%; height: 55vh;"
+            class="ag-theme-alpine"
+            [enableCellTextSelection]="true"
+            (gridReady)="onGridReady($event)"
+            (filterChanged)="onFilterChanged($event)"
+            [columnDefs]="gridColumnDefsCities"
+            [rowData]="gridRowDataCities"
+            [defaultColDef]="defaultColDef"
+          >
+          </ag-grid-angular>
+          <div *ngIf="gridRowDataCities?.length" class="ms-1 fw-bold">
+            <label>Total records: {{ rowCount }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row p-1 my-2" *ngIf="!stateLengthArrayIsEmpty">
+        <div class="col-12">
+          <button
+            type="button"
+            (click)="newCityModal()"
+            class="btn btn-primary me-2"
+            [disabled]="!search.stateId"
+          >
+            <i class="fas fa-city pe-1"></i>Add City
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

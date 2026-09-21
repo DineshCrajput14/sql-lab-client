@@ -1,0 +1,258 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-concierge-bell pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} Amenity
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="name"
+                >Amenities Name:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                id="name"
+                [ngClass]="{
+                  'is-invalid': name.invalid && (f.submitted || name.touched)
+                }"
+                [(ngModel)]="amenity.name"
+                placeholder="Enter amenities name"
+                required
+                #name="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="name.invalid && (f.submitted || name.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="name.errors?.required">
+                  Please enter a valid amenity name.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="categoryId"
+                >Category:</label
+              >
+              <select
+                class="form-select"
+                name="categoryId"
+                id="categoryId"
+                [ngClass]="{
+                  'is-invalid':
+                    categoryId.invalid && (f.submitted || categoryId.touched)
+                }"
+                [(ngModel)]="amenity.categoryId"
+                required
+                #categoryId="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a category
+                </option>
+                <option
+                  [ngValue]="category.id"
+                  *ngFor="let category of categories"
+                >
+                  {{ category.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="
+                  categoryId.invalid && (f.submitted || categoryId.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="categoryId.errors?.required">
+                  Please select a category.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="type">Type:</label>
+              <select
+                class="form-select"
+                name="type"
+                id="type"
+                [ngClass]="{
+                  'is-invalid': type.invalid && (f.submitted || type.touched)
+                }"
+                [(ngModel)]="amenity.type"
+                required
+                #type="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select type
+                </option>
+                <option [ngValue]="typeOption" *ngFor="let typeOption of types">
+                  {{ typeOption }}
+                </option>
+              </select>
+              <div
+                *ngIf="type.invalid && (f.submitted || type.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="type.errors?.required">
+                  Please select type.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="chargeType"
+                >Charge Type:</label
+              >
+              <select
+                class="form-select"
+                name="chargeType"
+                id="chargeType"
+                [ngClass]="{
+                  'is-invalid':
+                    chargeType.invalid && (f.submitted || chargeType.touched)
+                }"
+                [(ngModel)]="amenity.chargeType"
+                required
+                #chargeType="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select charge type
+                </option>
+                <option
+                  [ngValue]="chargeTypeOption"
+                  *ngFor="let chargeTypeOption of chargeTypes"
+                >
+                  {{ chargeTypeOption }}
+                </option>
+              </select>
+              <div
+                *ngIf="
+                  chargeType.invalid && (f.submitted || chargeType.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="chargeType.errors?.required">
+                  Please select charge type.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="defaultCharges"
+                >Default Charges:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="defaultCharges"
+                id="defaultCharges"
+                [ngClass]="{
+                  'is-invalid':
+                    defaultCharges.invalid &&
+                    (f.submitted || defaultCharges.touched)
+                }"
+                [(ngModel)]="amenity.defaultCharges"
+                placeholder="Enter default charges"
+                required
+                #defaultCharges="ngModel"
+                min="0"
+              />
+              <div
+                *ngIf="
+                  defaultCharges.invalid &&
+                  (f.submitted || defaultCharges.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="defaultCharges.errors?.required">
+                  Please enter default charges.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label" for="description">Description:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="description"
+                id="description"
+                [(ngModel)]="amenity.description"
+                placeholder="Enter description"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></i
+          ><i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

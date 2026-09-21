@@ -1,0 +1,424 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form
+      #f="ngForm"
+      (ngSubmit)="f.form.valid && checkAmountChange()"
+      autocomplete="off"
+    >
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-money-check-alt pe-1"></i>
+          Fee Receipt Editor
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body px-3 py-2">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="date" class="form-label required mt-1"
+                >Date (DD-MM-YYYY):
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                name="date"
+                id="date"
+                [(ngModel)]="receipt.date"
+                [disabled]="formStatus === 'EDIT' || isLoading"
+                required
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+            </div>
+          </div>
+          <div [ngClass]="formStatus === 'EDIT' ? 'col-sm-3' : 'col-sm-4'">
+            <div class="form-group">
+              <label for="regNo" class="form-label required mt-1"
+                >Registration Number:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="regNo"
+                id="regNo"
+                placeholder="Enter registration number"
+                [(ngModel)]="receipt.regNo"
+                [disabled]="isRegNoFrozen || formStatus === 'EDIT' || isLoading"
+                required
+              />
+            </div>
+          </div>
+          <div *ngIf="formStatus === 'EDIT'" class="col-sm-3">
+            <div class="form-group">
+              <label for="receiptNumber" class="form-label mt-1"
+                >Receipt Number:</label
+              >
+              <input
+                type="text"
+                name="receiptNumber"
+                id="receiptNumber"
+                class="form-control"
+                [value]="receipt.receiptNo || feeReceiptId || ''"
+                disabled
+              />
+            </div>
+          </div>
+          <div class="col-auto ms-auto mt-4">
+            <div class="form-group">
+              <button
+                class="btn btn-dark me-2"
+                type="button"
+                [disabled]="isRegNoFrozen || formStatus === 'EDIT' || isLoading"
+                (click)="onSearchByRegNo()"
+              >
+                <i
+                  *ngIf="isLoading"
+                  class="spinner-border spinner-border-sm me-1"
+                ></i>
+                <i *ngIf="!isLoading" class="fas fa-search pe-1"></i>
+                Search
+              </button>
+              <button
+                [disabled]="isRegNoFrozen || isLoading"
+                *ngIf="formStatus !== 'EDIT'"
+                class="btn btn-info text-white"
+                type="button"
+                (click)="onClearRegNo()"
+              >
+                <svg
+                  class="me-1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="17"
+                  height="17"
+                  color="#ffffff"
+                  fill="none"
+                >
+                  <path
+                    d="M19.0005 4.99988L5.00049 18.9999M5.00049 4.99988L19.0005 18.9999"
+                    stroke="currentColor"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <app-is-loading></app-is-loading>
+        </div>
+        <div class="row mt-2" [hidden]="isLoading">
+          <div class="col-sm-4">
+            <div class="row">
+              <label class="col-auto col-form-label text-break"
+                >Tenant Name:</label
+              >
+              <div class="col pt-2 text-break">
+                <span>{{ tenant?.name }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="row">
+              <label class="col-auto col-form-label text-break"
+                >Mobile Number:</label
+              >
+              <div class="col pt-2 text-break">
+                <span>{{ tenant?.mobileNo }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="row">
+              <label class="col-auto col-form-label text-break">
+                Property - Unit:
+              </label>
+              <div class="col pt-2 text-break">
+                <span class="text-break">
+                  {{ allotment?.propertyName
+                  }}{{ allotment?.unitNo ? " - Unit " + allotment.unitNo : "" }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr class="m-2" [hidden]="isLoading" />
+        <div class="row" [hidden]="isLoading">
+          <div class="col-sm-5">
+            <h5 class="mb-1">Due Fee Summary:</h5>
+            <ag-grid-angular
+              style="width: 100%; height: 26vh;"
+              class="ag-theme-alpine"
+              [enableCellTextSelection]="false"
+              [columnDefs]="columnDefsDue"
+              [rowData]="dueRentSummary"
+              [defaultColDef]="defaultColDef"
+              [rowSelection]="'multiple'"
+              (gridReady)="onDueGridReady($event)"
+              (firstDataRendered)="onDueFirstDataRendered($event)"
+              (selectionChanged)="onDueSelectionChanged()"
+            >
+            </ag-grid-angular>
+          </div>
+          <div class="col-sm-7">
+            <h5 class="mb-1">Fee Receipt Details:</h5>
+            <ag-grid-angular
+              style="width: 100%; height: 26vh;"
+              class="ag-theme-alpine"
+              [enableCellTextSelection]="true"
+              [columnDefs]="columnDefsDetails"
+              [rowData]="receiptDetails"
+              [defaultColDef]="defaultColDef"
+              (gridReady)="onDetailsGridReady($event)"
+              (firstDataRendered)="onDetailsFirstDataRendered($event)"
+            >
+            </ag-grid-angular>
+          </div>
+        </div>
+        <div class="row mt-2" [hidden]="isLoading">
+          <h5 class="mb-0">Total:</h5>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label mt-1">Selected:</label>
+              <input
+                type="text"
+                class="form-control text-end font-monospace"
+                style="background-color: #fff;"
+                [value]="receipt.selectedTotal | number: '1.2-2'"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label mt-1">Total Receivable:</label>
+              <input
+                type="text"
+                class="form-control text-end font-monospace"
+                style="background-color: #fff;"
+                [value]="receipt.totalReceivable | number: '1.2-2'"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label required mt-1">Received Amount:</label>
+              <input
+                type="number"
+                class="form-control text-end font-monospace"
+                name="receivedAmount"
+                id="receivedAmount"
+                [(ngModel)]="receipt.receivedAmount"
+                (input)="onReceivedAmountChange()"
+                required
+                min="1"
+                [max]="receipt.totalReceivable"
+                [ngClass]="{
+                  'is-invalid':
+                    receipt.receivedAmount > receipt.totalReceivable ||
+                    (receivedAmountInput.invalid &&
+                      (f.submitted || receivedAmountInput.touched))
+                }"
+                #receivedAmountInput="ngModel"
+              />
+              <div
+                *ngIf="receipt.receivedAmount > receipt.totalReceivable"
+                class="invalid-feedback text-break"
+                style="display: block;"
+              >
+                Receiving amount cannot be greater than the selected fee amount.
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="form-label mt-1">Balance:</label>
+              <input
+                type="text"
+                class="form-control text-end font-monospace"
+                style="background-color: #fff;"
+                [value]="receipt.balance | number: '1.2-2'"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2" [hidden]="isLoading">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="receiptMode" class="form-label required"
+                >Receipt Mode:</label
+              >
+              <select
+                class="form-select"
+                name="receiptMode"
+                id="receiptMode"
+                [(ngModel)]="receipt.receiptMode"
+                required
+              >
+                <option *ngFor="let mode of receiptModeLists" [value]="mode.id">
+                  {{ mode.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div *ngIf="isChequeOrBankTransfer" class="col-sm-3">
+            <div class="form-group">
+              <label for="chequeDraftNumber" class="form-label required"
+                >Cheque/Draft Number:</label
+              >
+              <input
+                type="text"
+                class="form-control font-monospace"
+                name="chequeDraftNumber"
+                id="chequeDraftNumber"
+                [(ngModel)]="receipt.chequeDraftNo"
+                required
+                [ngClass]="{
+                  'is-invalid':
+                    chequeDraftNumber.invalid &&
+                    (f.submitted || chequeDraftNumber.touched)
+                }"
+                placeholder="Enter cheque/draft number"
+                #chequeDraftNumber="ngModel"
+                maxlength="50"
+              />
+              <div
+                *ngIf="
+                  chequeDraftNumber.invalid &&
+                  (f.submitted || chequeDraftNumber.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="chequeDraftNumber.errors?.required">
+                  Please enter a valid cheque/draft number.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="isChequeOrBankTransfer" class="col-sm-3">
+            <div class="form-group">
+              <label for="chequeDraftDate" class="form-label required"
+                >Cheque/Draft Date (DD-MM-YYYY):</label
+              >
+              <input
+                type="text"
+                class="form-control font-monospace"
+                name="chequeDraftDate"
+                id="chequeDraftDate"
+                [(ngModel)]="receipt.chequeDraftDate"
+                required
+                [ngClass]="{
+                  'is-invalid':
+                    chequeDraftDate.invalid &&
+                    (f.submitted || chequeDraftDate.touched)
+                }"
+                #chequeDraftDate="ngModel"
+                placeholder="DD-MM-YYYY"
+                bsDatepicker
+                autocomplete="off"
+                [outsideClick]="true"
+                [container]="'body'"
+                [bsConfig]="{
+                  dateInputFormat: 'DD-MM-YYYY',
+                  isAnimated: true,
+                  containerClass: 'theme-dark-blue',
+                  returnFocusToInput: true,
+                  showWeekNumbers: false
+                }"
+              />
+              <div
+                *ngIf="
+                  chequeDraftDate.invalid &&
+                  (f.submitted || chequeDraftDate.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="chequeDraftDate.errors?.required">
+                  Please enter a valid cheque/draft date.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div [ngClass]="isChequeOrBankTransfer ? 'col-sm-3' : 'col-sm-6'">
+            <div class="form-group">
+              <label for="remarks" class="form-label">Remarks:</label>
+              <input
+                type="text"
+                class="form-control"
+                name="remarks"
+                id="remarks"
+                placeholder="Enter remarks"
+                [(ngModel)]="receipt.remarks"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer px-3 py-2">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          data-bs-dismiss="modal"
+          [disabled]="isLoading"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="
+            isLoading ||
+            f.invalid ||
+            receipt.receivedAmount > receipt.totalReceivable ||
+            receipt.receivedAmount < 1
+          "
+        >
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formStatus === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formStatus !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formStatus === "EDIT" ? "Update" : "Save" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+.notifications-block {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  flex-direction: column;
+  &__wrapper {
+    height: 120px;
+    width: 300px;
+    border: 1px solid lightgrey;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    &__content {
+      display: flex;
+      height: 70px;
+      font-size: small;
+    }
+
+    &__bottom {
+      height: 30px;
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 10px;
+      font-size: small;
+    }
+  }
+}

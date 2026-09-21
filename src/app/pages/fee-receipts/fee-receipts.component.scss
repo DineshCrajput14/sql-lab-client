@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep {
+  .ag-theme-alpine .ag-header-cell {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .ag-theme-alpine .ag-header-cell-label {
+    overflow: visible !important;
+  }
+
+  .ag-theme-alpine .ag-header-cell-text {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+    font-weight: 600 !important;
+  }
+}

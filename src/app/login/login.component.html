@@ -1,0 +1,184 @@
+<div class="row mt-7" *ngIf="isLoading">
+  <app-is-loading></app-is-loading>
+</div>
+
+<div *ngIf="!isLoading" class="login-page-wrapper">
+  <header class="login-top-bar">
+    <a [routerLink]="['/home']" class="back-home-btn">
+      <i class="fas fa-arrow-left me-1"></i>
+      <span>Back to Home</span>
+    </a>
+    <div class="top-bar-brand">
+      <i class="fas fa-building me-2 brand-icon"></i>
+      <span class="brand-text">PUMA <strong>GROUP</strong></span>
+    </div>
+  </header>
+
+  <main class="login-content-area">
+    <div class="login-card-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-icon-box">
+            <i class="fas fa-city"></i>
+          </div>
+          <h2 class="login-company-title">PUMA GROUP</h2>
+          <p class="login-company-subtitle">
+            Property Management System • Lwipa Puma Plaza
+          </p>
+          <div class="login-divider"></div>
+          <h3 class="login-form-heading">Sign in to your account</h3>
+        </div>
+
+        <div
+          [ngClass]="
+            logoutReason === 'logout'
+              ? 'alert alert-success-custom mb-2'
+              : 'alert alert-danger-custom mb-2'
+          "
+          *ngIf="reasonMessage"
+        >
+          <i class="fas fa-info-circle me-1"></i>
+          {{ reasonMessage }}
+        </div>
+
+        <form
+          (ngSubmit)="f.form.valid && onLoginClick(f)"
+          #f="ngForm"
+          autocomplete="on"
+        >
+          <div class="form-group-compact mb-2">
+            <label class="form-label" for="username">
+              <i class="fas fa-envelope me-1 text-muted"></i>
+              Email / Username
+            </label>
+            <div class="input-icon-group">
+              <input
+                name="username"
+                type="text"
+                class="form-control login-input"
+                id="username"
+                placeholder="Enter email or username"
+                [(ngModel)]="login.username"
+                #username="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    (f.submitted || username.touched) && username.invalid
+                }"
+                maxlength="255"
+                required
+              />
+            </div>
+            <div
+              *ngIf="(f.submitted || username.touched) && username.invalid"
+              class="invalid-feedback d-block text-break mt-1"
+            >
+              <div *ngIf="username.errors.required">
+                Please enter a valid email address or username.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group-compact mb-2">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label mb-0" for="password">
+                <i class="fas fa-lock me-1 text-muted"></i>
+                Password
+              </label>
+              <a
+                [routerLink]="['/forgot-password']"
+                class="forgot-password-link"
+              >
+                Forgot password?
+              </a>
+            </div>
+            <div class="password-input-wrapper">
+              <input
+                name="password"
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control login-input"
+                id="password"
+                placeholder="Enter your password"
+                [(ngModel)]="login.password"
+                #password="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    (f.submitted || password.touched) && password.invalid
+                }"
+                minlength="6"
+                maxlength="20"
+                required
+              />
+              <button
+                type="button"
+                class="password-toggle-btn"
+                (click)="onClickShowPassword()"
+                tabindex="-1"
+                aria-label="Toggle password visibility"
+              >
+                <i
+                  class="fas"
+                  [ngClass]="showPassword ? 'fa-eye' : 'fa-eye-slash'"
+                ></i>
+              </button>
+            </div>
+
+            <div *ngIf="capsLockOn" class="caps-lock-warning mt-1">
+              <i class="fas fa-exclamation-triangle me-1"></i>
+              Warning! Caps Lock is ON!
+            </div>
+
+            <div
+              *ngIf="(f.submitted || password.touched) && password.invalid"
+              class="invalid-feedback d-block text-break mt-1"
+            >
+              <div *ngIf="password.errors.required">
+                Please enter a valid password.
+              </div>
+              <div *ngIf="password.errors.minlength">
+                Password must be at least 6 characters.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="rememberMe" />
+            <label class="form-check-label text-muted" for="rememberMe">
+              Remember me on this device
+            </label>
+          </div>
+
+          <div class="form-footer">
+            <button
+              type="submit"
+              id="signIn"
+              class="btn btn-login w-100"
+              [disabled]="isLoading"
+            >
+              <i *ngIf="!isLoading" class="fas fa-sign-in-alt me-2"></i>
+              <i
+                *ngIf="isLoading"
+                class="spinner-border spinner-border-sm me-2"
+              ></i>
+              <span>Sign In</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="login-card-footer">
+          <p class="mb-0 text-muted">
+            Need help? Contact
+            <a href="mailto:spuma1968@yahoo.com" class="support-link"
+              >spuma1968@yahoo.com</a
+            >
+          </p>
+        </div>
+      </div>
+
+      <footer class="login-page-footer">
+        <p class="mb-0">
+          © Puma Group of Companies Ltd • Lwipa Puma Plaza, Ndola, Zambia
+        </p>
+      </footer>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,103 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-list"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} Category
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-12">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="categoryName"
+                >Category Name:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="categoryName"
+                id="categoryName"
+                [ngClass]="{
+                  'is-invalid':
+                    categoryName.invalid &&
+                    (f.submitted || categoryName.touched)
+                }"
+                [(ngModel)]="category.name"
+                placeholder="Enter category name"
+                required
+                #categoryName="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="
+                  categoryName.invalid && (f.submitted || categoryName.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="categoryName.errors?.required">
+                  Please enter a valid category name.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></i
+          ><i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

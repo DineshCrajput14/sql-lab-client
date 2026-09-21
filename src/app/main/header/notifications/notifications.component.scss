@@ -1,0 +1,26 @@
+.notifications {
+  &__wrapper-collapsed {
+    min-height: 140px;
+    max-height: 400px;
+    height: auto;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow: hidden;
+  }
+  &__wrapper-expanded {
+    max-height: 500px;
+    height: auto;
+    width: 330px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    padding: 10px;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+}

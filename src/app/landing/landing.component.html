@@ -1,0 +1,541 @@
+<div class="pms-landing">
+  <header class="pms-header">
+    <div class="pms-nav-container">
+      <a
+        class="pms-brand"
+        [routerLink]="['/home']"
+        (click)="scrollToTop($event)"
+      >
+        <div class="pms-brand-emblem">
+          <i class="fas fa-building"></i>
+        </div>
+        <div class="pms-brand-info">
+          <span class="pms-brand-title">PUMA <strong>GROUP</strong></span>
+          <span class="pms-brand-subtitle">Property Management • Zambia</span>
+        </div>
+      </a>
+      <nav class="pms-nav-menu d-none d-lg-flex" aria-label="Main Navigation">
+        <a
+          [routerLink]="['/home']"
+          class="pms-nav-item active"
+          (click)="scrollToTop($event)"
+          >Home</a
+        >
+        <a (click)="scrollToSection('capabilities')" class="pms-nav-item"
+          >Capabilities</a
+        >
+        <a (click)="scrollToSection('portfolio')" class="pms-nav-item"
+          >Lwipa Puma Plaza</a
+        >
+        <a (click)="scrollToSection('enterprise')" class="pms-nav-item"
+          >About Puma Group</a
+        >
+        <a (click)="scrollToSection('contact')" class="pms-nav-item">Contact</a>
+      </nav>
+
+      <div class="pms-nav-actions d-none d-md-flex">
+        <a [routerLink]="['/login']" class="pms-btn-signin">
+          <i class="fas fa-lock me-2"></i>
+          <span>Sign In</span>
+        </a>
+      </div>
+      <button
+        class="pms-mobile-btn d-lg-none"
+        (click)="isMobileMenuOpen = !isMobileMenuOpen"
+        aria-label="Toggle navigation menu"
+      >
+        <i
+          class="fas"
+          [ngClass]="isMobileMenuOpen ? 'fa-times' : 'fa-bars'"
+        ></i>
+      </button>
+    </div>
+    <div class="pms-mobile-drawer d-lg-none" *ngIf="isMobileMenuOpen">
+      <a
+        [routerLink]="['/home']"
+        class="pms-drawer-link"
+        (click)="scrollToTop($event); isMobileMenuOpen = false"
+      >
+        <i class="fas fa-home me-2"></i> Home
+      </a>
+      <a
+        class="pms-drawer-link"
+        (click)="scrollToSection('capabilities'); isMobileMenuOpen = false"
+      >
+        <i class="fas fa-th-large me-2"></i> Capabilities
+      </a>
+      <a
+        class="pms-drawer-link"
+        (click)="scrollToSection('portfolio'); isMobileMenuOpen = false"
+      >
+        <i class="fas fa-city me-2"></i> Lwipa Puma Plaza
+      </a>
+      <a
+        class="pms-drawer-link"
+        (click)="scrollToSection('enterprise'); isMobileMenuOpen = false"
+      >
+        <i class="fas fa-shield-alt me-2"></i> About Puma Group
+      </a>
+      <a
+        class="pms-drawer-link"
+        (click)="scrollToSection('contact'); isMobileMenuOpen = false"
+      >
+        <i class="fas fa-envelope me-2"></i> Contact & Head Office
+      </a>
+      <a
+        [routerLink]="['/login']"
+        class="pms-drawer-link highlight"
+        (click)="isMobileMenuOpen = false"
+      >
+        <i class="fas fa-sign-in-alt me-2"></i> Access Member Portal
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="pms-hero" id="home">
+      <div class="pms-hero-bg-overlay"></div>
+
+      <div class="pms-container">
+        <div class="pms-hero-grid">
+          <div class="pms-hero-lead">
+            <div class="pms-lead-badge">
+              <span class="pms-pulse-point"></span>
+              <span class="pms-badge-label"
+                >ENTERPRISE PROPERTY ECOSYSTEM • NDOLA, ZAMBIA</span
+              >
+            </div>
+
+            <h1 class="pms-hero-headline">
+              Manage All Your Properties
+              <span class="pms-hero-accent">With Absolute Precision.</span>
+            </h1>
+
+            <p class="pms-hero-desc">
+              Engineered exclusively for
+              <strong>Puma Group of Companies Ltd</strong>. From flagship
+              commercial hubs like <strong>Lwipa Puma Plaza</strong> to prime
+              residential developments across the Copperbelt, manage tenant
+              lifecycles, automated rent collections, and facilities in one
+              unified platform.
+            </p>
+            <ul class="pms-lead-features">
+              <li>
+                <i class="fas fa-check-circle"></i>
+                <span>Commercial & Residential Multi-Tier Hierarchy</span>
+              </li>
+              <li>
+                <i class="fas fa-check-circle"></i>
+                <span
+                  >Automated Zambian Kwacha (ZMW) Billing & Digital
+                  Invoices</span
+                >
+              </li>
+              <li>
+                <i class="fas fa-check-circle"></i>
+                <span>Real-Time Occupancy Metrics & Maintenance Tracking</span>
+              </li>
+            </ul>
+            <div class="pms-hero-footnote">
+              <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+              <span
+                ><strong>Headquarters:</strong> Lwipa Puma Plaza, Plot
+                36179/M/A, Ndola-Kitwe Road, Ndola</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="pms-hero-scroll-hint"
+        (click)="scrollToSection('capabilities')"
+      >
+        <span>Explore Platform</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </section>
+    <section class="pms-section pms-section-dark" id="capabilities">
+      <div class="pms-container">
+        <header class="pms-section-header">
+          <span class="pms-section-tag">CORE PLATFORM CAPABILITIES</span>
+          <h2 class="pms-section-title">
+            Engineered For Modern
+            <span class="pms-text-gradient">Real Estate Operations</span>
+          </h2>
+          <p class="pms-section-desc">
+            A comprehensive property management stack delivering complete
+            portfolio transparency, automated financial controls, and
+            maintenance operations for Puma Group of Companies Ltd.
+          </p>
+        </header>
+
+        <div class="pms-capabilities-grid">
+          <article class="pms-capability-card">
+            <div class="pms-card-top">
+              <div class="pms-card-icon icon-blue">
+                <i class="fas fa-city"></i>
+              </div>
+              <span class="pms-card-category">ASSET MANAGEMENT</span>
+            </div>
+            <h3 class="pms-card-title">Property & Building Structuring</h3>
+            <p class="pms-card-summary">
+              Organize complex portfolios into hierarchical plazas, wings,
+              floors, and individual units with precise square footage, zoning
+              details, and facility amenities.
+            </p>
+            <ul class="pms-card-points">
+              <li>
+                <i class="fas fa-check"></i> Multi-tier building and floor level
+                hierarchies
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Commercial suite and residential
+                unit classification
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Real-time vacancy, turnover, and
+                occupancy monitoring
+              </li>
+            </ul>
+          </article>
+          <article class="pms-capability-card">
+            <div class="pms-card-top">
+              <div class="pms-card-icon icon-purple">
+                <i class="fas fa-users-cog"></i>
+              </div>
+              <span class="pms-card-category">LEASING & CONTRACTS</span>
+            </div>
+            <h3 class="pms-card-title">Tenant Lifecycle & Digital Leases</h3>
+            <p class="pms-card-summary">
+              End-to-end tenant onboarding with Zambian NRC/passport
+              verification, digital contract drafting, security deposit
+              tracking, and automated escalation terms.
+            </p>
+            <ul class="pms-card-points">
+              <li>
+                <i class="fas fa-check"></i> Comprehensive tenant KYC and
+                compliance repository
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Configurable lease terms with
+                automated renewal notices
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Centralized digital tenant
+                correspondence & notices
+              </li>
+            </ul>
+          </article>
+          <article class="pms-capability-card">
+            <div class="pms-card-top">
+              <div class="pms-card-icon icon-emerald">
+                <i class="fas fa-money-bill-wave"></i>
+              </div>
+              <span class="pms-card-category">FINANCIAL AUTOMATION</span>
+            </div>
+            <h3 class="pms-card-title">Rent Billing & PDF Payment Receipts</h3>
+            <p class="pms-card-summary">
+              Automated recurring invoicing in Zambian Kwacha (ZMW), instant
+              digital payment receipt generation, automated arrears tracking,
+              and audit-ready reporting.
+            </p>
+            <ul class="pms-card-points">
+              <li>
+                <i class="fas fa-check"></i> Automated monthly ZMW billing
+                schedule dispatch
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Official payment receipts with
+                direct PDF generation
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Arrears penalty calculation and
+                collection tracking
+              </li>
+            </ul>
+          </article>
+
+          <article class="pms-capability-card">
+            <div class="pms-card-top">
+              <div class="pms-card-icon icon-amber">
+                <i class="fas fa-tools"></i>
+              </div>
+              <span class="pms-card-category">FACILITY OPERATIONS</span>
+            </div>
+            <h3 class="pms-card-title">Maintenance & Work Orders</h3>
+            <p class="pms-card-summary">
+              Keep assets in pristine operational condition. Receive tenant
+              repair requests, assign certified maintenance contractors, and
+              monitor completion timelines.
+            </p>
+            <ul class="pms-card-points">
+              <li>
+                <i class="fas fa-check"></i> Dedicated maintenance ticket
+                logging & tracking
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Contractor work dispatch and
+                expense monitoring
+              </li>
+              <li>
+                <i class="fas fa-check"></i> Scheduled preventive inspections
+                for commercial complexes
+              </li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="pms-section pms-section-showcase" id="portfolio">
+      <div class="pms-container">
+        <div class="pms-showcase-split">
+          <div class="pms-showcase-imagery">
+            <div class="pms-showcase-frame">
+              <img
+                src="assets/img/plaza-commercial.jpg"
+                alt="Lwipa Puma Plaza Commercial Complex • Ndola, Zambia"
+                class="pms-showcase-photo"
+              />
+              <div class="pms-showcase-scrim"></div>
+              <div class="pms-showcase-tag">
+                <i class="fas fa-gem text-warning me-2"></i>
+                <span>FLAGSHIP COMMERCIAL ASSET</span>
+              </div>
+              <div class="pms-showcase-details">
+                <h3 class="pms-showcase-asset-name">Lwipa Puma Plaza</h3>
+                <p class="pms-showcase-asset-loc">
+                  Plot No. 36179/M/A, Ndola-Kitwe Road, Ndola
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pms-showcase-article">
+            <span class="pms-section-tag">PREMIER PORTFOLIO SHOWCASE</span>
+            <h2 class="pms-showcase-heading">
+              Centralized Oversight for
+              <span class="pms-text-gradient">Lwipa Puma Plaza</span>
+            </h2>
+            <p class="pms-showcase-narrative">
+              Positioned along the Ndola-Kitwe economic corridor,
+              <strong>Lwipa Puma Plaza</strong>
+              is one of Ndola’s premier commercial and retail centers. Powered
+              by Puma Group PMS, facility operations, leasing workflows, and
+              tenant services operate in total synergy.
+            </p>
+
+            <div class="pms-prospectus-features">
+              <div class="pms-prospectus-row">
+                <div class="pms-prospectus-icon">
+                  <i class="fas fa-store-alt"></i>
+                </div>
+                <div>
+                  <h4 class="pms-prospectus-title">
+                    Retail & Corporate Suite Management
+                  </h4>
+                  <p class="pms-prospectus-text">
+                    Dedicated floor-by-floor occupancy and lease terms for
+                    retail and corporate tenants.
+                  </p>
+                </div>
+              </div>
+
+              <div class="pms-prospectus-row">
+                <div class="pms-prospectus-icon">
+                  <i class="fas fa-bolt"></i>
+                </div>
+                <div>
+                  <h4 class="pms-prospectus-title">
+                    Utility & Service Charge Split Billing
+                  </h4>
+                  <p class="pms-prospectus-text">
+                    Automated meter recording and transparent service charge
+                    allocation per tenancy.
+                  </p>
+                </div>
+              </div>
+
+              <div class="pms-prospectus-row">
+                <div class="pms-prospectus-icon">
+                  <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                  <h4 class="pms-prospectus-title">
+                    24/7 Security & Access Operations
+                  </h4>
+                  <p class="pms-prospectus-text">
+                    Centralized logs for security dispatches, facility
+                    maintenance, and tenant requests.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="pms-section pms-section-enterprise" id="enterprise">
+      <div class="pms-container">
+        <div class="pms-enterprise-split">
+          <div class="pms-enterprise-copy">
+            <span class="pms-section-tag">ABOUT PUMA GROUP</span>
+            <h2 class="pms-enterprise-heading">
+              Dedicated to Real Estate
+              <span class="pms-text-gradient">Excellence in Zambia</span>
+            </h2>
+            <p class="pms-enterprise-lead">
+              <strong>Puma Group of Companies Ltd</strong> is committed to
+              setting the benchmark for commercial leasing, property management,
+              and facility excellence in Ndola and across the Copperbelt.
+            </p>
+            <p class="pms-enterprise-body">
+              Our PMS platform provides bank-grade security, automated fiscal
+              compliance, and intuitive operational workflows tailored
+              specifically to the Zambian commercial property landscape.
+            </p>
+            <div class="pms-pillars-grid">
+              <div class="pms-pillar-cell">
+                <i class="fas fa-lock text-primary"></i>
+                <div>
+                  <h5>256-Bit Security</h5>
+                  <p>Encrypted cloud data protection</p>
+                </div>
+              </div>
+              <div class="pms-pillar-cell">
+                <i class="fas fa-cloud text-success"></i>
+                <div>
+                  <h5>Cloud Accessibility</h5>
+                  <p>Secure access on any device</p>
+                </div>
+              </div>
+              <div class="pms-pillar-cell">
+                <i class="fas fa-file-contract text-warning"></i>
+                <div>
+                  <h5>Zambian Compliance</h5>
+                  <p>Standardized commercial lease formats</p>
+                </div>
+              </div>
+              <div class="pms-pillar-cell">
+                <i class="fas fa-headset text-info"></i>
+                <div>
+                  <h5>Direct Administration</h5>
+                  <p>Fast corporate operational support</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pms-enterprise-imagery">
+            <div class="pms-executive-card">
+              <img
+                src="assets/img/property-keys.jpg"
+                alt="Puma Group Property Handover • Excellence in Zambia"
+                class="pms-executive-photo"
+              />
+              <div class="pms-executive-badge-box">
+                <div class="pms-executive-pill">
+                  <i class="fas fa-award text-warning me-2"></i>
+                  <span>Puma Group of Companies Ltd</span>
+                </div>
+                <p class="pms-executive-address">
+                  <strong>Registered Head Office</strong><br />
+                  No. F701, Plot No. 36179/M/A, Lwipa Puma Plaza<br />
+                  Ndola-Kitwe Road, Ndola, Zambia
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="pms-footer" id="contact">
+    <div class="pms-container">
+      <div class="pms-footer-grid">
+        <div class="pms-footer-brand-pane">
+          <div class="pms-footer-logo">
+            <div class="pms-footer-emblem">
+              <i class="fas fa-building"></i>
+            </div>
+            <span>PUMA <strong>GROUP</strong></span>
+          </div>
+          <p class="pms-footer-legal-name">Puma Group of Companies Ltd</p>
+          <p class="pms-footer-mission">
+            A comprehensive property management ecosystem built for modern
+            commercial and residential portfolios. Managing Lwipa Puma Plaza and
+            premier real estate assets across Zambia.
+          </p>
+          <div class="pms-footer-social">
+            <a href="javascript:void(0)" aria-label="Facebook"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="javascript:void(0)" aria-label="LinkedIn"
+              ><i class="fab fa-linkedin-in"></i
+            ></a>
+            <a href="javascript:void(0)" aria-label="Twitter"
+              ><i class="fab fa-twitter"></i
+            ></a>
+            <a href="mailto:spuma1968@yahoo.com" aria-label="Email"
+              ><i class="fas fa-envelope"></i
+            ></a>
+          </div>
+        </div>
+        <div class="pms-footer-nav-pane">
+          <h4 class="pms-footer-heading">Navigation</h4>
+          <ul class="pms-footer-menu">
+            <li><a [routerLink]="['/home']">Home</a></li>
+            <li>
+              <a (click)="scrollToSection('capabilities')"
+                >Platform Capabilities</a
+              >
+            </li>
+            <li>
+              <a (click)="scrollToSection('portfolio')">Lwipa Puma Plaza</a>
+            </li>
+            <li>
+              <a (click)="scrollToSection('enterprise')">About Puma Group</a>
+            </li>
+            <li><a [routerLink]="['/login']">Member Login</a></li>
+          </ul>
+        </div>
+        <div class="pms-footer-nav-pane">
+          <h4 class="pms-footer-heading">PMS Modules</h4>
+          <ul class="pms-footer-menu">
+            <li>
+              <a [routerLink]="['/login']">Property & Building Structuring</a>
+            </li>
+            <li><a [routerLink]="['/login']">Tenant Onboarding & KYC</a></li>
+            <li><a [routerLink]="['/login']">Rent Invoicing & Receipts</a></li>
+            <li><a [routerLink]="['/login']">Work Orders & Maintenance</a></li>
+            <li><a [routerLink]="['/login']">Financial Statements (ZMW)</a></li>
+          </ul>
+        </div>
+        <div class="pms-footer-contact-pane">
+          <h4 class="pms-footer-heading">Puma Group Head Office</h4>
+          <address class="pms-footer-contact-list">
+            <div class="pms-contact-row">
+              <i class="fas fa-map-marker-alt text-danger"></i>
+              <div>
+                <strong>Lwipa Puma Plaza</strong><br />
+                No. F701, Plot No. 36179/M/A<br />
+                Ndola-Kitwe Road, Ndola, Zambia
+              </div>
+            </div>
+            <div class="pms-contact-row">
+              <i class="fas fa-phone-alt text-success"></i>
+              <div>
+                <a href="tel:+260977872947">+260 977 872 947</a>
+              </div>
+            </div>
+            <div class="pms-contact-row">
+              <i class="fas fa-envelope text-info"></i>
+              <div>
+                <a href="mailto:spuma1968@yahoo.com">spuma1968@yahoo.com</a>
+              </div>
+            </div>
+          </address>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

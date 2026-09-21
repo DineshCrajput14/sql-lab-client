@@ -1,0 +1,15 @@
+<div class="page">
+  <app-header></app-header>
+  <app-top-navigation></app-top-navigation>
+  <div class="page-wrapper">
+    <div class="page-body page-body-height my-0">
+      <div
+        #contentWrapper
+        class="container-xl d-flex flex-column justify-content-center"
+      >
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+    <app-footer [callingFrom]="'mainComponent'"></app-footer>
+  </div>
+</div>

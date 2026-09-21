@@ -1,0 +1,15 @@
+<div *ngIf="showNotificationBlocks" class="notifications-block">
+  <div
+    class="notifications-block__wrapper"
+    *ngFor="let notification of notifications; i as index"
+  >
+    <div class="notifications-block__wrapper__content">
+      {{ notification.content }}
+    </div>
+    <div class="notifications-block__wrapper__bottom">
+      <span>
+        {{ notification.time }}
+      </span>
+    </div>
+  </div>
+</div>

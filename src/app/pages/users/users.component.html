@@ -1,0 +1,119 @@
+<div class="page-header d-print-none mt-1">
+  <div class="container-xl p-0 pb-1">
+    <div class="row g-2 align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          Users
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+<section class="content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="getUsers()">
+      <div class="row mb-3">
+        <div class="col-sm-4 col-md-3">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="searchKeyword"
+              >Keyword:</label
+            >
+            <div class="col-sm-9">
+              <input
+                type="text"
+                class="form-control"
+                name="searchKeyword"
+                id="searchKeyword"
+                [(ngModel)]="search.keyword"
+                placeholder="Enter name, email, username, phone..."
+                maxlength="255"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label" for="searchRole"
+              >Role:</label
+            >
+            <div class="col-sm-9">
+              <select
+                class="form-select"
+                name="searchRole"
+                id="searchRole"
+                [(ngModel)]="search.userRoleCode"
+                (change)="getUsers()"
+              >
+                <option [ngValue]="undefined">All</option>
+                <option
+                  [ngValue]="roleOption.code"
+                  *ngFor="let roleOption of roles"
+                >
+                  {{ roleOption.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-dark" type="submit" [disabled]="isLoading">
+            <i
+              *ngIf="isLoading"
+              class="spinner-border spinner-border-sm me-1"
+            ></i>
+            <i *ngIf="!isLoading" class="fas fa-search pe-1"></i> Search
+          </button>
+        </div>
+      </div>
+      <div class="row" *ngIf="!(gridRowDataUsers || []).length && isLoading">
+        <app-is-loading></app-is-loading>
+      </div>
+      <div
+        class="row"
+        *ngIf="
+          !(gridRowDataUsers || []).length &&
+          !isLoading &&
+          isGetUsersCallComplete
+        "
+      >
+        <div class="col-12">
+          <div class="d-flex justify-content-center align-items-center">
+            <app-no-record-found-image
+              [masterName]="'Users'"
+            ></app-no-record-found-image>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="(gridRowDataUsers || []).length">
+        <div class="col-12">
+          <ag-grid-angular
+            style="width: 100%; height: 60vh;"
+            class="ag-theme-alpine"
+            [enableCellTextSelection]="true"
+            (gridReady)="onGridReady($event)"
+            (filterChanged)="onFilterChanged($event)"
+            [columnDefs]="gridColumnDefsUsers"
+            [rowData]="gridRowDataUsers"
+            [defaultColDef]="defaultColDef"
+          >
+          </ag-grid-angular>
+          <div *ngIf="gridRowDataUsers?.length" class="ms-1 fw-bold mt-2">
+            <label>Total records: {{ rowCount }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="row p-1 my-2">
+        <div class="col-12">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="addUserModal()"
+            [disabled]="isLoading"
+          >
+            <i class="fas fa-user-plus pe-1"></i> Add User
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

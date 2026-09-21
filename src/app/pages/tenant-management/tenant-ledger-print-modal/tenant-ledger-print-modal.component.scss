@@ -1,0 +1,355 @@
+:host {
+  display: block;
+}
+
+.print-modal-body {
+  max-height: 85vh;
+  overflow-y: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #525659;
+  padding: 16px 10px;
+}
+
+.print-page-container {
+  width: 194mm;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.receipt-card {
+  width: 100%;
+  height: 135mm;
+  max-height: 135mm;
+  min-height: 135mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #ffffff;
+  border: 1.5px solid #000000;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000000;
+  font-size: 10.5px;
+  line-height: 1.3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.receipt-header-box {
+  padding: 6px 12px 4px 12px;
+  border-bottom: 1.5px solid #0f2b5c;
+  background-color: #f1f5f9;
+
+  .company-name {
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #0f2b5c;
+    text-transform: uppercase;
+  }
+
+  .company-subtitle {
+    font-weight: 700;
+    font-size: 10.5px;
+    margin-top: 1px;
+    color: #1e3a8a;
+    text-transform: uppercase;
+  }
+
+  .company-address,
+  .company-city {
+    font-size: 10px;
+    color: #334155;
+    text-transform: uppercase;
+  }
+
+  .company-contact,
+  .company-email {
+    font-size: 9.5px;
+    color: #334155;
+  }
+}
+
+.receipt-title-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2.5px 12px;
+  background-color: #0f2b5c;
+  color: #ffffff;
+  border-bottom: 1.5px solid #0f2b5c;
+
+  .copy-tag-placeholder {
+    width: 80px;
+  }
+
+  .receipt-title-text {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-align: center;
+    flex: 1;
+    text-transform: uppercase;
+  }
+
+  .receipt-copy-badge {
+    width: 80px;
+    text-align: right;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #cbd5e1;
+    text-transform: uppercase;
+  }
+}
+
+.receipt-meta-box {
+  padding: 4px 12px;
+  border-bottom: 1.5px solid #000000;
+
+  .meta-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    td {
+      padding: 1.5px 0;
+      font-size: 10.5px;
+      vertical-align: middle;
+    }
+
+    .meta-lbl {
+      width: 95px;
+      font-weight: normal;
+    }
+
+    .meta-cln {
+      width: 12px;
+      text-align: center;
+    }
+
+    .meta-val {
+      font-weight: normal;
+
+      .tenant-name {
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+    }
+
+    .meta-lbl-right {
+      width: 70px;
+      text-align: right;
+      padding-right: 4px;
+    }
+
+    .meta-val-right {
+      width: 100px;
+      text-align: left;
+    }
+  }
+}
+
+.receipt-table-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1.5px solid #000000;
+
+  .table-ledger {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: 3px 8px;
+      font-size: 10.5px;
+      border-right: 1.5px solid #000000;
+      border-bottom: 1px solid #000000;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    thead th {
+      border-bottom: 1.5px solid #000000;
+      background-color: #f1f5f9;
+      color: #0f2b5c;
+      font-weight: 700;
+      padding: 3px 8px;
+    }
+
+    .col-date {
+      width: 11%;
+      text-align: center;
+    }
+
+    .col-particulars {
+      width: 22%;
+      text-align: left;
+    }
+
+    .col-rcpt-no {
+      width: 15%;
+      text-align: left;
+    }
+
+    .col-due {
+      width: 14%;
+      text-align: right;
+    }
+
+    .col-rec {
+      width: 14%;
+      text-align: right;
+    }
+
+    .col-balance {
+      width: 14%;
+      text-align: right;
+    }
+
+    .col-mode {
+      width: 10%;
+      text-align: center;
+    }
+
+    .spacer-row td {
+      height: 100%;
+      border-bottom: none;
+    }
+
+    .total-row td {
+      border-top: 1.5px solid #000000;
+      border-bottom: none;
+      background-color: #f8fafc;
+      font-weight: 700;
+      padding: 3.5px 8px;
+    }
+  }
+}
+
+.receipt-signature-box {
+  height: 38px;
+  padding: 4px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  .amount-in-words {
+    font-size: 10px;
+    color: #000000;
+    max-width: 65%;
+    line-height: 1.25;
+    text-align: left;
+    padding-bottom: 2px;
+  }
+
+  .signatory-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 110px;
+
+    .sign-line {
+      width: 100%;
+      border-top: 1px solid #475569;
+      margin-bottom: 3px;
+    }
+
+    .auth-signatory {
+      font-weight: 700;
+      font-size: 10px;
+      white-space: nowrap;
+      color: #1e293b;
+    }
+  }
+}
+
+.text-end {
+  text-align: right !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.fw-bold {
+  font-weight: 700 !important;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 5mm 6mm;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-page-container,
+  .print-page-container * {
+    visibility: visible;
+  }
+
+  .print-page-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .receipt-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 135mm !important;
+    max-height: 135mm !important;
+    min-height: 135mm !important;
+    border: 1.5px solid #000000 !important;
+    box-shadow: none !important;
+    background-color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .table-ledger .spacer-row td {
+    height: 100% !important;
+  }
+
+  .receipt-signature-box {
+    height: 38px !important;
+    padding: 4px 14px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important;
+  }
+
+  .modal-dialog {
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .modal-content {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .modal-body {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .d-print-none {
+    display: none !important;
+  }
+}

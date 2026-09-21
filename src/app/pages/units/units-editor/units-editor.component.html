@@ -1,0 +1,212 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && save()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-door-open pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} Unit
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="unitNo"
+                >Unit No/Name:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="unitNo"
+                id="unitNo"
+                [ngClass]="{
+                  'is-invalid':
+                    unitNo.invalid && (f.submitted || unitNo.touched)
+                }"
+                [(ngModel)]="unit.unitNo"
+                placeholder="Enter unit number or name"
+                required
+                #unitNo="ngModel"
+                maxlength="255"
+              />
+              <div
+                *ngIf="unitNo.invalid && (f.submitted || unitNo.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="unitNo.errors?.required">
+                  Please enter a valid unit number/name.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="floorId">Floor No:</label>
+              <select
+                class="form-select"
+                name="floorId"
+                id="floorId"
+                [ngClass]="{
+                  'is-invalid':
+                    floorId.invalid && (f.submitted || floorId.touched)
+                }"
+                [(ngModel)]="unit.floorId"
+                required
+                #floorId="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select a floor
+                </option>
+                <option [ngValue]="floor.id" *ngFor="let floor of floors">
+                  {{ floor.name }}
+                </option>
+              </select>
+              <div
+                *ngIf="floorId.invalid && (f.submitted || floorId.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="floorId.errors?.required">
+                  Please select a floor.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="status">Status:</label>
+              <select
+                class="form-select"
+                name="status"
+                id="status"
+                [disabled]="formState === 'EDIT'"
+                [ngClass]="{
+                  'is-invalid':
+                    status.invalid && (f.submitted || status.touched)
+                }"
+                [(ngModel)]="unit.status"
+                required
+                #status="ngModel"
+              >
+                <option [ngValue]="undefined" disabled selected>
+                  Select status
+                </option>
+                <option
+                  [ngValue]="statusOption"
+                  *ngFor="let statusOption of statuses"
+                >
+                  {{ statusOption }}
+                </option>
+              </select>
+              <div
+                *ngIf="status.invalid && (f.submitted || status.touched)"
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="status.errors?.required">
+                  Please select status.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="form-label required" for="charges">Charges:</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="charges"
+                  id="charges"
+                  [ngClass]="{
+                    'is-invalid':
+                      charges.invalid && (f.submitted || charges.touched)
+                  }"
+                  [(ngModel)]="unit.charges"
+                  placeholder="Enter charges"
+                  required
+                  #charges="ngModel"
+                  min="0"
+                />
+                <span class="input-group-text">/Month</span>
+                <div
+                  *ngIf="charges.invalid && (f.submitted || charges.touched)"
+                  class="invalid-feedback text-break"
+                >
+                  <div *ngIf="charges.errors?.required">
+                    Please enter valid charges.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="form-group mb-3">
+              <label class="form-label" for="description">Details:</label>
+              <textarea
+                class="form-control"
+                name="description"
+                id="description"
+                rows="2"
+                [(ngModel)]="unit.description"
+                placeholder="Enter details"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></i
+          ><i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

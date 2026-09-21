@@ -1,0 +1,300 @@
+<header class="navbar-expand-md">
+  <div class="collapse navbar-collapse" id="navbar-menu">
+    <div class="navbar">
+      <div class="container-xl">
+        <ul class="navbar-nav">
+          <li
+            class="nav-item"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            <a class="nav-link p-0" [routerLink]="['/']">
+              <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                </svg>
+              </span>
+            </a>
+          </li>
+          <li class="nav-item dropdown" [class.show]="openMenu === 'masters'">
+            <a
+              class="nav-link dropdown-toggle"
+              role="button"
+              (click)="toggleMenu('masters')"
+            >
+              <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-building-skyscraper"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M3 21l18 0" />
+                  <path d="M5 21v-14l8 -4v18" />
+                  <path d="M19 21v-10l-6 -4" />
+                  <path d="M9 9l0 .01" />
+                  <path d="M9 12l0 .01" />
+                  <path d="M9 15l0 .01" />
+                  <path d="M9 18l0 .01" />
+                </svg>
+              </span>
+              <span class="nav-link-title">Masters</span>
+            </a>
+            <div class="dropdown-menu" [class.show]="openMenu === 'masters'">
+              <div
+                class="dropdown-submenu"
+                [class.show]="openSubMenu === 'pms'"
+              >
+                <a
+                  class="dropdown-item dropdown-toggle d-flex justify-content-between align-items-center"
+                  role="button"
+                  (click)="toggleSubMenu('pms', $event)"
+                >
+                  <span>PMS</span>
+                </a>
+                <div class="dropdown-menu" [class.show]="openSubMenu === 'pms'">
+                  <a class="dropdown-item" [routerLink]="['/properties']"
+                    >Property</a
+                  >
+                  <a class="dropdown-item" [routerLink]="['/buildings']"
+                    >Building</a
+                  >
+                  <a class="dropdown-item" [routerLink]="['/floor']">Floor</a>
+                  <a class="dropdown-item" [routerLink]="['/unit']">Unit</a>
+                  <a class="dropdown-item" [routerLink]="['/amenities']"
+                    >Amenities</a
+                  >
+                </div>
+              </div>
+              <div
+                class="dropdown-submenu"
+                [class.show]="openSubMenu === 'misc'"
+              >
+                <a
+                  class="dropdown-item dropdown-toggle d-flex justify-content-between align-items-center"
+                  role="button"
+                  (click)="toggleSubMenu('misc', $event)"
+                >
+                  <span>Miscellaneous</span>
+                </a>
+                <div
+                  class="dropdown-menu"
+                  [class.show]="openSubMenu === 'misc'"
+                >
+                  <a class="dropdown-item" [routerLink]="['/categories']"
+                    >Categories</a
+                  >
+                  <!-- <a
+                    class="dropdown-item"
+                    [routerLink]="['/sale-categories']"
+                    >Sale Categories</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    [routerLink]="['/purchase-categories']"
+                    >Purchase Categories</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    [routerLink]="['/voucher-narrations']"
+                    >Voucher Narrations</a
+                  > -->
+                  <a class="dropdown-item" [routerLink]="['/cities']">Cities</a>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li
+            class="nav-item dropdown"
+            [class.show]="openMenu === 'transactions'"
+          >
+            <a
+              class="nav-link dropdown-toggle"
+              role="button"
+              (click)="toggleMenu('transactions')"
+            >
+              <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-receipt-2"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2"
+                  />
+                  <path
+                    d="M14 8h-2.5a1.5 1.5 0 0 0 0 3h1a1.5 1.5 0 0 1 0 3h-2.5m2 0v1.5m0 -9v1.5"
+                  />
+                </svg>
+              </span>
+              <span class="nav-link-title">Transactions</span>
+            </a>
+            <div
+              class="dropdown-menu"
+              [class.show]="openMenu === 'transactions'"
+            >
+              <a class="dropdown-item" [routerLink]="['/tenants']"
+                >Tenant Management</a
+              >
+              <a class="dropdown-item" [routerLink]="['/fee-receipts']"
+                >Rent Receipt</a
+              >
+              <a class="dropdown-item" [routerLink]="['/release-room']"
+                >Release Room</a
+              >
+            </div>
+          </li>
+
+          <li class="nav-item dropdown" [class.show]="openMenu === 'reports'">
+            <a
+              class="nav-link dropdown-toggle"
+              role="button"
+              (click)="toggleMenu('reports')"
+            >
+              <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-report-analytics"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
+                  />
+                  <path
+                    d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"
+                  />
+                  <path d="M9 17v-5" />
+                  <path d="M12 17v-1" />
+                  <path d="M15 17v-3" />
+                </svg>
+              </span>
+              <span class="nav-link-title">Reports</span>
+            </a>
+            <div class="dropdown-menu" [class.show]="openMenu === 'reports'">
+              <a class="dropdown-item" [routerLink]="['/tenant-register']"
+                >Tenant Register</a
+              >
+              <a
+                class="dropdown-item"
+                [routerLink]="['/reports/monthly-rent-register']"
+                >Monthly Rent Register</a
+              >
+              <a
+                class="dropdown-item"
+                [routerLink]="['/monthly-refund-register']"
+                >Monthly Refund Register</a
+              >
+              <a class="dropdown-item" [routerLink]="['/reports/outstanding']"
+                >Outstanding</a
+              >
+              <a class="dropdown-item" [routerLink]="['/occupancy-report']"
+                >Occupancy Report</a
+              >
+              <a class="dropdown-item" [routerLink]="['/agreement-expiry']"
+                >Agreement Expiry</a
+              >
+            </div>
+          </li>
+
+          <li
+            class="nav-item"
+            *ngIf="authService.authentication.userRoleCode === 'ADMIN'"
+            routerLinkActive="active"
+          >
+            <a class="nav-link" [routerLink]="['/users']">
+              <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-users"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                  <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                </svg>
+              </span>
+              <span class="nav-link-title">Users</span>
+            </a>
+          </li>
+
+          <li
+            class="nav-item"
+            *ngIf="authService.authentication.userRoleCode === 'ADMIN'"
+            routerLinkActive="active"
+          >
+            <a class="nav-link" [routerLink]="['/settings']">
+              <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
+                  />
+                  <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                </svg>
+              </span>
+              <span class="nav-link-title">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
