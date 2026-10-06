@@ -37,7 +37,13 @@ export class StandardReportsExcelExportService {
 
       const exportFileName =
         fileName || `Tenant_Register_${moment().format("DD_MM_YYYY")}`;
-      this.excelService.exportAsExcelFile(exportRows, exportFileName);
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Tenant Register",
+        searchObj,
+        reportCode
+      );
     } else if (reportCode === "monthly-rent-register") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
         return {
@@ -60,7 +66,13 @@ export class StandardReportsExcelExportService {
 
       const exportFileName =
         fileName || `Rent_Register_${moment().format("DD_MM_YYYY")}`;
-      this.excelService.exportAsExcelFile(exportRows, exportFileName);
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Rent Register",
+        searchObj,
+        reportCode
+      );
     } else if (reportCode === "monthly-refund-register") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
         return {
@@ -82,7 +94,13 @@ export class StandardReportsExcelExportService {
 
       const exportFileName =
         fileName || `Refund_Register_${moment().format("DD_MM_YYYY")}`;
-      this.excelService.exportAsExcelFile(exportRows, exportFileName);
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Refund Register",
+        searchObj,
+        reportCode
+      );
     } else if (reportCode === "outstanding") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
         const item: any = {
@@ -121,29 +139,44 @@ export class StandardReportsExcelExportService {
 
       const exportFileName =
         fileName || `Outstanding_Register_${moment().format("DD_MM_YYYY")}`;
-      this.excelService.exportAsExcelFile(exportRows, exportFileName);
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Outstanding Register",
+        searchObj,
+        reportCode,
+        reportDataRaw,
+        months
+      );
     } else if (reportCode === "occupancy-report") {
-      const exportRows: any[] = [];
-      let serialNumber = 1;
-      (reportDataRaw || []).forEach((row) => {
-        (row.units || []).forEach((unit) => {
-          exportRows.push({
-            "S.No": serialNumber++,
-            Property: row.propertyName,
-            Block: row.buildingName,
-            Floor: row.floorName,
-            "Unit No": unit.unitNo,
-            Status: unit.status,
-            "Tenant Name": unit.tenantName || "",
-            "From Date": unit.allotmentFromDate || "",
-            "To Date": unit.allotmentToDate || "",
-          });
-        });
+      const maxUnitColumns = Math.max(
+        ...(reportDataRaw || []).map((row) => (row.units || []).length),
+        5
+      );
+      const exportRows = (reportDataRaw || []).map((row) => {
+        const rowItem: Record<string, any> = {
+          Property: row.propertyName || "",
+          Block: row.buildingName || "",
+          Floor: row.floorName || "",
+        };
+        for (let unitIndex = 0; unitIndex < maxUnitColumns; unitIndex++) {
+          const unitColumnKey =
+            unitIndex === 0 ? "Units" : `Unit_${unitIndex + 1}`;
+          rowItem[unitColumnKey] = row.units?.[unitIndex]?.unitNo || "";
+        }
+        return rowItem;
       });
 
       const exportFileName =
         fileName || `Occupancy_Status_${moment().format("DD_MM_YYYY")}`;
-      this.excelService.exportAsExcelFile(exportRows, exportFileName);
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Occupancy Status",
+        searchObj,
+        reportCode,
+        reportDataRaw
+      );
     } else if (reportCode === "agreement-expiry") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
         return {
@@ -162,8 +195,14 @@ export class StandardReportsExcelExportService {
       });
 
       const exportFileName =
-        fileName || `Unit_Agreement_Status_${moment().format("DD_MM_YYYY")}`;
-      this.excelService.exportAsExcelFile(exportRows, exportFileName);
+        fileName || `Agreement_Status_${moment().format("DD_MM_YYYY")}`;
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Agreement Status",
+        searchObj,
+        reportCode
+      );
     }
   }
 }

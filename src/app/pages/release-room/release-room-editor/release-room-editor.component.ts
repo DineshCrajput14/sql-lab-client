@@ -151,7 +151,7 @@ export class ReleaseRoomEditorComponent implements OnInit {
       cellStyle: { fontWeight: "bold" },
     },
     {
-      headerName: "Received",
+      headerName: "Refundable",
       field: "receivedAmount",
       flex: 1,
       minWidth: 90,
@@ -599,7 +599,7 @@ export class ReleaseRoomEditorComponent implements OnInit {
     if (enteredAmount > maxAllowed) {
       params.data.refundAmount = params.oldValue;
       this.toastrMessage.showWarning(
-        "Refund amount should not be greater than received amount of " +
+        "Refund amount should not be greater than refundable amount of " +
           maxAllowed.toFixed(2)
       );
       this.gridApiDetails?.refreshCells();

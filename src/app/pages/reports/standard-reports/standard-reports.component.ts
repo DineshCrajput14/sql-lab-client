@@ -110,6 +110,18 @@ export class StandardReportsComponent implements OnInit {
 
   initReportConfig() {
     this.title.setTitle("Report | PMS");
+    this.search = {
+      fromDate: moment().toDate(),
+      toDate: moment().toDate(),
+      propertyId: "ALL",
+      buildingId: "ALL",
+      unitId: "ALL",
+      status: "ALL",
+      monthwise: "N",
+      searchField: "ALL",
+      keyword: "",
+    };
+    this.months = [];
     if (this.reportCode === "tenant-register") {
       this.reportTitle = "Tenant Register";
       this.statusList = [
@@ -433,7 +445,32 @@ export class StandardReportsComponent implements OnInit {
       });
   }
 
+  prepareExportSearchInfo() {
+    const selectedProperty = (this.propertiesList || []).find(
+      (property) => String(property.id) === String(this.search.propertyId)
+    );
+    const selectedBuilding = (this.buildingsList || []).find(
+      (building) => String(building.id) === String(this.search.buildingId)
+    );
+    const selectedUnit = (this.unitsList || []).find(
+      (unit) => String(unit.id) === String(this.search.unitId)
+    );
+    const selectedSearchOption = (this.searchOptionsList || []).find(
+      (option) => String(option.id) === String(this.search.searchField)
+    );
+
+    return {
+      ...this.search,
+      propertyName: selectedProperty?.name || "All",
+      buildingName: selectedBuilding?.name || "All",
+      unitName: selectedUnit?.unitNo || "All",
+      searchOptionName: selectedSearchOption?.name || "All",
+    };
+  }
+
   exportFile() {
+    const exportSearchInfo = this.prepareExportSearchInfo();
+
     if (this.reportCode === "occupancy-report") {
       if (!this.occupancyRows || !this.occupancyRows.length) {
         this.toastrMessage.showWarning("No data available to export");
@@ -444,7 +481,8 @@ export class StandardReportsComponent implements OnInit {
         this.occupancyRows,
         `${this.reportTitle.replace(/\s+/g, "_")}_${moment().format(
           "DD_MM_YYYY"
-        )}`
+        )}`,
+        exportSearchInfo
       );
       return;
     }
@@ -459,7 +497,7 @@ export class StandardReportsComponent implements OnInit {
       `${this.reportTitle.replace(/\s+/g, "_")}_${moment().format(
         "DD_MM_YYYY"
       )}`,
-      this.search,
+      exportSearchInfo,
       this.months
     );
   }

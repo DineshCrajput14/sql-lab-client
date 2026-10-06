@@ -24,7 +24,7 @@ export class StandardReportsPrepareGridColumnDefsService {
         {
           headerName: "Reg. No",
           field: "regNo",
-          width: 130,
+          width: 110,
           sortable: true,
           filter: true,
           pinned: "left",
@@ -34,7 +34,7 @@ export class StandardReportsPrepareGridColumnDefsService {
         {
           headerName: "Regn. Date",
           field: "registrationDate",
-          width: 140,
+          width: 130,
           sortable: true,
           filter: true,
           cellRenderer: (params) => {
@@ -47,7 +47,7 @@ export class StandardReportsPrepareGridColumnDefsService {
         {
           headerName: "Tenant Name",
           field: "tenantName",
-          width: 220,
+          width: 200,
           sortable: true,
           filter: true,
           cellStyle: { fontWeight: "500" },
@@ -68,14 +68,14 @@ export class StandardReportsPrepareGridColumnDefsService {
         {
           headerName: "Property",
           field: "propertyName",
-          width: 180,
+          width: 160,
           sortable: true,
           filter: true,
         },
         {
           headerName: "Building/Block",
           field: "buildingName",
-          width: 180,
+          width: 160,
           sortable: true,
           filter: true,
         },
@@ -98,7 +98,7 @@ export class StandardReportsPrepareGridColumnDefsService {
         {
           headerName: "Status",
           field: "status",
-          width: 130,
+          width: 110,
           sortable: true,
           filter: true,
           cellClass: "text-center",
