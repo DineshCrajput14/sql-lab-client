@@ -52,6 +52,7 @@ export class TenantEditorComponent implements OnInit {
     nextOfKinMobileNo: string;
     nextOfKinAddress: string;
     status: string;
+    inactiveDate: any;
   } = {
     regNo: "",
     regDate: moment().toDate(),
@@ -67,6 +68,7 @@ export class TenantEditorComponent implements OnInit {
     nextOfKinMobileNo: "",
     nextOfKinAddress: "",
     status: "Active",
+    inactiveDate: null,
   };
 
   constructor(
@@ -188,6 +190,13 @@ export class TenantEditorComponent implements OnInit {
     }
   }
 
+  onChangeStatus() {
+    this.tenant.inactiveDate =
+      this.tenant.status === "Inactive"
+        ? this.tenant.inactiveDate || moment().toDate()
+        : null;
+  }
+
   getTenant(tenantId) {
     this.isLoading = true;
     const params = {
@@ -214,6 +223,9 @@ export class TenantEditorComponent implements OnInit {
             nextOfKinMobileNo: tenant.nextOfKinMobileNo,
             nextOfKinAddress: tenant.nextOfKinAddress,
             status: tenant.status,
+            inactiveDate: tenant.inactiveDate
+              ? moment(tenant.inactiveDate).toDate()
+              : null,
           };
 
           if (this.tenant.countryId) {
@@ -258,6 +270,10 @@ export class TenantEditorComponent implements OnInit {
       nextOfKinMobileNo: this.tenant.nextOfKinMobileNo,
       nextOfKinAddress: this.tenant.nextOfKinAddress,
       status: this.tenant.status,
+      inactiveDate:
+        this.tenant.status === "Inactive" && this.tenant.inactiveDate
+          ? moment(this.tenant.inactiveDate).format("YYYY-MM-DD")
+          : null,
     };
 
     if (this.formState === "EDIT") {
@@ -276,6 +292,7 @@ export class TenantEditorComponent implements OnInit {
           this.onClose.next({
             dataChanged: this.dataChanged,
             tenantId: tenantId,
+            status: this.tenant.status,
           });
           this.bsModalRef.hide();
           if (this.formState === "NEW") {
@@ -313,6 +330,7 @@ export class TenantEditorComponent implements OnInit {
       nextOfKinMobileNo: "",
       nextOfKinAddress: "",
       status: "Active",
+      inactiveDate: null,
     };
     if (this.form) {
       this.form.resetForm();

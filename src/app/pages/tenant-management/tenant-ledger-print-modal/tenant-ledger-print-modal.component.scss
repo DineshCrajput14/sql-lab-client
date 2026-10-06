@@ -216,6 +216,30 @@
       text-align: center;
     }
 
+    &.is-security-table {
+      .col-date {
+        width: 10%;
+      }
+      .col-particulars {
+        width: 18%;
+      }
+      .col-rcpt-no {
+        width: 14%;
+      }
+      .col-due {
+        width: 12%;
+      }
+      .col-rec {
+        width: 12%;
+      }
+      .col-balance {
+        width: 12%;
+      }
+      .col-mode {
+        width: 10%;
+      }
+    }
+
     .spacer-row td {
       height: 100%;
       border-bottom: none;

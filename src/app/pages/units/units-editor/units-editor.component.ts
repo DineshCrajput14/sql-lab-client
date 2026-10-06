@@ -22,6 +22,8 @@ export class UnitsEditorComponent implements OnInit {
   selectedPropertyId: number;
   selectedBuildingId: number;
   editUnitId: number;
+  canEditStatus: boolean = true;
+  statusReason: string = "";
   onClose = new Subject<boolean>();
 
   unit: {
@@ -138,6 +140,8 @@ export class UnitsEditorComponent implements OnInit {
           this.unit.status = resultGetUnit.unit.status;
           this.unit.charges = resultGetUnit.unit.charges;
           this.unit.description = resultGetUnit.unit.description;
+          this.canEditStatus = resultGetUnit.unit.canEditStatus !== false;
+          this.statusReason = resultGetUnit.unit.statusReason || "";
         }
         this.isLoading = false;
       },

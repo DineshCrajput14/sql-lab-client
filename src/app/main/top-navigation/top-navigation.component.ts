@@ -27,6 +27,7 @@ export class TopNavigationComponent implements OnInit, AfterViewInit {
       next: (event) => {
         if (event instanceof NavigationEnd) {
           this.currentUrl = this.router.url;
+          this.hideNavDropdownMenu();
         }
       },
     });
@@ -50,11 +51,15 @@ export class TopNavigationComponent implements OnInit, AfterViewInit {
     this.openSubMenu = this.openSubMenu === name ? null : name;
   }
 
+  hideNavDropdownMenu() {
+    this.openMenu = null;
+    this.openSubMenu = null;
+  }
+
   @HostListener("document:click", ["$event"])
   onDocumentClick(event: MouseEvent) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.openMenu = null;
-      this.openSubMenu = null;
+      this.hideNavDropdownMenu();
     }
   }
 }

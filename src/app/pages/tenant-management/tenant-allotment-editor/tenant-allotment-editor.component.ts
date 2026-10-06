@@ -28,6 +28,7 @@ export class TenantAllotmentEditorComponent implements OnInit {
   allotmentData: any;
 
   isLoading: boolean;
+  hasReceipts: boolean = false;
   dataChanged: boolean = false;
   onClose = new Subject<any>();
 
@@ -39,63 +40,13 @@ export class TenantAllotmentEditorComponent implements OnInit {
   gridApiCharges: GridApi;
   defaultColDef = { resizable: true };
 
-  columnDefsCharges = [
-    {
-      headerName: "#",
-      width: 50,
-      minWidth: 50,
-      maxWidth: 55,
-      checkboxSelection: true,
-      headerCheckboxSelection: true,
-      headerCheckboxSelectionFilteredOnly: true,
-    },
-    {
-      headerName: "Additional Charges",
-      field: "name",
-      width: 220,
-      minWidth: 180,
-      cellStyle: { fontWeight: "bold" },
-    },
-    {
-      headerName: "Category",
-      field: "categoryName",
-      width: 140,
-      minWidth: 120,
-    },
-    {
-      headerName: "Type",
-      field: "type",
-      width: 120,
-      minWidth: 100,
-    },
-    {
-      headerName: "Charge Type",
-      field: "chargeType",
-      width: 140,
-      minWidth: 130,
-    },
-    {
-      headerName: "Def. Charge",
-      field: "defaultCharges",
-      width: 130,
-      minWidth: 120,
-      cellClass: "text-end font-monospace",
-      cellRenderer: (params: any) => {
-        const chargeAmount = Number(params.value) || 0;
-        return chargeAmount.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-      },
-    },
-  ];
-
   allotment: {
     date: any;
     propertyId: number;
     buildingId: number;
     unitId: number;
     charges: number;
+    securityAmount: number;
     allotmentFrom: any;
     allotmentTo: any;
     remarks: string;
@@ -106,11 +57,57 @@ export class TenantAllotmentEditorComponent implements OnInit {
     buildingId: undefined,
     unitId: undefined,
     charges: 0,
+    securityAmount: 0,
     allotmentFrom: moment().toDate(),
-    allotmentTo: moment().add(1, "year").toDate(),
+    allotmentTo: moment().toDate(),
     remarks: "",
     selectedCharges: [],
   };
+
+  columnDefsCharges = [
+    {
+      width: 50,
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      headerCheckboxSelectionFilteredOnly: true,
+    },
+    {
+      headerName: "Additional Charges",
+      field: "name",
+      width: 250,
+      cellStyle: { fontWeight: "bold" },
+    },
+    {
+      headerName: "Category",
+      field: "categoryName",
+      width: 160,
+    },
+    {
+      headerName: "Type",
+      field: "type",
+      width: 180,
+    },
+    {
+      headerName: "Charge Type",
+      field: "chargeType",
+      width: 180,
+    },
+    {
+      headerName: "Def. Charge",
+      field: "defaultCharges",
+      width: 200,
+      type: "rightAligned",
+      cellRenderer: (params: any) => {
+        const chargeAmount = Number(params.value) || 0;
+        return chargeAmount.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      },
+    },
+  ];
+
+  isSecurityManuallyChanged: boolean = false;
 
   constructor(
     public bsModalRef: BsModalRef,
@@ -130,8 +127,9 @@ export class TenantAllotmentEditorComponent implements OnInit {
     if (this.formState === "EDIT" && this.allotmentEditId) {
       this.isLoading = true;
       this.tenantService.getAllotment(this.allotmentEditId).subscribe({
-        next: (response: any) => {
+        next: (response) => {
           this.allotmentData = response?.allotment;
+          this.hasReceipts = !!this.allotmentData?.hasReceipts;
           this.populateEditData();
           this.syncChargesSelection();
         },
@@ -163,7 +161,7 @@ export class TenantAllotmentEditorComponent implements OnInit {
     this.amenitiesService.getAmenities().subscribe({
       next: (resultGetAmenities) => {
         const amenities = resultGetAmenities?.amenities || [];
-        this.amenitiesList = amenities.map((amenity: any) => ({
+        this.amenitiesList = amenities.map((amenity) => ({
           ...amenity,
           categoryName: amenity.categoryName,
           type: amenity.type,
@@ -202,10 +200,10 @@ export class TenantAllotmentEditorComponent implements OnInit {
     if (this.formState === "EDIT" && this.allotmentData?.additionalCharges) {
       const selectedIds = (
         this.allotmentData.additionalCharges || []
-      ).map((additionalCharge: any) =>
+      ).map((additionalCharge) =>
         Number(additionalCharge.id ?? additionalCharge.amenityId)
       );
-      this.gridApiCharges.forEachNode((node: any) => {
+      this.gridApiCharges.forEachNode((node) => {
         if (node.data && selectedIds.includes(Number(node.data.id))) {
           node.setSelected(true);
         }
@@ -218,9 +216,9 @@ export class TenantAllotmentEditorComponent implements OnInit {
       return;
     }
     const selectedRows = this.gridApiCharges.getSelectedRows();
-    this.amenitiesList.forEach((amenity: any) => {
+    this.amenitiesList.forEach((amenity) => {
       amenity.selected = selectedRows.some(
-        (selectedRow: any) => selectedRow.id === amenity.id
+        (selectedRow) => selectedRow.id === amenity.id
       );
     });
   }
@@ -258,7 +256,7 @@ export class TenantAllotmentEditorComponent implements OnInit {
             this.unitsList = allUnits.filter((unit: any) => {
               if (
                 this.formState === "EDIT" &&
-                unit.id === this.allotment.unitId
+                Number(unit.id) === Number(this.allotmentData?.unitId)
               ) {
                 return true;
               }
@@ -279,8 +277,31 @@ export class TenantAllotmentEditorComponent implements OnInit {
       );
       if (selectedUnit && selectedUnit.charges !== undefined) {
         this.allotment.charges = Number(selectedUnit.charges) || 0;
+        if (!this.isSecurityManuallyChanged) {
+          this.allotment.securityAmount = this.allotment.charges;
+        }
       }
     }
+  }
+
+  onChargesChange() {
+    if (!this.isSecurityManuallyChanged) {
+      this.allotment.securityAmount = Number(this.allotment.charges) || 0;
+    }
+  }
+
+  onSecurityChange() {
+    this.isSecurityManuallyChanged = true;
+  }
+
+  get isToDateInvalid(): boolean {
+    if (!this.allotment?.allotmentFrom || !this.allotment?.allotmentTo) {
+      return false;
+    }
+    return moment(this.allotment.allotmentTo).isBefore(
+      moment(this.allotment.allotmentFrom),
+      "day"
+    );
   }
 
   populateEditData() {
@@ -309,6 +330,12 @@ export class TenantAllotmentEditorComponent implements OnInit {
       ? Number(allotment.unitId)
       : undefined;
     this.allotment.charges = Number(allotment.charges) || 0;
+    this.allotment.securityAmount =
+      allotment.securityAmount !== undefined &&
+      allotment.securityAmount !== null
+        ? Number(allotment.securityAmount)
+        : this.allotment.charges;
+    this.isSecurityManuallyChanged = true;
     this.allotment.allotmentFrom = allotment.allotmentFrom
       ? moment(allotment.allotmentFrom).toDate()
       : moment().toDate();
@@ -339,7 +366,7 @@ export class TenantAllotmentEditorComponent implements OnInit {
         this.propertiesList = response.properties?.properties || [];
         this.buildingsList = response.buildings?.buildings || [];
         const allUnits = response.units?.units || [];
-        this.unitsList = allUnits.filter((unit: any) => {
+        this.unitsList = allUnits.filter((unit) => {
           if (unit.id === this.allotment.unitId) {
             return true;
           }
@@ -358,7 +385,17 @@ export class TenantAllotmentEditorComponent implements OnInit {
   save() {
     const selectedAmenities = this.gridApiCharges
       ? this.gridApiCharges.getSelectedRows()
-      : this.amenitiesList.filter((amenity: any) => amenity.selected);
+      : this.amenitiesList.filter((amenity) => amenity.selected);
+
+    const selectedCharges = (selectedAmenities || []).map((amenityItem) => ({
+      amenityId: amenityItem.id,
+      serviceName: amenityItem.name,
+      categoryId: amenityItem.categoryId,
+      categoryName: amenityItem.categoryName,
+      type: amenityItem.type,
+      chargeType: amenityItem.chargeType,
+      chargeAmount: Number(amenityItem.defaultCharges) || 0,
+    }));
 
     const payload: any = {
       tenantId: this.tenantId,
@@ -369,6 +406,7 @@ export class TenantAllotmentEditorComponent implements OnInit {
       buildingId: this.allotment.buildingId,
       unitId: this.allotment.unitId,
       charges: Number(this.allotment.charges) || 0,
+      securityAmount: Number(this.allotment.securityAmount) || 0,
       allotmentFrom: this.allotment.allotmentFrom
         ? moment(this.allotment.allotmentFrom).format("YYYY-MM-DD")
         : "",
@@ -376,7 +414,7 @@ export class TenantAllotmentEditorComponent implements OnInit {
         ? moment(this.allotment.allotmentTo).format("YYYY-MM-DD")
         : "",
       remarks: this.allotment.remarks,
-      additionalCharges: selectedAmenities,
+      additionalCharges: selectedCharges,
     };
 
     if (this.formState === "EDIT" && this.allotmentEditId) {

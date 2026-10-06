@@ -10,6 +10,7 @@ import { TenantEditorComponent } from "./tenant-editor/tenant-editor.component";
 import { TenantAllotmentEditorComponent } from "./tenant-allotment-editor/tenant-allotment-editor.component";
 import { RentReceiptEditorComponent } from "./rent-receipt-editor/rent-receipt-editor.component";
 import { TenantLedgerPrintModalComponent } from "./tenant-ledger-print-modal/tenant-ledger-print-modal.component";
+import { TenantChargesEditorComponent } from "./tenant-charges-editor/tenant-charges-editor.component";
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { TenantLedgerPrintModalComponent } from "./tenant-ledger-print-modal/ten
     TenantAllotmentEditorComponent,
     RentReceiptEditorComponent,
     TenantLedgerPrintModalComponent,
+    TenantChargesEditorComponent,
   ],
   imports: [
     CommonModule,

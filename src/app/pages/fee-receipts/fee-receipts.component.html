@@ -133,6 +133,7 @@
                 name="toDate"
                 id="toDate"
                 [(ngModel)]="search.toDate"
+                [minDate]="search.fromDate"
                 placeholder="DD-MM-YYYY"
                 #toDate="ngModel"
                 bsDatepicker
@@ -238,7 +239,7 @@
                 [disabled]="isLoading"
               >
                 <i class="fas fa-money-check-alt pe-1"></i>
-                New Fee Receipt
+                New Rent Receipt
               </button>
               <button
                 type="button"

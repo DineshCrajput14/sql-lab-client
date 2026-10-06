@@ -1,15 +1,14 @@
 <div class="modal-content">
   <div class="container-fluid p-0">
-    <form #f="ngForm" (ngSubmit)="f.form.valid && save()" autocomplete="off">
+    <form #f="ngForm" (ngSubmit)="f.form.valid && !isToDateInvalid && save()">
       <div class="modal-header py-2">
         <h5 class="modal-title">
           <i class="fas fa-home pe-1"></i>
           {{
-            formState === "EDIT" ? "Edit Unit Allotment" : "New Unit Allotment"
+            formState === "EDIT"
+              ? "Edit Tenant Unit Allotment"
+              : "New Tenant Unit Allotment"
           }}
-          <span *ngIf="tenantName" class="text-muted fs-6 fw-normal ms-1">
-            - {{ tenantName }}
-          </span>
         </h5>
         <button
           type="button"
@@ -25,7 +24,7 @@
       </div>
       <div class="modal-body py-2">
         <div class="row" [hidden]="isLoading">
-          <div class="col-md-4 mb-2">
+          <div class="col-md-3 mb-2">
             <div class="form-group">
               <label class="form-label required mb-1" for="allotDate"
                 >Date:</label
@@ -65,7 +64,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4 mb-2">
+          <div class="col-md-3 mb-2">
             <div class="form-group">
               <label class="form-label required mb-1" for="allotProperty"
                 >Property:</label
@@ -107,7 +106,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-4 mb-2">
+          <div class="col-md-3 mb-2">
             <div class="form-group">
               <label class="form-label required mb-1" for="allotBlock"
                 >Block:</label
@@ -190,12 +189,15 @@
                 >Charges:</label
               >
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 name="allotCharges"
                 id="allotCharges"
+                NumbersOnlyDirective
                 [(ngModel)]="allotment.charges"
+                (ngModelChange)="onChargesChange()"
                 required
+                maxlength="10"
                 min="0"
                 #allotCharges="ngModel"
                 [ngClass]="{
@@ -212,6 +214,42 @@
               >
                 <div *ngIf="allotCharges.errors?.required">
                   Please enter unit charges.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 mb-2">
+            <div class="form-group">
+              <label class="form-label required mb-1" for="allotSecurityAmount"
+                >Security Amount:</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="allotSecurityAmount"
+                id="allotSecurityAmount"
+                NumbersOnlyDirective
+                [(ngModel)]="allotment.securityAmount"
+                (input)="onSecurityChange()"
+                required
+                min="0"
+                maxlength="10"
+                #allotSecurityAmount="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    allotSecurityAmount.invalid &&
+                    (f.submitted || allotSecurityAmount.touched)
+                }"
+              />
+              <div
+                class="invalid-feedback text-break"
+                *ngIf="
+                  allotSecurityAmount.invalid &&
+                  (f.submitted || allotSecurityAmount.touched)
+                "
+              >
+                <div *ngIf="allotSecurityAmount.errors?.required">
+                  Please enter security amount.
                 </div>
               </div>
             </div>
@@ -275,7 +313,9 @@
                 #allotmentTo="ngModel"
                 [ngClass]="{
                   'is-invalid':
-                    allotmentTo.invalid && (f.submitted || allotmentTo.touched)
+                    (allotmentTo.invalid &&
+                      (f.submitted || allotmentTo.touched)) ||
+                    isToDateInvalid
                 }"
                 placeholder="DD-MM-YYYY"
                 bsDatepicker
@@ -299,6 +339,12 @@
                 <div *ngIf="allotmentTo.errors?.required">
                   Please select to date.
                 </div>
+              </div>
+              <div
+                class="invalid-feedback text-break d-block"
+                *ngIf="isToDateInvalid"
+              >
+                To Date should not be less than From Date.
               </div>
             </div>
           </div>
@@ -328,9 +374,10 @@
                 class="form-control"
                 name="allotRemarks"
                 id="allotRemarks"
+                maxlength="255"
                 rows="2"
                 [(ngModel)]="allotment.remarks"
-                placeholder="Enter remarks..."
+                placeholder="Enter remarks"
               ></textarea>
             </div>
           </div>
@@ -341,32 +388,46 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn me-auto"
-          (click)="cancel()"
-          [disabled]="isLoading"
-          data-bs-dismiss="modal"
+      <div class="modal-footer flex-column align-items-stretch gap-1">
+        <div
+          *ngIf="formState === 'EDIT' && hasReceipts"
+          class="alert alert-warning py-2 px-3 mb-1 w-100 text-center"
+          style="font-size: 0.85rem;"
         >
-          <i class="far fa-window-close pe-1"></i>
-          Close
-        </button>
-        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-          <i
-            *ngIf="isLoading"
-            class="spinner-border spinner-border-sm me-1"
-          ></i>
-          <i
-            *ngIf="!isLoading && formState === 'EDIT'"
-            class="fas fa-edit pe-1"
-          ></i>
-          <i
-            *ngIf="!isLoading && formState !== 'EDIT'"
-            class="far fa-save pe-1"
-          ></i>
-          {{ formState === "EDIT" ? "Update" : "Save" }}
-        </button>
+          Update is locked this allotment has rent receipts. Delete all receipts
+          first to enable editing.
+        </div>
+        <div class="d-flex w-100">
+          <button
+            type="button"
+            class="btn me-auto"
+            (click)="cancel()"
+            [disabled]="isLoading"
+            data-bs-dismiss="modal"
+          >
+            <i class="far fa-window-close pe-1"></i>
+            Close
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isLoading || (formState === 'EDIT' && hasReceipts)"
+          >
+            <i
+              *ngIf="isLoading"
+              class="spinner-border spinner-border-sm me-1"
+            ></i>
+            <i
+              *ngIf="!isLoading && formState === 'EDIT'"
+              class="fas fa-edit pe-1"
+            ></i>
+            <i
+              *ngIf="!isLoading && formState !== 'EDIT'"
+              class="far fa-save pe-1"
+            ></i>
+            {{ formState === "EDIT" ? "Update" : "Save" }}
+          </button>
+        </div>
       </div>
     </form>
   </div>

@@ -19,7 +19,7 @@ export class AmenitiesEditorComponent implements OnInit {
   formState: string;
   categories;
   types: string[] = ["Monthly", "One Time"];
-  chargeTypes: string[] = ["Fixed", "Usage"];
+  chargeTypes: string[] = ["Fixed"];
   editAmenityId: number;
   onClose = new Subject<boolean>();
 

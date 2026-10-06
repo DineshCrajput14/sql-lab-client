@@ -133,6 +133,7 @@
                 name="toDate"
                 id="toDate"
                 [(ngModel)]="search.toDate"
+                [minDate]="search.fromDate"
                 placeholder="DD-MM-YYYY"
                 #toDate="ngModel"
                 bsDatepicker

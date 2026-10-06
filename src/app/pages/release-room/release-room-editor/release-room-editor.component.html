@@ -75,7 +75,7 @@
                 type="text"
                 name="receiptNumber"
                 id="receiptNumber"
-                class="form-control font-monospace"
+                class="form-control"
                 [value]="release.receiptNo"
                 disabled
               />
@@ -158,16 +158,19 @@
                   type="checkbox"
                   id="isReleaseDate"
                   class="form-check-input"
+                  style="border: 1.5px solid #206bc4;"
                   name="isReleaseDate"
                   [(ngModel)]="release.isReleaseDate"
                   (change)="onReleaseDateToggle()"
                 />
-                <span class="form-check-label fw-bold">Release Date:</span>
+                <span class="form-check-label text-primary fw-bold"
+                  >Release Date:</span
+                >
               </label>
               <div *ngIf="release.isReleaseDate" style="width: 140px;">
                 <input
                   type="text"
-                  class="form-control font-monospace text-center"
+                  class="form-control text-center"
                   name="releaseDate"
                   id="releaseDate"
                   [(ngModel)]="release.releaseDate"
@@ -197,11 +200,14 @@
                   type="checkbox"
                   id="deleteDues"
                   class="form-check-input"
+                  style="border: 1.5px solid #206bc4;"
                   name="deleteDues"
                   [(ngModel)]="release.deleteDues"
                   (change)="onDeleteDuesToggle()"
                 />
-                <span class="form-check-label fw-bold">Delete Dues:</span>
+                <span class="form-check-label text-primary fw-bold"
+                  >Delete Dues:</span
+                >
               </label>
               <div
                 *ngIf="release.deleteDues"
@@ -211,7 +217,7 @@
                 <span class="input-group-text fw-bold text-muted">From</span>
                 <input
                   type="text"
-                  class="form-control font-monospace text-center"
+                  class="form-control text-center"
                   name="deleteDuesFromDate"
                   id="deleteDuesFromDate"
                   [(ngModel)]="release.deleteDuesFromDate"
@@ -235,7 +241,7 @@
         <hr class="m-2" [hidden]="isLoading" />
         <div class="row" [hidden]="isLoading">
           <div class="col-sm-5">
-            <h5 class="mb-1">Due Fee Summary:</h5>
+            <h5 class="mb-1">Due Rent Summary:</h5>
             <ag-grid-angular
               style="width: 100%; height: 26vh;"
               class="ag-theme-alpine"
@@ -251,7 +257,7 @@
             </ag-grid-angular>
           </div>
           <div class="col-sm-7">
-            <h5 class="mb-1">Fee Receipt Details:</h5>
+            <h5 class="mb-1">Rent Receipt Details:</h5>
             <ag-grid-angular
               style="width: 100%; height: 26vh;"
               class="ag-theme-alpine"
@@ -269,36 +275,14 @@
           <h5 class="mb-0">Total:</h5>
           <div class="col-sm-3">
             <div class="form-group">
-              <label class="form-label mt-1">Selected:</label>
-              <input
-                type="text"
-                class="form-control text-end font-monospace"
-                style="background-color: #fff;"
-                [value]="release.selectedTotal | number: '1.2-2'"
-                readonly
-              />
-            </div>
-          </div>
-          <div class="col-sm-3">
-            <div class="form-group">
-              <label class="form-label mt-1">Total Receivable:</label>
-              <input
-                type="text"
-                class="form-control text-end font-monospace"
-                style="background-color: #fff;"
-                [value]="release.totalRefundable | number: '1.2-2'"
-                readonly
-              />
-            </div>
-          </div>
-          <div class="col-sm-3">
-            <div class="form-group">
               <label class="form-label required mt-1">Refund Amount:</label>
               <input
-                type="number"
-                class="form-control text-end font-monospace"
+                type="text"
+                class="form-control text-end"
                 name="refundAmount"
                 id="refundAmount"
+                NumbersOnlyDirective
+                [allowDecimals]="true"
                 [(ngModel)]="release.refundAmount"
                 (input)="onRefundAmountInputChange()"
                 required
@@ -317,20 +301,8 @@
                 class="invalid-feedback text-break"
                 style="display: block;"
               >
-                Refund amount cannot be greater than the refundable fee amount.
+                Refund amount cannot be greater than the refundable Rent amount.
               </div>
-            </div>
-          </div>
-          <div class="col-sm-3">
-            <div class="form-group">
-              <label class="form-label mt-1">Balance:</label>
-              <input
-                type="text"
-                class="form-control text-end font-monospace"
-                style="background-color: #fff;"
-                [value]="release.balance | number: '1.2-2'"
-                readonly
-              />
             </div>
           </div>
         </div>
@@ -361,7 +333,7 @@
               </label>
               <input
                 type="text"
-                class="form-control font-monospace"
+                class="form-control"
                 name="chequeDraftNumber"
                 id="chequeDraftNumber"
                 [(ngModel)]="release.chequeDraftNo"
@@ -377,7 +349,7 @@
               </label>
               <input
                 type="text"
-                class="form-control font-monospace"
+                class="form-control"
                 name="chequeDraftDate"
                 id="chequeDraftDate"
                 [(ngModel)]="release.chequeDraftDate"

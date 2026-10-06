@@ -22,7 +22,7 @@ export class LandingComponent implements OnInit {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
-  
+
   scrollToTop(event?: Event) {
     if (event) {
       event.preventDefault();

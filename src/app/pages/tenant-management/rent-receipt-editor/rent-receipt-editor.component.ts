@@ -148,16 +148,15 @@ export class RentReceiptEditorComponent implements OnInit {
     {
       headerName: "Head",
       field: "serviceName",
-      flex: 1.5,
+      flex: 2,
       editable: false,
-      minWidth: 120,
       cellStyle: { fontWeight: "bold" },
     },
     {
       headerName: "Due",
       field: "dueAmount",
       flex: 1,
-      minWidth: 90,
+      minWidth: 105,
       type: "rightAligned",
       cellRenderer: (params: any) => {
         const sym = this.currencySymbol || "";
@@ -175,7 +174,7 @@ export class RentReceiptEditorComponent implements OnInit {
       headerName: "Received",
       field: "receivedAmount",
       flex: 1,
-      minWidth: 90,
+      minWidth: 105,
       type: "rightAligned",
       editable: true,
       cellStyle: {
@@ -184,7 +183,7 @@ export class RentReceiptEditorComponent implements OnInit {
         cursor: "pointer",
         "text-align": "right",
       },
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         const sym = this.currencySymbol || "";
         const receivedAmount = Number(params.value) || 0;
         return (
@@ -195,7 +194,7 @@ export class RentReceiptEditorComponent implements OnInit {
           })
         );
       },
-      onCellValueChanged: (params: any) => {
+      onCellValueChanged: (params) => {
         this.onDetailReceivedCellValueChanged(params);
       },
     },
@@ -214,8 +213,9 @@ export class RentReceiptEditorComponent implements OnInit {
 
   ngOnInit() {
     this.feeReceiptsService.getReceiptModes().subscribe({
-      next: (res) => this.getReceiptModes(res),
-      error: (err) => this.errorHandlingService.errors(err),
+      next: (resultGetReceiptModes) =>
+        this.getReceiptModes(resultGetReceiptModes),
+      error: (error) => this.errorHandlingService.errors(error),
     });
 
     this.isRegNoFrozen =
@@ -412,83 +412,119 @@ export class RentReceiptEditorComponent implements OnInit {
     this.receiptDetails = [];
 
     const baseRent = Number(this.allotment?.charges) || 0;
-    const gridSelected = this.gridApiDue
+    const selectedRows = this.gridApiDue
       ? this.gridApiDue.getSelectedRows()
-      : [];
-    const selectedRows =
-      gridSelected && gridSelected.length > 0
-        ? gridSelected
-        : this.dueRentSummary.filter((dueItem) => dueItem.selected);
+      : this.dueRentSummary.filter((dueItem) => dueItem.selected);
+
+    if (this.gridApiDue) {
+      const selectedSet = new Set(
+        selectedRows.map((row: any) => row.id || row.dueDate)
+      );
+      this.dueRentSummary.forEach((dueItem) => {
+        dueItem.selected = selectedSet.has(dueItem.id || dueItem.dueDate);
+      });
+    }
 
     selectedRows.forEach((dueItem) => {
       const dueAmountForThisRow = Number(dueItem.amount) || 0;
       sum += dueAmountForThisRow;
 
-      const additionalCharges = (
-        this.allotment?.additionalCharges || []
-      ).filter(
-        (chargeItem: any) =>
-          !chargeItem.isTotalRow &&
-          Number(
-            chargeItem.defaultCharges ??
-              chargeItem.chargeAmount ??
-              chargeItem.amount
-          ) > 0
-      );
+      if (
+        dueItem.heads &&
+        Array.isArray(dueItem.heads) &&
+        dueItem.heads.length > 0
+      ) {
+        dueItem.heads.forEach((headItem: any) => {
+          this.receiptDetails.push({
+            dueDate: headItem.dueDate || dueItem.dueDate,
+            serviceName: headItem.serviceName,
+            dueAmount: Number(headItem.dueAmount) || 0,
+            receivedAmount:
+              Number(headItem.receivedAmount ?? headItem.dueAmount) || 0,
+          });
+        });
+      } else {
+        const rentName = this.allotment?.serviceName;
+        const chargeHeads: { serviceName: string; amount: number }[] = [];
+        if (baseRent > 0) {
+          chargeHeads.push({
+            serviceName: rentName,
+            amount: baseRent,
+          });
+        }
 
-      if (additionalCharges.length > 0) {
-        if (additionalCharges.length === 1) {
-          const chargeItem = additionalCharges[0];
+        const isFirstMonth =
+          dueItem.monthIndex !== undefined
+            ? dueItem.monthIndex === 0
+            : this.dueRentSummary.length > 0 &&
+              dueItem.dueDate === this.dueRentSummary[0].dueDate;
+
+        const securityAmount = Number(this.allotment?.securityAmount) || 0;
+        if (securityAmount > 0 && isFirstMonth) {
+          chargeHeads.push({
+            serviceName: "Security",
+            amount: securityAmount,
+          });
+        }
+
+        const additionalCharges = (
+          this.allotment?.additionalCharges || []
+        ).filter((chargeItem: any) => {
+          if (chargeItem.isTotalRow) return false;
+          const amount = Number(chargeItem.chargeAmount) || 0;
+          if (amount <= 0) return false;
+          if (chargeItem.type === "One Time") {
+            return isFirstMonth;
+          }
+          return true;
+        });
+
+        additionalCharges.forEach((chargeItem: any) => {
+          chargeHeads.push({
+            serviceName: chargeItem.serviceName,
+            amount: Number(chargeItem.chargeAmount) || 0,
+          });
+        });
+
+        if (chargeHeads.length === 1) {
+          const headItem = chargeHeads[0];
           this.receiptDetails.push({
             dueDate: dueItem.dueDate,
-            serviceName: chargeItem.serviceName,
+            serviceName: headItem.serviceName,
             dueAmount: dueAmountForThisRow,
             receivedAmount: dueAmountForThisRow,
           });
-        } else {
-          const totalBase = additionalCharges.reduce(
-            (acc: number, chargeItem: any) =>
-              acc +
-              (Number(
-                chargeItem.defaultCharges ??
-                  chargeItem.chargeAmount ??
-                  chargeItem.amount
-              ) || 0),
+        } else if (chargeHeads.length > 1) {
+          const totalBase = chargeHeads.reduce(
+            (total, headItem) => total + headItem.amount,
             0
           );
-          let allocated = 0;
-          additionalCharges.forEach((chargeItem: any, cIdx: number) => {
-            const chargeVal =
-              Number(
-                chargeItem.defaultCharges ??
-                  chargeItem.chargeAmount ??
-                  chargeItem.amount
-              ) || 0;
+          let allocatedAmount = 0;
+          chargeHeads.forEach((headItem, headIndex) => {
             const ratio =
               totalBase > 0
-                ? chargeVal / totalBase
-                : 1 / additionalCharges.length;
+                ? headItem.amount / totalBase
+                : 1 / chargeHeads.length;
             const headDue =
-              cIdx === additionalCharges.length - 1
-                ? Number((dueAmountForThisRow - allocated).toFixed(2))
+              headIndex === chargeHeads.length - 1
+                ? Number((dueAmountForThisRow - allocatedAmount).toFixed(2))
                 : Number((dueAmountForThisRow * ratio).toFixed(2));
-            allocated += headDue;
+            allocatedAmount += headDue;
             this.receiptDetails.push({
               dueDate: dueItem.dueDate,
-              serviceName: chargeItem.serviceName,
+              serviceName: headItem.serviceName,
               dueAmount: headDue,
               receivedAmount: headDue,
             });
           });
+        } else {
+          this.receiptDetails.push({
+            dueDate: dueItem.dueDate,
+            serviceName: rentName,
+            dueAmount: dueAmountForThisRow,
+            receivedAmount: dueAmountForThisRow,
+          });
         }
-      } else {
-        const rentName = this.allotment?.serviceName;
-        this.receiptDetails.push({
-          dueDate: dueItem.dueDate,
-          serviceName: rentName,
-          dueAmount: dueAmountForThisRow,
-          receivedAmount: dueAmountForThisRow,
-        });
       }
     });
 
@@ -516,7 +552,7 @@ export class RentReceiptEditorComponent implements OnInit {
 
     if (received > totalReceivable) {
       this.toastrMessage.showWarning(
-        "Receiving amount cannot be greater than the selected fee amount."
+        "Receiving amount cannot be greater than the selected Rent amount."
       );
     }
     this.updateGridReceivedFromTotal();
@@ -625,7 +661,7 @@ export class RentReceiptEditorComponent implements OnInit {
                 this.gridApiDetails.setRowData([]);
               }
               this.toastrMessage.showWarning(
-                "The fee already taken against all due dates."
+                "The Rent already taken against all due dates."
               );
             } else {
               this.dueRentSummary = dueList.map(
@@ -697,9 +733,9 @@ export class RentReceiptEditorComponent implements OnInit {
       this.toastrMessage.showWarning("Received Amount must be at least 1.");
       return false;
     }
-    const hasSelectedDue =
-      (this.gridApiDue?.getSelectedRows() || []).length > 0 ||
-      (this.dueRentSummary || []).some((dueItem) => dueItem.selected);
+    const hasSelectedDue = this.gridApiDue
+      ? (this.gridApiDue.getSelectedRows() || []).length > 0
+      : (this.dueRentSummary || []).some((dueItem) => dueItem.selected);
     if (!hasSelectedDue) {
       this.toastrMessage.showWarning("Select at least one due date");
       return false;
@@ -708,7 +744,7 @@ export class RentReceiptEditorComponent implements OnInit {
       Number(this.receipt.receivedAmount) > Number(this.receipt.totalReceivable)
     ) {
       this.toastrMessage.showWarning(
-        "Receiving amount cannot be greater than the selected fee amount."
+        "Receiving amount cannot be greater than the selected Rent amount."
       );
       return false;
     }
@@ -808,7 +844,7 @@ export class RentReceiptEditorComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.isLoading = false;
-            this.toastrMessage.showSuccessMessage("Fee Receipt Updated");
+            this.toastrMessage.showSuccessMessage("Rent Receipt Updated");
             this.confirmPrint(this.feeReceiptId, response?.rentReceipt);
           },
           error: (error) => {
@@ -823,7 +859,7 @@ export class RentReceiptEditorComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.isLoading = false;
-            this.toastrMessage.showSuccessMessage("Fee Receipt Created");
+            this.toastrMessage.showSuccessMessage("Rent Receipt Created");
             const newReceiptId = response?.id;
             this.confirmPrint(newReceiptId, response?.rentReceipt);
           },
@@ -842,7 +878,7 @@ export class RentReceiptEditorComponent implements OnInit {
       keyboard: false,
       class: "modal-md",
       initialState: {
-        message: "Do you want to print fee receipt?",
+        message: "Do you want to print Rent receipt?",
       },
     });
 

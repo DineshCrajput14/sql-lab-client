@@ -12,8 +12,6 @@ export class NotificationsBlockComponent implements AfterViewInit {
   constructor() {}
 
   ngAfterViewInit() {
-    console.log("notifications", this.notifications);
-
     if (this.notifications.length) {
       this.showNotificationBlocks = true;
     }

@@ -17,6 +17,29 @@ export class TenantLedgerPrintModalComponent implements OnInit {
   openingRow: any = null;
   ledgerRows = [];
   totalRow: any = null;
+  ledgerType: string = "RENT";
+
+  get isSecurityLedger(): boolean {
+    return this.ledgerType === "SECURITY";
+  }
+
+  get modalTitle(): string {
+    return this.isSecurityLedger
+      ? "Tenant Security Ledger Print Preview"
+      : "Tenant Ledger Print Preview";
+  }
+
+  get sheetTitle(): string {
+    return this.isSecurityLedger ? "TENANT SECURITY LEDGER" : "TENANT LEDGER";
+  }
+
+  get docNoColTitle(): string {
+    return this.isSecurityLedger ? "Rcpt / Refund No." : "Rcpt No.";
+  }
+
+  get creditColTitle(): string {
+    return this.isSecurityLedger ? "Refund Amt" : "Rec. Amt";
+  }
 
   isDownloadingPdf: boolean = false;
 
@@ -302,6 +325,13 @@ export class TenantLedgerPrintModalComponent implements OnInit {
       .col-rec { width: 14% !important; text-align: right !important; }
       .col-balance { width: 14% !important; text-align: right !important; }
       .col-mode { width: 10% !important; text-align: center !important; }
+      .table-ledger.is-security-table .col-date { width: 10% !important; }
+      .table-ledger.is-security-table .col-particulars { width: 18% !important; }
+      .table-ledger.is-security-table .col-rcpt-no { width: 14% !important; }
+      .table-ledger.is-security-table .col-due { width: 12% !important; }
+      .table-ledger.is-security-table .col-rec { width: 12% !important; }
+      .table-ledger.is-security-table .col-balance { width: 12% !important; }
+      .table-ledger.is-security-table .col-mode { width: 10% !important; }
       .spacer-row td {
         height: 100% !important;
         border-bottom: none !important;

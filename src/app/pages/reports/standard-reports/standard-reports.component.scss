@@ -1,0 +1,74 @@
+:host ::ng-deep {
+  .ag-theme-alpine .ag-cell.occupancy-units-cell {
+    padding: 6px 12px !important;
+    white-space: normal !important;
+    line-height: normal !important;
+    overflow: visible !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .occupancy-unit-card {
+    width: 68px;
+    min-height: 52px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 4px 2px;
+    text-align: center;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+    .unit-no {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .unit-dates {
+      font-size: 9px;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+
+    &.status-occupied {
+      background: #ff2d37;
+      color: #000;
+    }
+    &.status-vacant {
+      background: #00e676;
+      color: #000;
+    }
+    &.status-maintenance {
+      background: #ffea00;
+      color: #000;
+    }
+  }
+}
+
+.legend-box {
+  display: inline-block;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  min-width: 85px;
+
+  &.legend-occupied {
+    background: #ff2d37;
+    color: #000;
+  }
+  &.legend-vacant {
+    background: #00e676;
+    color: #000;
+  }
+  &.legend-maintenance {
+    background: #ffea00;
+    color: #000;
+  }
+}

@@ -5,7 +5,7 @@
     <div class="d-flex align-items-center">
       <i class="fa fa-print fs-5 text-primary me-2"></i>
       <h5 class="modal-title m-0 fw-bold text-dark">
-        Tenant Ledger Print Preview
+        {{ modalTitle }}
       </h5>
     </div>
     <div class="d-flex align-items-center gap-2">
@@ -54,7 +54,7 @@
 
       <div class="receipt-title-box">
         <span class="copy-tag-placeholder"></span>
-        <span class="receipt-title-text">TENANT LEDGER</span>
+        <span class="receipt-title-text">{{ sheetTitle }}</span>
         <span class="receipt-copy-badge">TENANT COPY</span>
       </div>
 
@@ -104,14 +104,22 @@
       </div>
 
       <div class="receipt-table-box">
-        <table class="table-ledger">
+        <table
+          class="table-ledger"
+          [class.is-security-table]="isSecurityLedger"
+        >
           <thead>
             <tr>
               <th class="col-date">Date</th>
               <th class="col-particulars">Particulars</th>
-              <th class="col-rcpt-no">Rcpt No.</th>
+              <th class="col-rcpt-no">{{ docNoColTitle }}</th>
               <th class="col-due text-end">Due Amt</th>
-              <th class="col-rec text-end">Rec. Amt</th>
+              <th *ngIf="isSecurityLedger" class="col-rec text-end">
+                Rcpt Amt
+              </th>
+              <th class="col-rec text-end">
+                {{ isSecurityLedger ? "Refund Amt" : "Rec. Amt" }}
+              </th>
               <th class="col-balance text-end">Balance</th>
               <th class="col-mode text-center">Mode</th>
             </tr>
@@ -124,8 +132,17 @@
               <td class="col-due text-end">
                 {{ formatAmount(openingRow?.dueAmount) }}
               </td>
+              <td *ngIf="isSecurityLedger" class="col-rec text-end">
+                {{ formatAmount(openingRow?.receivedAmount) }}
+              </td>
               <td class="col-rec text-end">
-                {{ formatAmount(openingRow?.receiptAmount) }}
+                {{
+                  formatAmount(
+                    openingRow?.refundAmount !== undefined
+                      ? openingRow?.refundAmount
+                      : openingRow?.receiptAmount
+                  )
+                }}
               </td>
               <td class="col-balance text-end">
                 {{ formatBalance(openingRow?.balanceAmount) }}
@@ -135,13 +152,26 @@
             <tr *ngFor="let item of ledgerRows">
               <td class="col-date text-center">{{ formatDate(item.date) }}</td>
               <td class="col-particulars">{{ item.particulars }}</td>
-              <td class="col-rcpt-no">{{ item.receiptNo || "" }}</td>
+              <td class="col-rcpt-no">
+                {{ item.refundNo || item.receiptNo || "" }}
+              </td>
               <td class="col-due text-end">
                 {{ item.dueAmount ? formatAmount(item.dueAmount) : "" }}
               </td>
+              <td *ngIf="isSecurityLedger" class="col-rec text-end">
+                {{
+                  item.receivedAmount ? formatAmount(item.receivedAmount) : ""
+                }}
+              </td>
               <td class="col-rec text-end">
                 {{
-                  item.receiptAmount ? formatAmount(item.receiptAmount) : "0.00"
+                  item.refundAmount !== undefined
+                    ? item.refundAmount
+                      ? formatAmount(item.refundAmount)
+                      : ""
+                    : item.receiptAmount
+                    ? formatAmount(item.receiptAmount)
+                    : ""
                 }}
               </td>
               <td class="col-balance text-end">
@@ -154,6 +184,7 @@
               <td class="col-particulars"></td>
               <td class="col-rcpt-no"></td>
               <td class="col-due"></td>
+              <td *ngIf="isSecurityLedger" class="col-rec"></td>
               <td class="col-rec"></td>
               <td class="col-balance"></td>
               <td class="col-mode"></td>
@@ -167,8 +198,17 @@
               <td class="col-due text-end">
                 {{ formatAmount(totalRow?.dueAmount) }}
               </td>
+              <td *ngIf="isSecurityLedger" class="col-rec text-end">
+                {{ formatAmount(totalRow?.receivedAmount) }}
+              </td>
               <td class="col-rec text-end">
-                {{ formatAmount(totalRow?.receiptAmount) }}
+                {{
+                  formatAmount(
+                    totalRow?.refundAmount !== undefined
+                      ? totalRow?.refundAmount
+                      : totalRow?.receiptAmount
+                  )
+                }}
               </td>
               <td class="col-balance text-end">
                 {{ formatBalance(totalRow?.balanceAmount) }}

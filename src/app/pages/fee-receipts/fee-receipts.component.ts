@@ -74,8 +74,7 @@ export class FeeReceiptsComponent implements OnInit {
     {
       headerName: "Receipt Date",
       field: "receiptDate",
-      width: 170,
-      minWidth: 160,
+      width: 120,
       sortable: true,
       filter: true,
       cellRenderer: (params: any) => {
@@ -85,8 +84,7 @@ export class FeeReceiptsComponent implements OnInit {
     {
       headerName: "Receipt No.",
       field: "receiptNo",
-      width: 190,
-      minWidth: 180,
+      width: 120,
       sortable: true,
       filter: true,
       cellStyle: { fontWeight: "bold" },
@@ -95,15 +93,13 @@ export class FeeReceiptsComponent implements OnInit {
       headerName: "Reg. No",
       field: "regNo",
       width: 110,
-      minWidth: 100,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Tenant Name",
       field: "tenantName",
-      width: 160,
-      minWidth: 140,
+      width: 150,
       sortable: true,
       filter: true,
     },
@@ -111,15 +107,13 @@ export class FeeReceiptsComponent implements OnInit {
       headerName: "Unit No",
       field: "unitNo",
       width: 110,
-      minWidth: 90,
       sortable: true,
       filter: true,
     },
     {
       headerName: "Total Receivable",
       field: "totalReceivable",
-      width: 140,
-      minWidth: 120,
+      width: 130,
       type: "rightAligned",
       sortable: true,
       filter: true,
@@ -139,7 +133,6 @@ export class FeeReceiptsComponent implements OnInit {
       headerName: "Received",
       field: "receivedAmount",
       width: 130,
-      minWidth: 110,
       type: "rightAligned",
       sortable: true,
       filter: true,
@@ -159,7 +152,6 @@ export class FeeReceiptsComponent implements OnInit {
       headerName: "Balance",
       field: "balance",
       width: 120,
-      minWidth: 100,
       type: "rightAligned",
       sortable: true,
       filter: true,
@@ -188,8 +180,7 @@ export class FeeReceiptsComponent implements OnInit {
     {
       headerName: "Mode",
       field: "receiptMode",
-      width: 140,
-      minWidth: 120,
+      width: 120,
       sortable: true,
       filter: true,
       tooltipField: "receiptMode",
@@ -198,8 +189,6 @@ export class FeeReceiptsComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 220,
-      minWidth: 200,
-      pinned: "right",
       cellRendererFramework: PrintEditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editFeeReceipt.bind(this),
@@ -213,21 +202,18 @@ export class FeeReceiptsComponent implements OnInit {
     {
       headerName: "Due Date",
       field: "dueDate",
-      width: 105,
-      minWidth: 100,
+      width: 120,
       sortable: true,
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         return params.value ? moment(params.value).format("DD-MM-YYYY") : "";
       },
     },
     {
       headerName: "Head",
       field: "serviceName",
-      flex: 1,
-      minWidth: 100,
+      width: 130,
       sortable: true,
-      tooltipField: "serviceName",
-      cellStyle: (params: any) => {
+      cellStyle: (params) => {
         if (params.data?.isTotalRow || params.node?.rowPinned === "bottom") {
           return { "font-weight": "bold" };
         }
@@ -237,10 +223,9 @@ export class FeeReceiptsComponent implements OnInit {
     {
       headerName: "Due",
       field: "dueAmount",
-      width: 95,
-      minWidth: 85,
+      width: 130,
       type: "rightAligned",
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         const sym = this.currencySymbol || "";
         const val = Number(params.value) || 0;
         return (
@@ -251,7 +236,7 @@ export class FeeReceiptsComponent implements OnInit {
           })
         );
       },
-      cellStyle: (params: any) => {
+      cellStyle: (params) => {
         if (params.data?.isTotalRow || params.node?.rowPinned === "bottom") {
           return { "font-weight": "bold" };
         }
@@ -261,8 +246,7 @@ export class FeeReceiptsComponent implements OnInit {
     {
       headerName: "Received",
       field: "receivedAmount",
-      width: 95,
-      minWidth: 85,
+      width: 110,
       type: "rightAligned",
       cellRenderer: (params: any) => {
         const sym = this.currencySymbol || "";
@@ -275,7 +259,7 @@ export class FeeReceiptsComponent implements OnInit {
           })
         );
       },
-      cellStyle: (params: any) => {
+      cellStyle: (params) => {
         if (params.data?.isTotalRow || params.node?.rowPinned === "bottom") {
           return { "font-weight": "bold" };
         }
@@ -361,6 +345,14 @@ export class FeeReceiptsComponent implements OnInit {
 
   getFeeReceipts(selectReceiptId?: number) {
     this.isLoading = true;
+    this.selectedReceipt = null;
+    this.gridRowDataDetails = [];
+    this.pinnedBottomRowDataDetails = [];
+    this.receiptGridApi?.deselectAll();
+    if (this.detailGridApi) {
+      this.detailGridApi.setPinnedBottomRowData([]);
+      this.detailGridApi.showNoRowsOverlay();
+    }
 
     const params: any = {};
     if (this.search.propertyId) {
@@ -390,8 +382,13 @@ export class FeeReceiptsComponent implements OnInit {
         if (!this.gridRowDataReceipts.length) {
           this.receiptGridApi?.showNoRowsOverlay();
           this.gridRowDataDetails = [];
+          this.pinnedBottomRowDataDetails = [];
           this.selectedReceipt = null;
-          this.toastrMessage.showWarning("No fee receipt records found");
+          if (this.detailGridApi) {
+            this.detailGridApi.setPinnedBottomRowData([]);
+            this.detailGridApi.showNoRowsOverlay();
+          }
+          this.toastrMessage.showWarning("No Rent receipt records found");
         } else {
           this.receiptGridApi?.hideOverlay();
           of(1)
@@ -419,7 +416,12 @@ export class FeeReceiptsComponent implements OnInit {
         this.isLoading = false;
         this.gridRowDataReceipts = [];
         this.gridRowDataDetails = [];
+        this.pinnedBottomRowDataDetails = [];
         this.selectedReceipt = null;
+        if (this.detailGridApi) {
+          this.detailGridApi.setPinnedBottomRowData([]);
+          this.detailGridApi.showNoRowsOverlay();
+        }
         this.errorHandlingService.errors(error);
       },
     });
@@ -458,6 +460,10 @@ export class FeeReceiptsComponent implements OnInit {
       this.selectedReceipt = null;
       this.gridRowDataDetails = [];
       this.pinnedBottomRowDataDetails = [];
+      if (this.detailGridApi) {
+        this.detailGridApi.setPinnedBottomRowData([]);
+        this.detailGridApi.showNoRowsOverlay();
+      }
     }
   }
 
@@ -466,6 +472,10 @@ export class FeeReceiptsComponent implements OnInit {
     if (!id) {
       this.gridRowDataDetails = [];
       this.pinnedBottomRowDataDetails = [];
+      if (this.detailGridApi) {
+        this.detailGridApi.setPinnedBottomRowData([]);
+        this.detailGridApi.showNoRowsOverlay();
+      }
       return;
     }
     this.feeReceiptsService.getFeeReceipt(id).subscribe({
@@ -491,14 +501,27 @@ export class FeeReceiptsComponent implements OnInit {
               isTotalRow: true,
             },
           ];
+          if (this.detailGridApi) {
+            this.detailGridApi.hideOverlay();
+            this.detailGridApi.setPinnedBottomRowData(
+              this.pinnedBottomRowDataDetails
+            );
+          }
         } else {
           this.pinnedBottomRowDataDetails = [];
-          this.detailGridApi?.showNoRowsOverlay();
+          if (this.detailGridApi) {
+            this.detailGridApi.setPinnedBottomRowData([]);
+            this.detailGridApi.showNoRowsOverlay();
+          }
         }
       },
       error: (error) => {
         this.gridRowDataDetails = [];
         this.pinnedBottomRowDataDetails = [];
+        if (this.detailGridApi) {
+          this.detailGridApi.setPinnedBottomRowData([]);
+          this.detailGridApi.showNoRowsOverlay();
+        }
         this.errorHandlingService.errors(error);
       },
     });
@@ -620,16 +643,26 @@ export class FeeReceiptsComponent implements OnInit {
       backdrop: "static",
       keyboard: false,
       initialState: {
-        title: "Delete Fee Receipt",
+        title: "Delete Rent Receipt",
       },
     });
 
     const subscription = bsModalRef.content.onClose.subscribe({
       next: (response: any) => {
         if (response) {
+          this.isLoading = true;
+          this.selectedReceipt = null;
+          this.gridRowDataDetails = [];
+          this.pinnedBottomRowDataDetails = [];
+          this.receiptGridApi?.deselectAll();
+          if (this.detailGridApi) {
+            this.detailGridApi.setPinnedBottomRowData([]);
+            this.detailGridApi.showNoRowsOverlay();
+          }
+
           this.feeReceiptsService.delete(receipt.id).subscribe({
             next: () => {
-              this.toastrMessage.showSuccessMessage("Fee Receipt Deleted");
+              this.toastrMessage.showSuccessMessage("Rent Receipt Deleted");
               this.getFeeReceipts();
             },
             error: (error) => {

@@ -150,7 +150,7 @@
                 </svg>
                 Support Tickets
               </a>
-              <a class="dropdown-item" (click)="openFeedbackCommentsModal()">
+              <!-- <a class="dropdown-item" (click)="openFeedbackCommentsModal()">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -172,7 +172,7 @@
                   />
                 </svg>
                 Send Feedback or Comments
-              </a>
+              </a> -->
               <a
                 class="dropdown-item"
                 [routerLink]="['/']"
@@ -282,20 +282,20 @@
             class="dropdown-item"
             >Profile</a
           >
-          <a
+          <!-- <a
             [routerLink]="['/change-password']"
             routerLinkActive="active"
             class="dropdown-item"
             id="changePassword"
             >Change Password</a
-          >
-          <a
+          > -->
+          <!-- <a
             class="dropdown-item"
             id="shareFeedback"
             (click)="openFeedbackCommentsModal()"
           >
             Share Feedback
-          </a>
+          </a> -->
           <div class="dropdown-divider my-0"></div>
           <a class="dropdown-item" id="logOut" (click)="logout()">Logout</a>
         </div>

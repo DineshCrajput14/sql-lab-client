@@ -111,7 +111,7 @@
           </div>
           <div class="col-md-4 mb-2">
             <div class="form-group">
-              <label class="form-label required mb-1" for="tenantMobileNo"
+              <label class="form-label mb-1" for="tenantMobileNo"
                 >Mobile No:</label
               >
               <input
@@ -121,26 +121,9 @@
                 id="tenantMobileNo"
                 [(ngModel)]="tenant.mobileNo"
                 placeholder="Enter mobile number"
-                required
                 maxlength="15"
                 #tenantMobileNo="ngModel"
-                [ngClass]="{
-                  'is-invalid':
-                    tenantMobileNo.invalid &&
-                    (f.submitted || tenantMobileNo.touched)
-                }"
               />
-              <div
-                class="invalid-feedback text-break"
-                *ngIf="
-                  tenantMobileNo.invalid &&
-                  (f.submitted || tenantMobileNo.touched)
-                "
-              >
-                <div *ngIf="tenantMobileNo.errors?.required">
-                  Please enter a valid mobile number.
-                </div>
-              </div>
             </div>
           </div>
           <div class="col-md-8 mb-2">
@@ -263,26 +246,59 @@
             </div>
           </div>
           <div class="col-md-4 mb-2">
-            <div class="form-group">
-              <label class="form-label required mb-1" for="tenantStatus"
-                >Status:</label
+            <div class="row g-2">
+              <div
+                [ngClass]="tenant.status === 'Inactive' ? 'col-6' : 'col-12'"
               >
-              <select
-                class="form-select"
-                name="tenantStatus"
-                id="tenantStatus"
-                [(ngModel)]="tenant.status"
-                required
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+                <div class="form-group">
+                  <label class="form-label required mb-1" for="tenantStatus"
+                    >Status:</label
+                  >
+                  <select
+                    class="form-select"
+                    name="tenantStatus"
+                    id="tenantStatus"
+                    [(ngModel)]="tenant.status"
+                    (change)="onChangeStatus()"
+                    required
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-6" *ngIf="tenant.status === 'Inactive'">
+                <div class="form-group">
+                  <label class="form-label mb-1" for="tenantInactiveDate"
+                    >Inactive Date:</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="tenantInactiveDate"
+                    id="tenantInactiveDate"
+                    [(ngModel)]="tenant.inactiveDate"
+                    placeholder="DD-MM-YYYY"
+                    bsDatepicker
+                    autocomplete="off"
+                    [outsideClick]="true"
+                    [container]="'body'"
+                    [bsConfig]="{
+                      dateInputFormat: 'DD-MM-YYYY',
+                      isAnimated: true,
+                      containerClass: 'theme-dark-blue',
+                      returnFocusToInput: true,
+                      showWeekNumbers: false
+                    }"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-12 my-1">
-            <h6 class="font-weight-bold text-muted border-bottom pb-1 mb-2">
+            <h3 class="mb-0 text-primary fw-bold">
               <i class="fas fa-users-cog pe-1"></i> Next of Kin Details
-            </h6>
+            </h3>
           </div>
           <div class="col-md-4 mb-2">
             <div class="form-group">
@@ -327,6 +343,7 @@
                 id="nextOfKinAddress"
                 [(ngModel)]="tenant.nextOfKinAddress"
                 placeholder="Enter address"
+                maxlength="255"
               />
             </div>
           </div>

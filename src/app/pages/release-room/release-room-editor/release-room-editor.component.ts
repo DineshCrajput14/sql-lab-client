@@ -209,8 +209,9 @@ export class ReleaseRoomEditorComponent implements OnInit {
 
   ngOnInit() {
     this.releaseRoomService.getReceiptModes().subscribe({
-      next: (res) => this.getReceiptModes(res),
-      error: (err) => this.errorHandlingService.errors(err),
+      next: (resultGetReceiptModes) =>
+        this.getReceiptModes(resultGetReceiptModes),
+      error: (error) => this.errorHandlingService.errors(error),
     });
 
     this.isRegNoFrozen =
@@ -405,7 +406,7 @@ export class ReleaseRoomEditorComponent implements OnInit {
               this.gridApiDetails.setRowData([]);
             }
             this.toastrMessage.showWarning(
-              "No paid fee receipts found for this tenant to refund."
+              "No paid Rent receipts found for this tenant to refund."
             );
             return;
           }
@@ -638,7 +639,7 @@ export class ReleaseRoomEditorComponent implements OnInit {
 
     if (remaining > total) {
       this.toastrMessage.showWarning(
-        "Refund amount cannot be greater than the selected fee amount."
+        "Refund amount cannot be greater than the selected Rent amount."
       );
     }
 

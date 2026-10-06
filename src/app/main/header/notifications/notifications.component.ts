@@ -12,17 +12,7 @@ export class NotificationsComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.notifications = [
-      {
-        content: "This is announcement content for a short announcement. ",
-        time: "19/05/2025 04:05 AM",
-      },
-      {
-        content:
-          "This is announcement content for a long announcement. I am writing this to check how long announcement can be and on the basis it's that we will set and height.",
-        time: "19/05/2025 04:05 AM",
-      },
-    ];
+    this.notifications = [];
     if (this.notifications.length > 3) {
       this.isExpanded = true;
     }

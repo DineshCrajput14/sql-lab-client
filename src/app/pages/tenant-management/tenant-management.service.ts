@@ -100,4 +100,11 @@ export class TenantManagementService {
       { params }
     );
   }
+
+  getTenantSecurityLedger(tenantId: number, params?: any): Observable<any> {
+    return this.http.get(
+      environment.apiBasePath + "v1/tenants/" + tenantId + "/security-ledger",
+      { params }
+    );
+  }
 }

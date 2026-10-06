@@ -103,6 +103,58 @@ const routes: Routes = [
           ),
       },
       {
+        path: "reports/:reportCode",
+        loadChildren: () =>
+          import(
+            "./pages/reports/standard-reports/standard-reports.module"
+          ).then((m) => m.StandardReportsModule),
+      },
+      {
+        path: "tenant-register",
+        redirectTo: "reports/tenant-register",
+        pathMatch: "full",
+      },
+      {
+        path: "monthly-rent-register",
+        redirectTo: "reports/monthly-rent-register",
+        pathMatch: "full",
+      },
+      {
+        path: "monthly-refund-register",
+        redirectTo: "reports/monthly-refund-register",
+        pathMatch: "full",
+      },
+      {
+        path: "outstanding",
+        redirectTo: "reports/outstanding",
+        pathMatch: "full",
+      },
+      {
+        path: "outstanding-register",
+        redirectTo: "reports/outstanding",
+        pathMatch: "full",
+      },
+      {
+        path: "occupancy-report",
+        redirectTo: "reports/occupancy-report",
+        pathMatch: "full",
+      },
+      {
+        path: "occupancy-status",
+        redirectTo: "reports/occupancy-report",
+        pathMatch: "full",
+      },
+      {
+        path: "agreement-expiry",
+        redirectTo: "reports/agreement-expiry",
+        pathMatch: "full",
+      },
+      {
+        path: "unit-agreement-status",
+        redirectTo: "reports/agreement-expiry",
+        pathMatch: "full",
+      },
+      {
         path: "profile",
         loadChildren: () =>
           import("./pages/profile/profile.module").then((m) => m.ProfileModule),

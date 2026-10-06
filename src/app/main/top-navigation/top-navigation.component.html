@@ -8,7 +8,11 @@
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
           >
-            <a class="nav-link p-0" [routerLink]="['/']">
+            <a
+              class="nav-link p-0"
+              [routerLink]="['/']"
+              (click)="hideNavDropdownMenu()"
+            >
               <span class="nav-link-icon d-md-none d-lg-inline-block">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +34,11 @@
               </span>
             </a>
           </li>
-          <li class="nav-item dropdown" [class.show]="openMenu === 'masters'">
+          <li
+            class="nav-item dropdown"
+            routerLinkActive="active"
+            [class.show]="openMenu === 'masters'"
+          >
             <a
               class="nav-link dropdown-toggle"
               role="button"
@@ -74,15 +82,39 @@
                   <span>PMS</span>
                 </a>
                 <div class="dropdown-menu" [class.show]="openSubMenu === 'pms'">
-                  <a class="dropdown-item" [routerLink]="['/properties']"
+                  <a
+                    class="dropdown-item"
+                    routerLinkActive="active"
+                    [routerLink]="['/properties']"
+                    (click)="hideNavDropdownMenu()"
                     >Property</a
                   >
-                  <a class="dropdown-item" [routerLink]="['/buildings']"
+                  <a
+                    class="dropdown-item"
+                    routerLinkActive="active"
+                    [routerLink]="['/buildings']"
+                    (click)="hideNavDropdownMenu()"
                     >Building</a
                   >
-                  <a class="dropdown-item" [routerLink]="['/floor']">Floor</a>
-                  <a class="dropdown-item" [routerLink]="['/unit']">Unit</a>
-                  <a class="dropdown-item" [routerLink]="['/amenities']"
+                  <a
+                    class="dropdown-item"
+                    routerLinkActive="active"
+                    [routerLink]="['/floor']"
+                    (click)="hideNavDropdownMenu()"
+                    >Floor</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    routerLinkActive="active"
+                    [routerLink]="['/unit']"
+                    (click)="hideNavDropdownMenu()"
+                    >Unit</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    routerLinkActive="active"
+                    [routerLink]="['/amenities']"
+                    (click)="hideNavDropdownMenu()"
                     >Amenities</a
                   >
                 </div>
@@ -102,25 +134,20 @@
                   class="dropdown-menu"
                   [class.show]="openSubMenu === 'misc'"
                 >
-                  <a class="dropdown-item" [routerLink]="['/categories']"
+                  <a
+                    class="dropdown-item"
+                    routerLinkActive="active"
+                    [routerLink]="['/categories']"
+                    (click)="hideNavDropdownMenu()"
                     >Categories</a
                   >
-                  <!-- <a
-                    class="dropdown-item"
-                    [routerLink]="['/sale-categories']"
-                    >Sale Categories</a
-                  >
                   <a
                     class="dropdown-item"
-                    [routerLink]="['/purchase-categories']"
-                    >Purchase Categories</a
+                    routerLinkActive="active"
+                    [routerLink]="['/cities']"
+                    (click)="hideNavDropdownMenu()"
+                    >Cities</a
                   >
-                  <a
-                    class="dropdown-item"
-                    [routerLink]="['/voucher-narrations']"
-                    >Voucher Narrations</a
-                  > -->
-                  <a class="dropdown-item" [routerLink]="['/cities']">Cities</a>
                 </div>
               </div>
             </div>
@@ -128,6 +155,7 @@
 
           <li
             class="nav-item dropdown"
+            routerLinkActive="active"
             [class.show]="openMenu === 'transactions'"
           >
             <a
@@ -163,19 +191,35 @@
               class="dropdown-menu"
               [class.show]="openMenu === 'transactions'"
             >
-              <a class="dropdown-item" [routerLink]="['/tenants']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/tenants']"
+                (click)="hideNavDropdownMenu()"
                 >Tenant Management</a
               >
-              <a class="dropdown-item" [routerLink]="['/fee-receipts']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/fee-receipts']"
+                (click)="hideNavDropdownMenu()"
                 >Rent Receipt</a
               >
-              <a class="dropdown-item" [routerLink]="['/release-room']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/release-room']"
+                (click)="hideNavDropdownMenu()"
                 >Release Room</a
               >
             </div>
           </li>
 
-          <li class="nav-item dropdown" [class.show]="openMenu === 'reports'">
+          <li
+            class="nav-item dropdown"
+            routerLinkActive="active"
+            [class.show]="openMenu === 'reports'"
+          >
             <a
               class="nav-link dropdown-toggle"
               role="button"
@@ -209,26 +253,46 @@
               <span class="nav-link-title">Reports</span>
             </a>
             <div class="dropdown-menu" [class.show]="openMenu === 'reports'">
-              <a class="dropdown-item" [routerLink]="['/tenant-register']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/reports/tenant-register']"
+                (click)="hideNavDropdownMenu()"
                 >Tenant Register</a
               >
               <a
                 class="dropdown-item"
+                routerLinkActive="active"
                 [routerLink]="['/reports/monthly-rent-register']"
+                (click)="hideNavDropdownMenu()"
                 >Monthly Rent Register</a
               >
               <a
                 class="dropdown-item"
-                [routerLink]="['/monthly-refund-register']"
+                routerLinkActive="active"
+                [routerLink]="['/reports/monthly-refund-register']"
+                (click)="hideNavDropdownMenu()"
                 >Monthly Refund Register</a
               >
-              <a class="dropdown-item" [routerLink]="['/reports/outstanding']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/reports/outstanding']"
+                (click)="hideNavDropdownMenu()"
                 >Outstanding</a
               >
-              <a class="dropdown-item" [routerLink]="['/occupancy-report']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/reports/occupancy-report']"
+                (click)="hideNavDropdownMenu()"
                 >Occupancy Report</a
               >
-              <a class="dropdown-item" [routerLink]="['/agreement-expiry']"
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/reports/agreement-expiry']"
+                (click)="hideNavDropdownMenu()"
                 >Agreement Expiry</a
               >
             </div>
@@ -239,7 +303,11 @@
             *ngIf="authService.authentication.userRoleCode === 'ADMIN'"
             routerLinkActive="active"
           >
-            <a class="nav-link" [routerLink]="['/users']">
+            <a
+              class="nav-link"
+              [routerLink]="['/users']"
+              (click)="hideNavDropdownMenu()"
+            >
               <span class="nav-link-icon d-md-none d-lg-inline-block">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +337,11 @@
             *ngIf="authService.authentication.userRoleCode === 'ADMIN'"
             routerLinkActive="active"
           >
-            <a class="nav-link" [routerLink]="['/settings']">
+            <a
+              class="nav-link"
+              [routerLink]="['/settings']"
+              (click)="hideNavDropdownMenu()"
+            >
               <span class="nav-link-icon d-md-none d-lg-inline-block">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

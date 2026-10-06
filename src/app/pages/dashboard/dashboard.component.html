@@ -76,15 +76,13 @@
             <line x1="7" y1="9" x2="7" y2="9.01" />
             <line x1="17" y1="15" x2="17" y2="15.01" />
           </svg>
-          <span>New Fee Receipt</span>
+          <span>New Rent Receipt</span>
         </a>
       </div>
     </div>
   </div>
 </div>
-
 <div class="row g-3 mb-3">
-  <!-- Card 1: Total Properties -->
   <div class="col-sm-6 col-xl-3">
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
@@ -140,8 +138,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Card 2: Total Units Capacity -->
   <div class="col-sm-6 col-xl-3">
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
@@ -194,8 +190,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Card 3: Occupancy Status -->
   <div class="col-sm-6 col-xl-3">
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
@@ -253,8 +247,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Card 4: Total Revenue / Rent Collection -->
   <div class="col-sm-6 col-xl-3">
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
@@ -436,7 +428,6 @@
             </div>
           </div>
         </div>
-        <!-- Portfolio Assets Snapshot -->
         <div class="p-2.5 rounded-3 bg-light border mb-3">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <span
@@ -678,8 +669,6 @@
               {{ financials.monthlyCollected | number: "1.2-2" }}
             </div>
           </div>
-
-          <!-- Today's Cashflow Pill Grid -->
           <div
             class="today-cashflow-box p-2.5 rounded-3 bg-light border mt-2.5 mb-1"
           >
@@ -803,7 +792,7 @@
           <h3 class="card-title m-0 fw-bold text-dark">
             Recent Receipts
           </h3>
-          <span class="badge bg-blue-lt ms-2 font-monospace">Latest 5</span>
+          <span class="badge bg-blue-lt ms-2">Latest 5</span>
         </div>
       </div>
       <div class="card-body p-0">
@@ -824,7 +813,7 @@
             <tbody>
               <tr *ngFor="let receipt of recentReceipts">
                 <td class="ps-3">
-                  <span class="badge bg-blue-lt fw-bold font-monospace">
+                  <span class="badge bg-blue-lt fw-bold">
                     #{{ receipt.receiptNo }}
                   </span>
                 </td>

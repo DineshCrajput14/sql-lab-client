@@ -57,6 +57,7 @@
                 class="form-control"
                 name="floorNo"
                 id="floorNo"
+                NumbersOnlyDirective
                 [ngClass]="{
                   'is-invalid':
                     floorNo.invalid && (f.submitted || floorNo.touched)
@@ -64,6 +65,7 @@
                 [(ngModel)]="floor.floorNo"
                 placeholder="Enter floor number"
                 required
+                maxlength="3"
                 #floorNo="ngModel"
               />
               <div

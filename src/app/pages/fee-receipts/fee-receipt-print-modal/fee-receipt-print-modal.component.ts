@@ -19,6 +19,13 @@ export class FeeReceiptPrintModalComponent implements OnInit {
   formattedReceiptDate: string = "";
   formattedChequeDate: string = "";
 
+  companyName: string = "PUMA GROUP OF COMPANIES LTD";
+  companySubtitle: string = "LWIPA PUMA PLAZA";
+  companyAddress: string = "NO. F701, PLOT NO. 36179/M/A";
+  companyCity: string = "NDOLA-KITWE ROAD, NDOLA";
+  companyContact: string = "Contact No : +260977872947";
+  companyEmail: string = "Email : spuma1968@yahoo.com";
+
   constructor(
     public bsModalRef: BsModalRef,
     private feeReceiptsService: FeeReceiptsService,
@@ -68,8 +75,8 @@ export class FeeReceiptPrintModalComponent implements OnInit {
     const details = receipt.details || [];
     if (details.length > 0) {
       const dates = details
-        .map((d: any) => d.dueDate)
-        .filter((d: any) => !!d)
+        .map((detailItem: any) => detailItem.dueDate)
+        .filter((dueDate: any) => !!dueDate)
         .sort();
       if (dates.length > 1) {
         const first = moment(dates[0]).format("MMM-YY");
@@ -109,7 +116,7 @@ export class FeeReceiptPrintModalComponent implements OnInit {
   }
 
   private convertToWords(num: number): string {
-    const a = [
+    const ones = [
       "",
       "One",
       "Two",
@@ -131,7 +138,7 @@ export class FeeReceiptPrintModalComponent implements OnInit {
       "Eighteen",
       "Nineteen",
     ];
-    const b = [
+    const tens = [
       "",
       "",
       "Twenty",
@@ -144,17 +151,19 @@ export class FeeReceiptPrintModalComponent implements OnInit {
       "Ninety",
     ];
 
-    const convertChunk = (n: number): string => {
+    const convertChunk = (chunkValue: number): string => {
       let str = "";
-      if (n >= 100) {
-        str += a[Math.floor(n / 100)] + " Hundred ";
-        n %= 100;
+      if (chunkValue >= 100) {
+        str += ones[Math.floor(chunkValue / 100)] + " Hundred ";
+        chunkValue %= 100;
       }
-      if (n >= 20) {
+      if (chunkValue >= 20) {
         str +=
-          b[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + a[n % 10] : "") + " ";
-      } else if (n > 0) {
-        str += a[n] + " ";
+          tens[Math.floor(chunkValue / 10)] +
+          (chunkValue % 10 !== 0 ? " " + ones[chunkValue % 10] : "") +
+          " ";
+      } else if (chunkValue > 0) {
+        str += ones[chunkValue] + " ";
       }
       return str.trim();
     };
