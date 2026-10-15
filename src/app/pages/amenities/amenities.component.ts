@@ -61,6 +61,9 @@ export class AmenitiesComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission("PMS", "Masters", "Edit") &&
+        !this.authService.findActivityPermission("PMS", "Masters", "Delete"),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editAmenityModal.bind(this),
@@ -94,6 +97,8 @@ export class AmenitiesComponent implements OnInit {
           this.gridRowDataAmenities = resultGetAmenities.amenities.map(
             (amenity) => ({
               ...amenity,
+              resource: "Masters",
+              module: "PMS",
             })
           );
           this.rowCount = this.gridRowDataAmenities.length;

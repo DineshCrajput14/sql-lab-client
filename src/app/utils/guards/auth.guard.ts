@@ -51,6 +51,10 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
+    if (this.authService.authentication.userRoleCode === "ADMIN") {
+      return true;
+    }
+
     if (route.data.activities?.length) {
       const hasPermission = route.data.activities.some((activity) =>
         this.authService.authentication.allowedAppActivities.includes(activity)

@@ -69,6 +69,9 @@ export class BuildingsComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission("PMS", "Masters", "Edit") &&
+        !this.authService.findActivityPermission("PMS", "Masters", "Delete"),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editBuildingModal.bind(this),
@@ -134,6 +137,8 @@ export class BuildingsComponent implements OnInit {
             this.gridRowDataBuildings = resultGetBuildings.buildings.map(
               (building) => ({
                 ...building,
+                resource: "Masters",
+                module: "PMS",
               })
             );
             this.rowCount = this.gridRowDataBuildings.length;

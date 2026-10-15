@@ -10,10 +10,11 @@ export class StandardReportsExcelExportService {
 
   generateExcelExportFile(
     reportCode: string,
-    reportDataRaw: any[],
+    reportDataRaw,
     fileName?: string,
-    searchObj?: any,
-    months?: any[]
+    searchObj?,
+    months?,
+    isPrint: boolean = false
   ) {
     if (reportCode === "tenant-register") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
@@ -42,7 +43,10 @@ export class StandardReportsExcelExportService {
         exportFileName,
         "Tenant Register",
         searchObj,
-        reportCode
+        reportCode,
+        reportDataRaw,
+        months,
+        isPrint
       );
     } else if (reportCode === "monthly-rent-register") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
@@ -71,7 +75,10 @@ export class StandardReportsExcelExportService {
         exportFileName,
         "Rent Register",
         searchObj,
-        reportCode
+        reportCode,
+        reportDataRaw,
+        months,
+        isPrint
       );
     } else if (reportCode === "monthly-refund-register") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
@@ -99,11 +106,14 @@ export class StandardReportsExcelExportService {
         exportFileName,
         "Refund Register",
         searchObj,
-        reportCode
+        reportCode,
+        reportDataRaw,
+        months,
+        isPrint
       );
     } else if (reportCode === "outstanding") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
-        const item: any = {
+        const item = {
           "S.No": index + 1,
           "Reg.No": row.regNo,
           "Tenant Name": row.tenantName,
@@ -117,7 +127,7 @@ export class StandardReportsExcelExportService {
         };
 
         if (searchObj?.monthwise === "Y" && months && months.length) {
-          months.forEach((monthColumn: any) => {
+          months.forEach((monthColumn) => {
             item[monthColumn.monthLabel] = row[monthColumn.monthKey]
               ? Number(row[monthColumn.monthKey]).toFixed(2)
               : "0.00";
@@ -142,11 +152,12 @@ export class StandardReportsExcelExportService {
       this.excelService.exportStyledReportExcel(
         exportRows,
         exportFileName,
-        "Outstanding Register",
+        "Outstanding",
         searchObj,
         reportCode,
         reportDataRaw,
-        months
+        months,
+        isPrint
       );
     } else if (reportCode === "occupancy-report") {
       const maxUnitColumns = Math.max(
@@ -202,6 +213,69 @@ export class StandardReportsExcelExportService {
         "Agreement Status",
         searchObj,
         reportCode
+      );
+    } else if (reportCode === "tenant-ledger") {
+      const exportRows = (reportDataRaw || []).map((row) => {
+        return {
+          Date: row.date ? moment(row.date).format("DD-MM-YYYY") : "",
+          Particulars: row.particulars || "",
+          "Rcpt No.": row.receiptNo || "",
+          "Due Amt.": row.dueAmount ? Number(row.dueAmount).toFixed(2) : "0.00",
+          "Rcpt Amt.":
+            row.receiptAmount || row.receivedAmount
+              ? Number(row.receiptAmount || row.receivedAmount).toFixed(2)
+              : "0.00",
+          Balance: row.balanceAmount
+            ? Number(row.balanceAmount).toFixed(2)
+            : "0.00",
+          Mode: row.mode || "",
+        };
+      });
+
+      const exportFileName =
+        fileName || `Tenant_Ledger_${moment().format("DD_MM_YYYY")}`;
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "TENANT LEDGER",
+        searchObj,
+        reportCode,
+        reportDataRaw,
+        undefined,
+        isPrint
+      );
+    } else if (reportCode === "tenant-security-ledger") {
+      const exportRows = (reportDataRaw || []).map((row) => {
+        return {
+          Date: row.date ? moment(row.date).format("DD-MM-YYYY") : "",
+          Particulars: row.particulars || "",
+          "Rcpt/Refund No.": row.refundNo || row.receiptNo || "",
+          "Due Amt.": row.dueAmount ? Number(row.dueAmount).toFixed(2) : "0.00",
+          "Rcpt Amt.":
+            row.receivedAmount || row.receiptAmount
+              ? Number(row.receivedAmount || row.receiptAmount).toFixed(2)
+              : "0.00",
+          "Refund Amt.": row.refundAmount
+            ? Number(row.refundAmount).toFixed(2)
+            : "0.00",
+          Balance: row.balanceAmount
+            ? Number(row.balanceAmount).toFixed(2)
+            : "0.00",
+          Mode: row.mode || "",
+        };
+      });
+
+      const exportFileName =
+        fileName || `Tenant_Security_Ledger_${moment().format("DD_MM_YYYY")}`;
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "TENANT SECURITY LEDGER",
+        searchObj,
+        reportCode,
+        reportDataRaw,
+        undefined,
+        isPrint
       );
     }
   }

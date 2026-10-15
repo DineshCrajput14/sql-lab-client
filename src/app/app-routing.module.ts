@@ -7,6 +7,7 @@ import { AuthGuard } from "./utils/guards/auth.guard";
 import { NonAuthGuard } from "./utils/guards/non-auth.guard";
 import { ForgotPasswordComponent } from "./forgot-password/forgot-password.component";
 import { ResetPasswordComponent } from "./reset-password/reset-password.component";
+import { ChangePasswordComponent } from "./pages/profile/change-password/change-password.component";
 import { PageNotFoundComponent } from "./pages/common/page-not-found/page-not-found.component";
 
 const routes: Routes = [
@@ -20,6 +21,11 @@ const routes: Routes = [
         path: "cities",
         loadChildren: () =>
           import("./pages/cities/cities.module").then((m) => m.CitiesModule),
+        data: {
+          module: ["Miscellaneous"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "properties",
@@ -27,6 +33,11 @@ const routes: Routes = [
           import("./pages/properties/properties.module").then(
             (m) => m.PropertiesModule
           ),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "buildings",
@@ -34,16 +45,31 @@ const routes: Routes = [
           import("./pages/buildings/buildings.module").then(
             (m) => m.BuildingsModule
           ),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "floor",
         loadChildren: () =>
           import("./pages/floors/floors.module").then((m) => m.FloorsModule),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "floors",
         loadChildren: () =>
           import("./pages/floors/floors.module").then((m) => m.FloorsModule),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "categories",
@@ -51,16 +77,31 @@ const routes: Routes = [
           import("./pages/categories/categories.module").then(
             (m) => m.CategoriesModule
           ),
+        data: {
+          module: ["Miscellaneous"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "unit",
         loadChildren: () =>
           import("./pages/units/units.module").then((m) => m.UnitsModule),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "units",
         loadChildren: () =>
           import("./pages/units/units.module").then((m) => m.UnitsModule),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "amenities",
@@ -68,11 +109,19 @@ const routes: Routes = [
           import("./pages/amenities/amenities.module").then(
             (m) => m.AmenitiesModule
           ),
+        data: {
+          module: ["PMS"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
       },
       {
         path: "users",
         loadChildren: () =>
           import("./pages/users/users.module").then((m) => m.UsersModule),
+        data: {
+          role: ["ADMIN"],
+        },
       },
       {
         path: "tenants",
@@ -80,6 +129,11 @@ const routes: Routes = [
           import("./pages/tenant-management/tenant-management.module").then(
             (m) => m.TenantManagementModule
           ),
+        data: {
+          module: ["TenantRegistration"],
+          resource: ["Transactions"],
+          activity: ["View"],
+        },
       },
       {
         path: "fee-receipts",
@@ -87,6 +141,11 @@ const routes: Routes = [
           import("./pages/fee-receipts/fee-receipts.module").then(
             (m) => m.FeeReceiptsModule
           ),
+        data: {
+          module: ["Receipt"],
+          resource: ["Transactions"],
+          activity: ["View"],
+        },
       },
       {
         path: "release-room",
@@ -94,6 +153,11 @@ const routes: Routes = [
           import("./pages/release-room/release-room.module").then(
             (m) => m.ReleaseRoomModule
           ),
+        data: {
+          module: ["RoomsAllotment"],
+          resource: ["Transactions"],
+          activity: ["View"],
+        },
       },
       {
         path: "settings",
@@ -101,6 +165,9 @@ const routes: Routes = [
           import("./pages/settings/settings.module").then(
             (m) => m.SettingsModule
           ),
+        data: {
+          role: ["ADMIN"],
+        },
       },
       {
         path: "reports/:reportCode",
@@ -108,6 +175,14 @@ const routes: Routes = [
           import(
             "./pages/reports/standard-reports/standard-reports.module"
           ).then((m) => m.StandardReportsModule),
+        data: {
+          activities: [
+            "RegistrationReports.Reports.View",
+            "OutstandingReports.Reports.View",
+            "OccupancyStatus.Reports.View",
+            "AgreementExpiry.Reports.View",
+          ],
+        },
       },
       {
         path: "tenant-register",
@@ -158,6 +233,10 @@ const routes: Routes = [
         path: "profile",
         loadChildren: () =>
           import("./pages/profile/profile.module").then((m) => m.ProfileModule),
+      },
+      {
+        path: "change-password",
+        component: ChangePasswordComponent,
       },
       {
         path: "",

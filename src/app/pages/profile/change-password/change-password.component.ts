@@ -2,7 +2,6 @@ import { Component, HostListener, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "src/app/utils/services/auth.service";
 import { ToastrMessage } from "src/app/utils/services/toastrmessage.service";
-import { VERSION } from "src/environments/version";
 import { ErrorHandlingService } from "src/app/utils/services/error-handling.service";
 
 @Component({
@@ -17,7 +16,6 @@ export class ChangePasswordComponent implements OnInit {
   focusOnOldPasswordField: boolean = false;
   focusOnNewPasswordField: boolean = false;
   focusOnConfirmNewPasswordField: boolean = false;
-  version = VERSION;
   change: {
     oldPassword: string;
     newPassword: string;
@@ -38,10 +36,6 @@ export class ChangePasswordComponent implements OnInit {
 
   ngOnInit() {}
 
-  executeCaptcha() {
-    this.onChangePassword();
-  }
-
   onChangePassword() {
     if (this.change.oldPassword === this.change.newPassword) {
       this.toastrMessage.showWarning(
@@ -50,6 +44,8 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
 
+    this.showPasswordIsEnabled = false;
+    this.showPassword = false;
     this.isLoading = true;
     this.authService
       .changePassword(this.change.oldPassword, this.change.newPassword)

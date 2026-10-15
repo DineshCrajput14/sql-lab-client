@@ -13,6 +13,7 @@ import { StandardReportsService } from "./standard-reports.service";
 import { StandardReportsPrepareGridColumnDefsService } from "./standard-reports-prepare-grid-columnDefs.service";
 import { StandardReportsDataService } from "./standard-reports-data.service";
 import { StandardReportsExcelExportService } from "./standard-reports-excel-export.service";
+import { AuthService } from "src/app/utils/services/auth.service";
 
 @Component({
   selector: "app-standard-reports",
@@ -86,6 +87,7 @@ export class StandardReportsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private title: Title,
+    public authService: AuthService,
     private toastrMessage: ToastrMessage,
     private errorHandlingService: ErrorHandlingService,
     private propertiesService: PropertiesService,
@@ -161,7 +163,7 @@ export class StandardReportsComponent implements OnInit {
         { id: "regNo", name: "Reg. No." },
       ];
     } else if (this.reportCode === "outstanding") {
-      this.reportTitle = "Outstanding Register";
+      this.reportTitle = "Outstanding";
       this.statusList = [
         { id: "ALL", name: "All" },
         { id: "Active", name: "Active" },
@@ -423,7 +425,8 @@ export class StandardReportsComponent implements OnInit {
       .subscribe({
         next: (resultOccupancyReport) => {
           const reportRows = resultOccupancyReport?.report || [];
-          this.occupancyRows = this.reportsDataService.prepareOccupancyRows(
+          this.occupancyRows = this.reportsDataService.prepareGridRows(
+            this.reportCode,
             this.search,
             reportRows
           );
@@ -503,6 +506,18 @@ export class StandardReportsComponent implements OnInit {
   }
 
   print() {
-    window.print();
+    if (!this.rowData || !this.rowData.length) {
+      this.toastrMessage.showWarning("No data available to print");
+      return;
+    }
+    const exportSearchInfo = this.prepareExportSearchInfo();
+    this.excelExportService.generateExcelExportFile(
+      this.reportCode,
+      this.rowData,
+      undefined,
+      exportSearchInfo,
+      this.months,
+      true
+    );
   }
 }

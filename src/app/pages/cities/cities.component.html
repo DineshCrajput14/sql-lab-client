@@ -113,7 +113,13 @@
                 [formType]="'PARENT_MASTER'"
                 [parentMasterName]="'State'"
                 [masterName]="'City'"
-                [permittedToAddNew]="true"
+                [permittedToAddNew]="
+                  authService.findActivityPermission(
+                    'Miscellaneous',
+                    'Masters',
+                    'CreateNew'
+                  )
+                "
               ></app-no-record-found-image>
             </div>
             <div
@@ -125,7 +131,13 @@
             >
               <app-no-record-found-image
                 [masterName]="'City'"
-                [permittedToAddNew]="true"
+                [permittedToAddNew]="
+                  authService.findActivityPermission(
+                    'Miscellaneous',
+                    'Masters',
+                    'CreateNew'
+                  )
+                "
               ></app-no-record-found-image>
             </div>
           </div>
@@ -154,6 +166,13 @@
           <button
             type="button"
             (click)="newCityModal()"
+            *ngIf="
+              authService.findActivityPermission(
+                'Miscellaneous',
+                'Masters',
+                'CreateNew'
+              )
+            "
             class="btn btn-primary me-2"
             [disabled]="!search.stateId"
           >

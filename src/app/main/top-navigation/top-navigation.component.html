@@ -37,6 +37,13 @@
           <li
             class="nav-item dropdown"
             routerLinkActive="active"
+            *ngIf="
+              authService.findActivityPermission(
+                ['PMS', 'Miscellaneous'],
+                'Masters',
+                'View'
+              )
+            "
             [class.show]="openMenu === 'masters'"
           >
             <a
@@ -72,6 +79,9 @@
             <div class="dropdown-menu" [class.show]="openMenu === 'masters'">
               <div
                 class="dropdown-submenu"
+                *ngIf="
+                  authService.findActivityPermission('PMS', 'Masters', 'View')
+                "
                 [class.show]="openSubMenu === 'pms'"
               >
                 <a
@@ -121,6 +131,13 @@
               </div>
               <div
                 class="dropdown-submenu"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'Miscellaneous',
+                    'Masters',
+                    'View'
+                  )
+                "
                 [class.show]="openSubMenu === 'misc'"
               >
                 <a
@@ -156,6 +173,13 @@
           <li
             class="nav-item dropdown"
             routerLinkActive="active"
+            *ngIf="
+              authService.findActivityPermission(
+                ['TenantRegistration', 'RoomsAllotment', 'Receipt'],
+                'Transactions',
+                'View'
+              )
+            "
             [class.show]="openMenu === 'transactions'"
           >
             <a
@@ -193,6 +217,13 @@
             >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'TenantRegistration',
+                    'Transactions',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/tenants']"
                 (click)="hideNavDropdownMenu()"
@@ -200,6 +231,13 @@
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'Receipt',
+                    'Transactions',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/fee-receipts']"
                 (click)="hideNavDropdownMenu()"
@@ -207,6 +245,13 @@
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RoomsAllotment',
+                    'Transactions',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/release-room']"
                 (click)="hideNavDropdownMenu()"
@@ -218,6 +263,18 @@
           <li
             class="nav-item dropdown"
             routerLinkActive="active"
+            *ngIf="
+              authService.findActivityPermission(
+                [
+                  'RegistrationReports',
+                  'OutstandingReports',
+                  'OccupancyStatus',
+                  'AgreementExpiry'
+                ],
+                'Reports',
+                'View'
+              )
+            "
             [class.show]="openMenu === 'reports'"
           >
             <a
@@ -255,6 +312,13 @@
             <div class="dropdown-menu" [class.show]="openMenu === 'reports'">
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RegistrationReports',
+                    'Reports',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/reports/tenant-register']"
                 (click)="hideNavDropdownMenu()"
@@ -262,20 +326,42 @@
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RegistrationReports',
+                    'Reports',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/reports/monthly-rent-register']"
                 (click)="hideNavDropdownMenu()"
-                >Monthly Rent Register</a
+              >
+                Rent Register</a
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RegistrationReports',
+                    'Reports',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/reports/monthly-refund-register']"
                 (click)="hideNavDropdownMenu()"
-                >Monthly Refund Register</a
+                >Refund Register</a
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'OutstandingReports',
+                    'Reports',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/reports/outstanding']"
                 (click)="hideNavDropdownMenu()"
@@ -283,13 +369,27 @@
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'OccupancyStatus',
+                    'Reports',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/reports/occupancy-report']"
                 (click)="hideNavDropdownMenu()"
-                >Occupancy Report</a
+                >Occupancy</a
               >
               <a
                 class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'AgreementExpiry',
+                    'Reports',
+                    'View'
+                  )
+                "
                 routerLinkActive="active"
                 [routerLink]="['/reports/agreement-expiry']"
                 (click)="hideNavDropdownMenu()"

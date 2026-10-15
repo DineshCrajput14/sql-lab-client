@@ -43,12 +43,9 @@ export class TenantLedgerPrintModalComponent implements OnInit {
 
   isDownloadingPdf: boolean = false;
 
-  companyName: string = "PUMA GROUP OF COMPANIES LTD";
-  companySubtitle: string = "LWIPA PUMA PLAZA";
-  companyAddress: string = "NO. F701, PLOT NO. 36179/M/A";
-  companyCity: string = "NDOLA-KITWE ROAD, NDOLA";
-  companyContact: string = "Contact No : +260977872947";
-  companyEmail: string = "Email : spuma1968@yahoo.com";
+  get organization() {
+    return this.authService?.authentication?.organization;
+  }
 
   constructor(
     public bsModalRef: BsModalRef,

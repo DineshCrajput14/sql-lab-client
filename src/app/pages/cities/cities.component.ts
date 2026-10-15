@@ -44,17 +44,17 @@ export class CitiesComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
-      // hide:
-      //   !this.authService.findActivityPermission(
-      //     "Miscellaneous",
-      //     "Masters",
-      //     "Edit"
-      //   ) &&
-      //   !this.authService.findActivityPermission(
-      //     "Miscellaneous",
-      //     "Masters",
-      //     "Delete"
-      //   ),
+      hide:
+        !this.authService.findActivityPermission(
+          "Miscellaneous",
+          "Masters",
+          "Edit"
+        ) &&
+        !this.authService.findActivityPermission(
+          "Miscellaneous",
+          "Masters",
+          "Delete"
+        ),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editCityModal.bind(this),

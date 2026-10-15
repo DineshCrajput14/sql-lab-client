@@ -37,6 +37,13 @@
         </div>
         <a
           [routerLink]="['/tenants']"
+          *ngIf="
+            authService.findActivityPermission(
+              'TenantRegistration',
+              'Transactions',
+              'View'
+            )
+          "
           class="btn btn-toolbar-item btn-allot px-3 fw-semibold"
         >
           <svg
@@ -58,6 +65,13 @@
         </a>
         <a
           [routerLink]="['/fee-receipts']"
+          *ngIf="
+            authService.findActivityPermission(
+              'Receipt',
+              'Transactions',
+              'View'
+            )
+          "
           class="btn btn-toolbar-item btn-receipt px-3 fw-bold shadow-sm"
         >
           <svg
@@ -82,8 +96,27 @@
     </div>
   </div>
 </div>
-<div class="row g-3 mb-3">
-  <div class="col-sm-6 col-xl-3">
+<div
+  class="row g-3 mb-3"
+  *ngIf="
+    authService.findActivityPermission(
+      'PortfolioSummary',
+      'Dashboard',
+      'View'
+    ) ||
+    authService.findActivityPermission('RentCollected', 'Dashboard', 'View')
+  "
+>
+  <div
+    class="col-sm-6 col-xl-3"
+    *ngIf="
+      authService.findActivityPermission(
+        'PortfolioSummary',
+        'Dashboard',
+        'View'
+      )
+    "
+  >
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
         <div class="d-flex align-items-center justify-content-between">
@@ -138,7 +171,16 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6 col-xl-3">
+  <div
+    class="col-sm-6 col-xl-3"
+    *ngIf="
+      authService.findActivityPermission(
+        'PortfolioSummary',
+        'Dashboard',
+        'View'
+      )
+    "
+  >
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
         <div class="d-flex align-items-center justify-content-between">
@@ -190,7 +232,16 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6 col-xl-3">
+  <div
+    class="col-sm-6 col-xl-3"
+    *ngIf="
+      authService.findActivityPermission(
+        'PortfolioSummary',
+        'Dashboard',
+        'View'
+      )
+    "
+  >
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
         <div class="d-flex align-items-center justify-content-between">
@@ -247,7 +298,12 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6 col-xl-3">
+  <div
+    class="col-sm-6 col-xl-3"
+    *ngIf="
+      authService.findActivityPermission('RentCollected', 'Dashboard', 'View')
+    "
+  >
     <div class="card card-kpi h-100 shadow-sm border-0">
       <div class="card-body">
         <div class="d-flex align-items-center justify-content-between">
@@ -309,8 +365,31 @@
     </div>
   </div>
 </div>
-<div class="row g-3 mb-3">
-  <div class="col-lg-6">
+<div
+  class="row g-3 mb-3"
+  *ngIf="
+    authService.findActivityPermission(
+      'OccupancyDistribution',
+      'Dashboard',
+      'View'
+    ) ||
+    authService.findActivityPermission(
+      'FinancialPerformance',
+      'Dashboard',
+      'View'
+    )
+  "
+>
+  <div
+    class="col-lg-6"
+    *ngIf="
+      authService.findActivityPermission(
+        'OccupancyDistribution',
+        'Dashboard',
+        'View'
+      )
+    "
+  >
     <div class="card shadow-sm border-0 h-100">
       <div
         class="card-header bg-transparent py-3 border-bottom d-flex align-items-center justify-content-between"
@@ -479,7 +558,16 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-6">
+  <div
+    class="col-lg-6"
+    *ngIf="
+      authService.findActivityPermission(
+        'FinancialPerformance',
+        'Dashboard',
+        'View'
+      )
+    "
+  >
     <div class="card shadow-sm border-0 h-100">
       <div
         class="card-header bg-transparent py-3 border-bottom d-flex align-items-center justify-content-between"
@@ -767,7 +855,14 @@
     </div>
   </div>
 </div>
-<div class="row g-3" *ngIf="recentReceipts && recentReceipts.length > 0">
+<div
+  class="row g-3"
+  *ngIf="
+    authService.findActivityPermission('RecentReceipts', 'Dashboard', 'View') &&
+    recentReceipts &&
+    recentReceipts.length > 0
+  "
+>
   <div class="col-12">
     <div class="card shadow-sm border-0">
       <div

@@ -108,7 +108,7 @@ export class ReleaseRoomEditorComponent implements OnInit {
       cellStyle: { fontWeight: "bold" },
     },
     {
-      headerName: "Amount",
+      headerName: "Refundable",
       field: "amount",
       flex: 1,
       minWidth: 90,

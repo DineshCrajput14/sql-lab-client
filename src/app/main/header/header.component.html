@@ -23,7 +23,7 @@
       </a>
     </h1>
     <div class="navbar-nav flex-row order-md-last">
-      <div class="nav-item dropdown">
+      <!-- <div class="nav-item dropdown">
         <a
           class="nav-link dropdown-toggle"
           data-bs-toggle="dropdown"
@@ -58,8 +58,8 @@
           <span class="nav-link-title">
             Help & Support
           </span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-arrow" #helpAndSupportMenu>
+        </a> -->
+      <!-- <div class="dropdown-menu dropdown-menu-arrow" #helpAndSupportMenu>
           <div class="dropdown-menu-columns width-max-content">
             <div class="dropdown-menu-column">
               <a
@@ -149,8 +149,8 @@
                   />
                 </svg>
                 Support Tickets
-              </a>
-              <!-- <a class="dropdown-item" (click)="openFeedbackCommentsModal()">
+              </a> -->
+      <!-- <a class="dropdown-item" (click)="openFeedbackCommentsModal()">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -173,7 +173,7 @@
                 </svg>
                 Send Feedback or Comments
               </a> -->
-              <a
+      <!-- <a
                 class="dropdown-item"
                 [routerLink]="['/']"
                 (click)="hideNavDropdownMenu()"
@@ -205,9 +205,9 @@
               </a>
             </div>
           </div>
-        </div>
-      </div>
-      <div
+        </div> -->
+      <!-- </div> -->
+      <!-- <div
         class="d-none d-md-flex"
         [ngClass]="{
           'me-3': loginEnvironment === 'qa' || loginEnvironment === 'prod'
@@ -250,7 +250,7 @@
             </ng-template>
           </p-overlayPanel>
         </div>
-      </div>
+      </div> -->
       <div class="nav-item dropdown" id="openUserMenu">
         <a
           class="nav-link d-flex lh-1 text-reset p-0"
@@ -282,13 +282,13 @@
             class="dropdown-item"
             >Profile</a
           >
-          <!-- <a
+          <a
             [routerLink]="['/change-password']"
             routerLinkActive="active"
             class="dropdown-item"
             id="changePassword"
             >Change Password</a
-          > -->
+          >
           <!-- <a
             class="dropdown-item"
             id="shareFeedback"

@@ -66,6 +66,9 @@ export class PropertiesComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission("PMS", "Masters", "Edit") &&
+        !this.authService.findActivityPermission("PMS", "Masters", "Delete"),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editPropertyModal.bind(this),
@@ -101,8 +104,10 @@ export class PropertiesComponent implements OnInit {
           (resultGetProperties.properties || []).length
         ) {
           this.gridRowDataProperties = resultGetProperties.properties.map(
-            (propertie) => ({
-              ...propertie,
+            (property) => ({
+              ...property,
+              resource: "Masters",
+              module: "PMS",
             })
           );
           this.rowCount = this.gridRowDataProperties.length;

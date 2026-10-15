@@ -20,7 +20,7 @@ export class UsersComponent implements OnInit {
   gridApi: GridApi;
   onClose = new Subject<boolean>();
   isGetUsersCallComplete: boolean;
-  gridRowDataUsers: any[] = [];
+  gridRowDataUsers = [];
   rowCount: number = 0;
   defaultColDef = { resizable: true };
 

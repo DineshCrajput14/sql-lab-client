@@ -187,6 +187,13 @@
                     <button
                       type="button"
                       class="btn btn-primary me-2"
+                      *ngIf="
+                        authService.findActivityPermission(
+                          'TenantRegistration',
+                          'Transactions',
+                          'CreateNew'
+                        )
+                      "
                       (click)="openNewTenantModal()"
                     >
                       <i class="fas fa-user-plus pe-1"></i>Add Tenant
@@ -292,9 +299,21 @@
                             }}
                           </dd>
 
-                          <dt class="col-sm-4">Mobile Number:</dt>
+                          <dt class="col-sm-4">Mobile No.:</dt>
                           <dd class="col-sm-8">
-                            {{ selectedTenant?.mobileNo }}
+                            <div class="row">
+                              <div class="col-sm-5">
+                                {{ selectedTenant?.mobileNo }}
+                              </div>
+                              <div class="col-sm-7">
+                                <span class="fw-bold pe-1"
+                                  >Alt. Mobile No.:</span
+                                >
+                                <span>{{
+                                  selectedTenant?.alternateMobileNo
+                                }}</span>
+                              </div>
+                            </div>
                           </dd>
 
                           <dt class="col-sm-4">Identity Proof:</dt>
@@ -389,23 +408,50 @@
                         {{ selectedTenant?.countryName }}
                       </dd>
                     </dl>
+                    <ng-container
+                      *ngIf="
+                        selectedTenant?.employerName ||
+                        selectedTenant?.employerContactNo ||
+                        selectedTenant?.employerAddress
+                      "
+                    >
+                      <h3 class="mb-0 text-primary fw-bold">
+                        <i class="fas fa-briefcase pe-1"></i> Employer Details
+                      </h3>
+                      <dl class="row mb-3">
+                        <dt class="col-sm-3">Employer Name:</dt>
+                        <dd class="col-sm-3">
+                          {{ selectedTenant?.employerName }}
+                        </dd>
+
+                        <dt class="col-sm-3">Address:</dt>
+                        <dd class="col-sm-3">
+                          {{ selectedTenant?.employerAddress }}
+                        </dd>
+
+                        <dt class="col-sm-3">Contact Number:</dt>
+                        <dd class="col-sm-9">
+                          {{ selectedTenant?.employerContactNo }}
+                        </dd>
+                      </dl>
+                    </ng-container>
                     <h3 class="mb-0 text-primary fw-bold">
                       <i class="fas fa-users-cog pe-1"></i> Next of Kin Details
                     </h3>
                     <dl class="row mb-0">
                       <dt class="col-sm-3">Next of Kin Name:</dt>
-                      <dd class="col-sm-9">
+                      <dd class="col-sm-3">
                         {{ selectedTenant?.nextOfKinName }}
+                      </dd>
+
+                      <dt class="col-sm-3">Address:</dt>
+                      <dd class="col-sm-3">
+                        {{ selectedTenant?.nextOfKinAddress }}
                       </dd>
 
                       <dt class="col-sm-3">Mobile Number:</dt>
                       <dd class="col-sm-9">
                         {{ selectedTenant?.nextOfKinMobileNo }}
-                      </dd>
-
-                      <dt class="col-sm-3">Address:</dt>
-                      <dd class="col-sm-9">
-                        {{ selectedTenant?.nextOfKinAddress }}
                       </dd>
                     </dl>
                   </div>
@@ -436,6 +482,13 @@
                       <button
                         type="button"
                         class="btn btn-primary"
+                        *ngIf="
+                          authService.findActivityPermission(
+                            'RoomsAllotment',
+                            'Transactions',
+                            'CreateNew'
+                          )
+                        "
                         (click)="openNewAllotmentModal()"
                         [disabled]="!selectedTenant && !tenantId"
                       >
@@ -462,6 +515,13 @@
                         <button
                           type="button"
                           class="btn btn-secondary"
+                          *ngIf="
+                            authService.findActivityPermission(
+                              'Receipt',
+                              'Transactions',
+                              'CreateNew'
+                            )
+                          "
                           (click)="onFeeReceipt()"
                           [disabled]="
                             !selectedTenant ||
@@ -476,6 +536,13 @@
                         <button
                           type="button"
                           class="btn btn-warning"
+                          *ngIf="
+                            authService.findActivityPermission(
+                              'RoomsAllotment',
+                              'Transactions',
+                              'Edit'
+                            )
+                          "
                           (click)="openTenantChargesEditorModal()"
                           [disabled]="
                             !selectedTenant ||

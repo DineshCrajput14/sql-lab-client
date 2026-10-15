@@ -18,7 +18,7 @@ export class UsersEditorComponent implements OnInit {
   formState: string;
   editUserId: number;
   onClose = new Subject<boolean>();
-  showPassword: boolean = true;
+  showPassword: boolean = false;
 
   roles: { code: string; name: string }[] = [
     { code: "ADMIN", name: "Administrator" },
@@ -45,6 +45,124 @@ export class UsersEditorComponent implements OnInit {
     status: "Active",
   };
 
+  activityKeys = [
+    { key: "createNew", name: "CreateNew", label: "New" },
+    { key: "edit", name: "Edit", label: "Edit" },
+    { key: "delete", name: "Delete", label: "Delete" },
+    { key: "view", name: "View", label: "View" },
+    { key: "print", name: "Print", label: "Print" },
+  ];
+
+  permissionSections = [
+    {
+      resource: "Dashboard",
+      items: [
+        {
+          code: "PortfolioSummary",
+          name: "Portfolio Summary",
+          view: false,
+        },
+        {
+          code: "RentCollected",
+          name: "Rent Collected",
+          view: false,
+        },
+        {
+          code: "OccupancyDistribution",
+          name: "Occupancy Distribution",
+          view: false,
+        },
+        {
+          code: "FinancialPerformance",
+          name: "Financial Performance",
+          view: false,
+        },
+        {
+          code: "RecentReceipts",
+          name: "Recent Receipts",
+          view: false,
+        },
+      ],
+    },
+    {
+      resource: "Masters",
+      items: [
+        {
+          code: "PMS",
+          name: "PMS",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+        },
+        {
+          code: "Miscellaneous",
+          name: "Miscellaneous",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+        },
+      ],
+    },
+    {
+      resource: "Transactions",
+      items: [
+        {
+          code: "TenantRegistration",
+          name: "Tenant Registration",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+        },
+        {
+          code: "RoomsAllotment",
+          name: "Rooms Allotment",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+        },
+        {
+          code: "Receipt",
+          name: "Receipt",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+          print: false,
+        },
+      ],
+    },
+    {
+      resource: "Reports",
+      items: [
+        {
+          code: "RegistrationReports",
+          name: "Registration Reports",
+          view: false,
+          print: false,
+        },
+        {
+          code: "OutstandingReports",
+          name: "Outstanding Reports",
+          view: false,
+        },
+        {
+          code: "OccupancyStatus",
+          name: "Occupancy Status",
+          view: false,
+        },
+        {
+          code: "AgreementExpiry",
+          name: "Agreement Expiry",
+          view: false,
+        },
+      ],
+    },
+  ];
+
   constructor(
     public bsModalRef: BsModalRef,
     private usersService: UsersService,
@@ -59,10 +177,103 @@ export class UsersEditorComponent implements OnInit {
     }
   }
 
-  onRoleChange() {
+  onChangeRole() {
     if (this.user.userRoleCode === "ADMIN") {
       this.user.status = "Active";
     }
+  }
+
+  onClickShowPassword() {
+    this.showPassword = !this.showPassword;
+  }
+
+  checkAllPermissionsSelected() {
+    return this.activityKeys.every((activity) =>
+      this.checkColumnSelected(activity.key)
+    );
+  }
+
+  onSelectAllPermissions(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.form?.form?.markAsDirty();
+    this.permissionSections.forEach((section) => {
+      section.items.forEach((item) => {
+        this.activityKeys.forEach((activity) => {
+          if (item[activity.key] !== undefined) {
+            item[activity.key] = isChecked;
+          }
+        });
+      });
+    });
+  }
+
+  checkColumnSelected(field) {
+    return this.permissionSections.every((section) =>
+      section.items.every(
+        (item) => item[field] === undefined || item[field] === true
+      )
+    );
+  }
+
+  onChangeColumnPermission(field: string, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.form?.form?.markAsDirty();
+    this.permissionSections.forEach((section) => {
+      section.items.forEach((item) => {
+        if (item[field] !== undefined) {
+          item[field] = isChecked;
+          this.onChangePermission(item, field);
+        }
+      });
+    });
+  }
+
+  onChangePermission(item, field: string) {
+    if (field !== "view" && item[field]) {
+      item.view = true;
+    } else if (field === "view" && !item.view) {
+      this.activityKeys.forEach((activity) => {
+        if (item[activity.key] !== undefined) {
+          item[activity.key] = false;
+        }
+      });
+    }
+  }
+
+  getSelectedPermissions() {
+    const allowedAppModules = [];
+    const allowedAppActivities = [];
+
+    this.permissionSections.forEach((section) => {
+      section.items.forEach((item) => {
+        this.activityKeys.forEach((activity) => {
+          if (item[activity.key]) {
+            if (!allowedAppModules.includes(item.code)) {
+              allowedAppModules.push(item.code);
+            }
+            allowedAppActivities.push(
+              `${item.code}.${section.resource}.${activity.name}`
+            );
+          }
+        });
+      });
+    });
+
+    return { allowedAppModules, allowedAppActivities };
+  }
+
+  handlePermissionSelection(allowedAppActivities = []) {
+    this.permissionSections.forEach((section) => {
+      section.items.forEach((item) => {
+        this.activityKeys.forEach((activity) => {
+          if (item[activity.key] !== undefined) {
+            item[activity.key] = allowedAppActivities.includes(
+              `${item.code}.${section.resource}.${activity.name}`
+            );
+          }
+        });
+      });
+    });
   }
 
   save() {
@@ -82,17 +293,21 @@ export class UsersEditorComponent implements OnInit {
       this.user.status = "Active";
     }
 
-    const params: any = {
+    const {
+      allowedAppModules,
+      allowedAppActivities,
+    } = this.getSelectedPermissions();
+
+    const params = {
       name: this.user.name,
       email: this.user.email,
       phone: this.user.phone,
       userRoleCode: this.user.userRoleCode,
       status: this.user.status,
+      password: this.user.password ? this.user.password.trim() : "",
+      allowedAppModules,
+      allowedAppActivities,
     };
-
-    if (this.user.password && this.user.password.trim()) {
-      params.password = this.user.password.trim();
-    }
 
     if (this.formState === "EDIT") {
       observable = this.usersService.update(this.editUserId, params);
@@ -116,6 +331,7 @@ export class UsersEditorComponent implements OnInit {
             userRoleCode: "STAFF",
             status: "Active",
           });
+          this.handlePermissionSelection([]);
           this.toastrMessage.showSuccessMessage("User Added Successfully");
           this.isLoading = false;
         }
@@ -142,6 +358,7 @@ export class UsersEditorComponent implements OnInit {
           this.user.userRoleCode = user.userRoleCode || "STAFF";
           this.user.status = user.status || "Active";
           this.user.password = user.password || "";
+          this.handlePermissionSelection(user.allowedAppActivities || []);
         }
         this.isLoading = false;
       },
@@ -163,7 +380,7 @@ export class UsersEditorComponent implements OnInit {
     if (this.isLoading) {
       return;
     }
-    if (!this.form.dirty || this.dataChanged) {
+    if (!this.form.dirty) {
       this.onClose.next(this.dataChanged);
       this.bsModalRef.hide();
       return;

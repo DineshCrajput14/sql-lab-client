@@ -80,6 +80,9 @@ export class UnitsComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission("PMS", "Masters", "Edit") &&
+        !this.authService.findActivityPermission("PMS", "Masters", "Delete"),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editUnitModal.bind(this),
@@ -176,6 +179,8 @@ export class UnitsComponent implements OnInit {
           if (resultGetUnits && (resultGetUnits.units || []).length) {
             this.gridRowDataUnits = resultGetUnits.units.map((unit) => ({
               ...unit,
+              resource: "Masters",
+              module: "PMS",
             }));
             this.rowCount = this.gridRowDataUnits.length;
           }

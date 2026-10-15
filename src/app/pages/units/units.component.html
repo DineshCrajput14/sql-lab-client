@@ -90,6 +90,13 @@
           <div class="d-flex justify-content-center align-items-center">
             <app-no-record-found-image
               [masterName]="'Unit'"
+              [permittedToAddNew]="
+                authService.findActivityPermission(
+                  'PMS',
+                  'Masters',
+                  'CreateNew'
+                )
+              "
             ></app-no-record-found-image>
           </div>
         </div>
@@ -117,6 +124,9 @@
           <button
             type="button"
             (click)="newUnitModal()"
+            *ngIf="
+              authService.findActivityPermission('PMS', 'Masters', 'CreateNew')
+            "
             class="btn btn-primary me-2"
             [disabled]="!search.buildingId"
           >

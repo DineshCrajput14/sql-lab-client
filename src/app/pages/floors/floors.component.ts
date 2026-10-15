@@ -45,6 +45,9 @@ export class FloorsComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission("PMS", "Masters", "Edit") &&
+        !this.authService.findActivityPermission("PMS", "Masters", "Delete"),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editFloorModal.bind(this),
@@ -77,6 +80,8 @@ export class FloorsComponent implements OnInit {
         if (resultGetFloors && (resultGetFloors.floors || []).length) {
           this.gridRowDataFloors = resultGetFloors.floors.map((floor) => ({
             ...floor,
+            resource: "Masters",
+            module: "PMS",
           }));
           this.rowCount = this.gridRowDataFloors.length;
         }

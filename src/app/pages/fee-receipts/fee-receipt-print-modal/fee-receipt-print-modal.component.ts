@@ -3,6 +3,7 @@ import { BsModalRef } from "ngx-bootstrap/modal";
 import moment from "moment";
 import { FeeReceiptsService } from "../fee-receipts.service";
 import { ToastrMessage } from "src/app/utils/services/toastrmessage.service";
+import { AuthService } from "src/app/utils/services/auth.service";
 
 @Component({
   selector: "app-fee-receipt-print-modal",
@@ -19,17 +20,15 @@ export class FeeReceiptPrintModalComponent implements OnInit {
   formattedReceiptDate: string = "";
   formattedChequeDate: string = "";
 
-  companyName: string = "PUMA GROUP OF COMPANIES LTD";
-  companySubtitle: string = "LWIPA PUMA PLAZA";
-  companyAddress: string = "NO. F701, PLOT NO. 36179/M/A";
-  companyCity: string = "NDOLA-KITWE ROAD, NDOLA";
-  companyContact: string = "Contact No : +260977872947";
-  companyEmail: string = "Email : spuma1968@yahoo.com";
+  get organization() {
+    return this.authService?.authentication?.organization;
+  }
 
   constructor(
     public bsModalRef: BsModalRef,
     private feeReceiptsService: FeeReceiptsService,
-    private toastrMessage: ToastrMessage
+    private toastrMessage: ToastrMessage,
+    public authService: AuthService
   ) {}
 
   ngOnInit() {

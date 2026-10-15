@@ -77,7 +77,7 @@ export class FeeReceiptsComponent implements OnInit {
       width: 120,
       sortable: true,
       filter: true,
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         return params.value ? moment(params.value).format("DD-MM-YYYY") : "";
       },
     },
@@ -117,7 +117,7 @@ export class FeeReceiptsComponent implements OnInit {
       type: "rightAligned",
       sortable: true,
       filter: true,
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         const sym = this.currencySymbol || "";
         const val = Number(params.value) || 0;
         return (
@@ -136,7 +136,7 @@ export class FeeReceiptsComponent implements OnInit {
       type: "rightAligned",
       sortable: true,
       filter: true,
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         const sym = this.currencySymbol || "";
         const val = Number(params.value) || 0;
         return (
@@ -155,7 +155,7 @@ export class FeeReceiptsComponent implements OnInit {
       type: "rightAligned",
       sortable: true,
       filter: true,
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         const sym = this.currencySymbol || "";
         const val = Number(params.value) || 0;
         if (val < 0) {
@@ -189,6 +189,22 @@ export class FeeReceiptsComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 220,
+      hide:
+        !this.authService.findActivityPermission(
+          "Receipt",
+          "Transactions",
+          "Print"
+        ) &&
+        !this.authService.findActivityPermission(
+          "Receipt",
+          "Transactions",
+          "Edit"
+        ) &&
+        !this.authService.findActivityPermission(
+          "Receipt",
+          "Transactions",
+          "Delete"
+        ),
       cellRendererFramework: PrintEditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editFeeReceipt.bind(this),
@@ -248,7 +264,7 @@ export class FeeReceiptsComponent implements OnInit {
       field: "receivedAmount",
       width: 110,
       type: "rightAligned",
-      cellRenderer: (params: any) => {
+      cellRenderer: (params) => {
         const sym = this.currencySymbol || "";
         const val = Number(params.value) || 0;
         return (
@@ -376,9 +392,15 @@ export class FeeReceiptsComponent implements OnInit {
     }
 
     this.feeReceiptsService.getFeeReceipts(params).subscribe({
-      next: (response: any) => {
+      next: (resultGetFeeReceipts) => {
         this.isLoading = false;
-        this.gridRowDataReceipts = response?.rentReceipts || [];
+        this.gridRowDataReceipts = (
+          resultGetFeeReceipts?.rentReceipts || []
+        ).map((receipt) => ({
+          ...receipt,
+          resource: "Transactions",
+          module: "Receipt",
+        }));
         if (!this.gridRowDataReceipts.length) {
           this.receiptGridApi?.showNoRowsOverlay();
           this.gridRowDataDetails = [];
@@ -397,7 +419,7 @@ export class FeeReceiptsComponent implements OnInit {
               let targetIndex = 0;
               if (selectReceiptId) {
                 const foundIdx = this.gridRowDataReceipts.findIndex(
-                  (feeReceipt: any) => feeReceipt.id === selectReceiptId
+                  (feeReceipt) => feeReceipt.id === selectReceiptId
                 );
                 if (foundIdx !== -1) {
                   targetIndex = foundIdx;
@@ -485,12 +507,11 @@ export class FeeReceiptsComponent implements OnInit {
         this.gridRowDataDetails = details;
         if (details.length) {
           const totalDue = details.reduce(
-            (sum: number, detail: any) => sum + (Number(detail.dueAmount) || 0),
+            (sum, detail) => sum + (Number(detail.dueAmount) || 0),
             0
           );
           const totalReceived = details.reduce(
-            (sum: number, detail: any) =>
-              sum + (Number(detail.receivedAmount) || 0),
+            (sum, detail) => sum + (Number(detail.receivedAmount) || 0),
             0
           );
           this.pinnedBottomRowDataDetails = [
@@ -550,7 +571,7 @@ export class FeeReceiptsComponent implements OnInit {
     );
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           const targetReceiptId = result?.receiptId;
           this.getFeeReceipts(targetReceiptId);
@@ -624,7 +645,7 @@ export class FeeReceiptsComponent implements OnInit {
     );
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           const targetReceiptId = result?.receiptId || receipt.id;
           this.getFeeReceipts(targetReceiptId);
@@ -648,7 +669,7 @@ export class FeeReceiptsComponent implements OnInit {
     });
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (response: any) => {
+      next: (response) => {
         if (response) {
           this.isLoading = true;
           this.selectedReceipt = null;
@@ -674,13 +695,5 @@ export class FeeReceiptsComponent implements OnInit {
         subscription.unsubscribe();
       },
     });
-  }
-
-  exportToCsv() {
-    if (this.receiptGridApi) {
-      this.receiptGridApi.exportDataAsCsv({
-        fileName: `fee_receipts_${moment().format("YYYYMMDD_HHmmss")}.csv`,
-      });
-    }
   }
 }

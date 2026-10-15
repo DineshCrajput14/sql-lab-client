@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { ICellRendererAngularComp } from "ag-grid-angular";
+import { AuthService } from "src/app/utils/services/auth.service";
 
 @Component({
   template: `
@@ -8,6 +9,13 @@ import { ICellRendererAngularComp } from "ag-grid-angular";
         type="button"
         class="btn btn-link edit-delete-button-renderer px-1"
         style="font-size: 12px; text-decoration: underline; padding-left: 5px; padding-top: 5px;"
+        [hidden]="
+          !authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Print'
+          )
+        "
         (click)="onPrint($event)"
       >
         <span>
@@ -27,11 +35,37 @@ import { ICellRendererAngularComp } from "ag-grid-angular";
         </span>
         Print
       </button>
-      <span>|</span>
+      <span
+        [hidden]="
+          !authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Print'
+          ) ||
+          (!authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Edit'
+          ) &&
+            !authService.findActivityPermission(
+              params?.data?.module,
+              params?.data?.resource,
+              'Delete'
+            ))
+        "
+        >|</span
+      >
       <button
         type="button"
         class="btn btn-link edit-delete-button-renderer px-1"
         style="font-size: 12px; text-decoration: underline; padding-left: 5px; padding-top: 5px;"
+        [hidden]="
+          !authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Edit'
+          )
+        "
         (click)="onEdit($event)"
       >
         <span>
@@ -55,11 +89,32 @@ import { ICellRendererAngularComp } from "ag-grid-angular";
         </span>
         Edit
       </button>
-      <span>|</span>
+      <span
+        [hidden]="
+          !authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Edit'
+          ) ||
+          !authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Delete'
+          )
+        "
+        >|</span
+      >
       <button
         type="button"
         class="btn btn-link edit-delete-button-renderer text-danger px-1"
         style="font-size: 12px; text-decoration: underline; padding-left: 5px; padding-top: 5px;"
+        [hidden]="
+          !authService.findActivityPermission(
+            params?.data?.module,
+            params?.data?.resource,
+            'Delete'
+          )
+        "
         (click)="onDelete($event)"
       >
         <svg
@@ -89,6 +144,8 @@ import { ICellRendererAngularComp } from "ag-grid-angular";
 export class PrintEditDeleteRendererComponent
   implements ICellRendererAngularComp {
   params: any;
+
+  constructor(public authService: AuthService) {}
 
   agInit(params: any) {
     this.params = params;

@@ -110,6 +110,9 @@ export class AuthService {
               imageUrl: user.imageUrl,
             };
             this.authentication.organization = authData.organization;
+            this.authentication.allowedAppActivities =
+              authData.allowedAppActivities;
+            this.authentication.allowedAppModules = authData.allowedAppModules;
             localStorage.setItem(
               "erpLoginData",
               JSON.stringify({
@@ -157,7 +160,7 @@ export class AuthService {
   }
 
   changePassword(oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(environment.apiBasePath + "auth/change-password", {
+    return this.http.put(environment.apiBasePath + "v1/auth/change-password", {
       oldPassword,
       newPassword,
     });

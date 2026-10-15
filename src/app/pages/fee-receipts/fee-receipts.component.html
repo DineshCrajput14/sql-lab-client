@@ -235,20 +235,27 @@
               <button
                 type="button"
                 class="btn btn-primary me-2"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'Receipt',
+                    'Transactions',
+                    'CreateNew'
+                  )
+                "
                 (click)="newFeeReceipt()"
                 [disabled]="isLoading"
               >
                 <i class="fas fa-money-check-alt pe-1"></i>
                 New Rent Receipt
               </button>
-              <button
+              <!-- <button
                 type="button"
                 (click)="exportToCsv()"
                 class="btn btn-secondary me-2"
                 [disabled]="!gridRowDataReceipts || !gridRowDataReceipts.length"
               >
                 <i class="fas fa-file-export pe-1"></i> Export
-              </button>
+              </button> -->
             </div>
           </div>
         </div>

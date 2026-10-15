@@ -18,7 +18,7 @@ import { TenantAllotmentEditorComponent } from "./tenant-allotment-editor/tenant
 import { RentReceiptEditorComponent } from "./rent-receipt-editor/rent-receipt-editor.component";
 import { TenantLedgerPrintModalComponent } from "./tenant-ledger-print-modal/tenant-ledger-print-modal.component";
 import { TenantChargesEditorComponent } from "./tenant-charges-editor/tenant-charges-editor.component";
-import { ExcelService } from "../common/export-file.service";
+import { StandardReportsExcelExportService } from "../reports/standard-reports/standard-reports-excel-export.service";
 import moment from "moment";
 
 @Component({
@@ -103,6 +103,17 @@ export class TenantManagementComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission(
+          "TenantRegistration",
+          "Transactions",
+          "Edit"
+        ) &&
+        !this.authService.findActivityPermission(
+          "TenantRegistration",
+          "Transactions",
+          "Delete"
+        ),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.onEditTenantModal.bind(this),
@@ -175,6 +186,17 @@ export class TenantManagementComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 160,
+      hide:
+        !this.authService.findActivityPermission(
+          "RoomsAllotment",
+          "Transactions",
+          "Edit"
+        ) &&
+        !this.authService.findActivityPermission(
+          "RoomsAllotment",
+          "Transactions",
+          "Delete"
+        ),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.openEditAllotmentModal.bind(this),
@@ -630,7 +652,7 @@ export class TenantManagementComponent implements OnInit {
     private propertiesService: PropertiesService,
     private buildingsService: BuildingsService,
     private unitsService: UnitsService,
-    private excelService: ExcelService
+    private excelExportService: StandardReportsExcelExportService
   ) {}
 
   ngOnInit() {
@@ -768,7 +790,11 @@ export class TenantManagementComponent implements OnInit {
       next: (resultGetTenants) => {
         this.gridApi?.hideOverlay();
         if (resultGetTenants && (resultGetTenants.tenants || []).length) {
-          this.gridRowDataTenants = resultGetTenants.tenants;
+          this.gridRowDataTenants = resultGetTenants.tenants.map((tenant) => ({
+            ...tenant,
+            resource: "Transactions",
+            module: "TenantRegistration",
+          }));
           this.rowCount = this.gridRowDataTenants.length;
           const targetTenantId =
             selectedTenantId ||
@@ -1214,7 +1240,13 @@ export class TenantManagementComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response && (response.allotments || []).length) {
-            this.gridRowDataTenantAllotment = response.allotments;
+            this.gridRowDataTenantAllotment = response.allotments.map(
+              (allotment) => ({
+                ...allotment,
+                resource: "Transactions",
+                module: "RoomsAllotment",
+              })
+            );
             this.selectTargetAllotment(targetId);
           } else {
             this.gridRowDataTenantAllotment = [];
@@ -1269,7 +1301,7 @@ export class TenantManagementComponent implements OnInit {
     );
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           const newId =
             typeof result === "object" && result.allotment?.id
@@ -1316,7 +1348,7 @@ export class TenantManagementComponent implements OnInit {
     );
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           const updatedId =
             typeof result === "object" && result.allotment?.id
@@ -1400,7 +1432,7 @@ export class TenantManagementComponent implements OnInit {
     );
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           if (this.selectedTenant) {
             this.getTenantAllotments(this.selectedTenant.id);
@@ -1485,7 +1517,7 @@ export class TenantManagementComponent implements OnInit {
       },
     });
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           const tenantId =
             typeof result === "object" ? result.tenantId : data.id;
@@ -1700,49 +1732,46 @@ export class TenantManagementComponent implements OnInit {
   }
 
   exportTenantLedger() {
-    let excelFeeArr = [];
-    (this.gridPinnedTopRowDataLedger || []).forEach((data) => {
-      excelFeeArr.push(data);
+    if (!this.selectedTenant) {
+      this.toastrMessage.showWarning("Please select a tenant first");
+      return;
+    }
+    if (!this.gridRowDataLedger || this.gridRowDataLedger.length === 0) {
+      this.toastrMessage.showWarning("No ledger data available to export");
+      return;
+    }
+
+    const rows: any[] = [];
+    (this.gridPinnedTopRowDataLedger || []).forEach((openingRow) => {
+      rows.push(openingRow);
     });
     if (this.ledgerGridApi) {
-      this.ledgerGridApi.forEachNodeAfterFilterAndSort((node) => {
-        excelFeeArr.push(node.data);
+      this.ledgerGridApi.forEachNodeAfterFilterAndSort((gridNode) => {
+        rows.push(gridNode.data);
       });
     } else {
-      (this.gridRowDataLedger || []).forEach((row) => {
-        excelFeeArr.push(row);
+      (this.gridRowDataLedger || []).forEach((ledgerRow) => {
+        rows.push(ledgerRow);
       });
     }
-    (this.gridPinnedBottomRowDataLedger || []).forEach((data) => {
-      excelFeeArr.push(data);
-    });
-
-    let excelFileRecord = [];
-    const dateFormat = "DD-MM-YYYY";
-
-    excelFeeArr.forEach((feeData, index) => {
-      excelFileRecord.push({
-        "Sr No.":
-          feeData.particulars === "Total" || feeData.particulars === "Opening"
-            ? ""
-            : index,
-        Date: feeData.date ? moment(feeData.date).format(dateFormat) : "",
-        Particulars: feeData.particulars || "",
-        "Rcpt No.": feeData.receiptNo || "",
-        "Due Amount": feeData.dueAmount ? Number(feeData.dueAmount) : 0,
-        "Receipt Amount": feeData.receiptAmount
-          ? Number(feeData.receiptAmount)
-          : 0,
-        Balance: feeData.balanceAmount ? Number(feeData.balanceAmount) : 0,
-        Mode: feeData.mode || "",
-      });
+    (this.gridPinnedBottomRowDataLedger || []).forEach((totalRow) => {
+      rows.push(totalRow);
     });
 
     const safeName = (this.selectedTenant?.name || "Tenant").replace(
       /[^a-zA-Z0-9]/g,
       "_"
     );
-    this.excelService.exportAsExcelFile(excelFileRecord, `${safeName}_ledger`);
+    this.excelExportService.generateExcelExportFile(
+      "tenant-ledger",
+      rows,
+      `Tenant_Ledger_${safeName}_${moment().format("DD_MM_YYYY")}`,
+      {
+        fromDate: this.fromDateForLedgerTab,
+        toDate: this.toDateForLedgerTab,
+        tenantName: this.selectedTenant?.name,
+      }
+    );
   }
 
   printTenantLedger() {
@@ -1761,7 +1790,11 @@ export class TenantManagementComponent implements OnInit {
     } else {
       this.tenantService.getAllotments(activeTenantId).subscribe({
         next: (response) => {
-          const allotments = response?.allotments || [];
+          const allotments = (response?.allotments || []).map((allotment) => ({
+            ...allotment,
+            resource: "Transactions",
+            module: "RoomsAllotment",
+          }));
           this.gridRowDataTenantAllotment = allotments;
           this.openTenantLedgerPrintModal(allotments[0] || null);
         },
@@ -1967,54 +2000,48 @@ export class TenantManagementComponent implements OnInit {
   }
 
   exportTenantSecurityLedger() {
-    let excelFeeArr = [];
-    (this.gridPinnedTopRowDataSecurityLedger || []).forEach((data) => {
-      excelFeeArr.push(data);
+    if (!this.selectedTenant) {
+      this.toastrMessage.showWarning("Please select a tenant first");
+      return;
+    }
+    if (
+      !this.gridRowDataSecurityLedger ||
+      this.gridRowDataSecurityLedger.length === 0
+    ) {
+      this.toastrMessage.showWarning("No ledger data available to export");
+      return;
+    }
+
+    const rows: any[] = [];
+    (this.gridPinnedTopRowDataSecurityLedger || []).forEach((openingRow) => {
+      rows.push(openingRow);
     });
     if (this.securityLedgerGridApi) {
-      this.securityLedgerGridApi.forEachNodeAfterFilterAndSort((node) => {
-        excelFeeArr.push(node.data);
+      this.securityLedgerGridApi.forEachNodeAfterFilterAndSort((gridNode) => {
+        rows.push(gridNode.data);
       });
     } else {
-      (this.gridRowDataSecurityLedger || []).forEach((row) => {
-        excelFeeArr.push(row);
+      (this.gridRowDataSecurityLedger || []).forEach((securityLedgerRow) => {
+        rows.push(securityLedgerRow);
       });
     }
-    (this.gridPinnedBottomRowDataSecurityLedger || []).forEach((data) => {
-      excelFeeArr.push(data);
-    });
-
-    let excelFileRecord = [];
-    const dateFormat = "DD-MM-YYYY";
-
-    excelFeeArr.forEach((feeData, index) => {
-      excelFileRecord.push({
-        "Sr No.":
-          feeData.particulars === "Total" || feeData.particulars === "Opening"
-            ? ""
-            : index,
-        Date: feeData.date ? moment(feeData.date).format(dateFormat) : "",
-        Particulars: feeData.particulars || "",
-        "Rcpt / Refund No.": feeData.refundNo || "",
-        "Due Amount": feeData.dueAmount ? Number(feeData.dueAmount) : 0,
-        "Rcpt Amount": feeData.receivedAmount
-          ? Number(feeData.receivedAmount)
-          : 0,
-        "Refund Amount": feeData.refundAmount
-          ? Number(feeData.refundAmount)
-          : 0,
-        Balance: feeData.balanceAmount ? Number(feeData.balanceAmount) : 0,
-        Mode: feeData.mode || "",
-      });
+    (this.gridPinnedBottomRowDataSecurityLedger || []).forEach((totalRow) => {
+      rows.push(totalRow);
     });
 
     const safeName = (this.selectedTenant?.name || "Tenant").replace(
       /[^a-zA-Z0-9]/g,
       "_"
     );
-    this.excelService.exportAsExcelFile(
-      excelFileRecord,
-      `${safeName}_security_ledger`
+    this.excelExportService.generateExcelExportFile(
+      "tenant-security-ledger",
+      rows,
+      `Tenant_Security_Ledger_${safeName}_${moment().format("DD_MM_YYYY")}`,
+      {
+        fromDate: this.fromDateForSecurityLedgerTab,
+        toDate: this.toDateForSecurityLedgerTab,
+        tenantName: this.selectedTenant?.name,
+      }
     );
   }
 
@@ -2034,7 +2061,11 @@ export class TenantManagementComponent implements OnInit {
     } else {
       this.tenantService.getAllotments(activeTenantId).subscribe({
         next: (response) => {
-          const allotments = response?.allotments || [];
+          const allotments = (response?.allotments || []).map((allotment) => ({
+            ...allotment,
+            resource: "Transactions",
+            module: "RoomsAllotment",
+          }));
           this.gridRowDataTenantAllotment = allotments;
           this.openTenantSecurityLedgerPrintModal(allotments[0] || null);
         },

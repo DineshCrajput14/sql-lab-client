@@ -137,7 +137,7 @@ export class ReleaseRoomComponent implements OnInit {
       filter: true,
     },
     {
-      headerName: "Total Amount",
+      headerName: "Refundable",
       field: "totalAmount",
       width: 165,
       type: "rightAligned",
@@ -159,6 +159,17 @@ export class ReleaseRoomComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 170,
+      hide:
+        !this.authService.findActivityPermission(
+          "RoomsAllotment",
+          "Transactions",
+          "Edit"
+        ) &&
+        !this.authService.findActivityPermission(
+          "RoomsAllotment",
+          "Transactions",
+          "Delete"
+        ),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editReleaseRoom.bind(this),
@@ -182,7 +193,7 @@ export class ReleaseRoomComponent implements OnInit {
       },
     },
     {
-      headerName: "Amount",
+      headerName: "Refund",
       field: "refundAmount",
       flex: 1,
       minWidth: 100,
@@ -293,10 +304,15 @@ export class ReleaseRoomComponent implements OnInit {
     }
 
     this.releaseRoomService.getReleaseRooms(params).subscribe({
-      next: (resultGetReleaseRooms: any) => {
+      next: (resultGetReleaseRooms) => {
         this.isLoading = false;
-        this.gridRowDataReleaseRooms =
-          resultGetReleaseRooms?.releaseRooms || [];
+        this.gridRowDataReleaseRooms = (
+          resultGetReleaseRooms?.releaseRooms || []
+        ).map((releaseRoom) => ({
+          ...releaseRoom,
+          resource: "Transactions",
+          module: "RoomsAllotment",
+        }));
 
         if (!this.gridRowDataReleaseRooms.length) {
           this.masterGridApi?.showNoRowsOverlay();
@@ -443,7 +459,7 @@ export class ReleaseRoomComponent implements OnInit {
     );
 
     const subscription = bsModalRef.content.onClose.subscribe({
-      next: (result: any) => {
+      next: (result) => {
         if (result) {
           this.getReleaseRooms(record.id);
         }
@@ -457,7 +473,6 @@ export class ReleaseRoomComponent implements OnInit {
       return;
     }
 
-    const receiptNo = record.receiptNo;
     const bsModalRef = this.modalService.show(DeleteModalComponent, {
       animated: true,
       backdrop: "static",
@@ -484,13 +499,5 @@ export class ReleaseRoomComponent implements OnInit {
         subscription.unsubscribe();
       },
     });
-  }
-
-  exportToCsv() {
-    if (this.masterGridApi) {
-      this.masterGridApi.exportDataAsCsv({
-        fileName: `release_room_${moment().format("DDMMYYYY_HHmmss")}.csv`,
-      });
-    }
   }
 }

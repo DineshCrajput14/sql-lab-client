@@ -54,13 +54,33 @@
     id="printableReceiptSheet"
   >
     <div class="receipt-card">
-      <div class="receipt-header-box text-center">
-        <div class="company-name">{{ companyName }}</div>
-        <div class="company-subtitle">{{ companySubtitle }}</div>
-        <div class="company-address">{{ companyAddress }}</div>
-        <div class="company-city">{{ companyCity }}</div>
-        <div class="company-contact">{{ companyContact }}</div>
-        <div class="company-email">{{ companyEmail }}</div>
+      <div class="receipt-header-box text-center" *ngIf="organization">
+        <div class="company-name" *ngIf="organization.name">
+          {{ organization.name }}
+        </div>
+        <div class="company-subtitle" *ngIf="organization.addressLine1">
+          {{ organization.addressLine1 }}
+        </div>
+        <div class="company-address" *ngIf="organization.addressLine2">
+          {{ organization.addressLine2 }}
+        </div>
+        <div class="company-city" *ngIf="organization.city">
+          {{ organization.city
+          }}<ng-container *ngIf="organization.state?.name"
+            >, {{ organization.state.name }}</ng-container
+          ><ng-container *ngIf="organization.postalCode">
+            - {{ organization.postalCode }}</ng-container
+          >
+        </div>
+        <div
+          class="company-contact"
+          *ngIf="organization.phoneNo || organization.mobileNo"
+        >
+          Contact No : {{ organization.phoneNo || organization.mobileNo }}
+        </div>
+        <div class="company-email" *ngIf="organization.email">
+          Email : {{ organization.email }}
+        </div>
       </div>
 
       <div class="receipt-title-box">
@@ -204,13 +224,33 @@
       >
     </div>
     <div class="receipt-card">
-      <div class="receipt-header-box text-center">
-        <div class="company-name">{{ companyName }}</div>
-        <div class="company-subtitle">{{ companySubtitle }}</div>
-        <div class="company-address">{{ companyAddress }}</div>
-        <div class="company-city">{{ companyCity }}</div>
-        <div class="company-contact">{{ companyContact }}</div>
-        <div class="company-email">{{ companyEmail }}</div>
+      <div class="receipt-header-box text-center" *ngIf="organization">
+        <div class="company-name" *ngIf="organization.name">
+          {{ organization.name }}
+        </div>
+        <div class="company-subtitle" *ngIf="organization.addressLine1">
+          {{ organization.addressLine1 }}
+        </div>
+        <div class="company-address" *ngIf="organization.addressLine2">
+          {{ organization.addressLine2 }}
+        </div>
+        <div class="company-city" *ngIf="organization.city">
+          {{ organization.city
+          }}<ng-container *ngIf="organization.state?.name"
+            >, {{ organization.state.name }}</ng-container
+          ><ng-container *ngIf="organization.postalCode">
+            - {{ organization.postalCode }}</ng-container
+          >
+        </div>
+        <div
+          class="company-contact"
+          *ngIf="organization.phoneNo || organization.mobileNo"
+        >
+          Contact No : {{ organization.phoneNo || organization.mobileNo }}
+        </div>
+        <div class="company-email" *ngIf="organization.email">
+          Email : {{ organization.email }}
+        </div>
       </div>
       <div class="receipt-title-box">
         <span class="copy-tag-placeholder"></span>

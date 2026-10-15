@@ -5,11 +5,7 @@ import moment from "moment";
   providedIn: "root",
 })
 export class StandardReportsPrepareGridColumnDefsService {
-  prepareStaticGridColumnDefs(
-    reportCode: string,
-    search?: any,
-    months?: any[]
-  ) {
+  prepareStaticGridColumnDefs(reportCode, search?, months?) {
     if (reportCode === "tenant-register") {
       return [
         {
@@ -202,7 +198,7 @@ export class StandardReportsPrepareGridColumnDefsService {
         {
           headerName: "Due Month",
           field: "dueMonth",
-          width: 280,
+          width: 200,
           sortable: true,
           filter: true,
           cellClass: "text-center",
@@ -305,7 +301,7 @@ export class StandardReportsPrepareGridColumnDefsService {
         },
       ];
     } else if (reportCode === "outstanding") {
-      const baseCols: any[] = [
+      const baseCols = [
         {
           headerName: "S.No",
           valueGetter: (params) => {
@@ -391,15 +387,15 @@ export class StandardReportsPrepareGridColumnDefsService {
       ];
 
       if (search?.monthwise === "Y" && months && months.length) {
-        const monthColumns = months.map((monthColumn: any) => ({
+        const monthColumns = months.map((monthColumn) => ({
           headerName: monthColumn.monthLabel,
           field: monthColumn.monthKey,
           width: 110,
           sortable: true,
           filter: true,
-          cellClass: (params: any) =>
+          cellClass: (params) =>
             params.node.rowPinned ? "text-end fw-bold" : "text-end",
-          cellStyle: (params: any) => {
+          cellStyle: (params) => {
             if (params.node?.rowPinned) {
               return null;
             }
@@ -429,7 +425,7 @@ export class StandardReportsPrepareGridColumnDefsService {
             }
             return null;
           },
-          cellRenderer: (params: any) => {
+          cellRenderer: (params) => {
             if (
               params.value === null ||
               params.value === undefined ||
@@ -438,7 +434,7 @@ export class StandardReportsPrepareGridColumnDefsService {
               return "";
             return Number(params.value).toFixed(2);
           },
-          tooltipValueGetter: (params: any) => {
+          tooltipValueGetter: (params) => {
             if (params.node?.rowPinned) return null;
             const val = Number(params.value) || 0;
             if (val === 0) return null;

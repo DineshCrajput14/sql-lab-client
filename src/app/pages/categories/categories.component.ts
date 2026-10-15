@@ -37,6 +37,17 @@ export class CategoriesComponent implements OnInit {
       headerName: "Action",
       field: "Action",
       width: 155,
+      hide:
+        !this.authService.findActivityPermission(
+          "Miscellaneous",
+          "Masters",
+          "Edit"
+        ) &&
+        !this.authService.findActivityPermission(
+          "Miscellaneous",
+          "Masters",
+          "Delete"
+        ),
       cellRendererFramework: EditDeleteRendererComponent,
       cellRendererParams: {
         onEdit: this.editCategoryModal.bind(this),
@@ -73,6 +84,8 @@ export class CategoriesComponent implements OnInit {
           this.gridRowDataCategories = resultGetCategories.categories.map(
             (category) => ({
               ...category,
+              resource: "Masters",
+              module: "Miscellaneous",
             })
           );
           this.rowCount = this.gridRowDataCategories.length;

@@ -43,6 +43,7 @@ export class TenantEditorComponent implements OnInit {
     name: string;
     address: string;
     mobileNo: string;
+    alternateMobileNo: string;
     countryId: number;
     stateId: number;
     cityId: number;
@@ -51,6 +52,9 @@ export class TenantEditorComponent implements OnInit {
     nextOfKinName: string;
     nextOfKinMobileNo: string;
     nextOfKinAddress: string;
+    employerName: string;
+    employerContactNo: string;
+    employerAddress: string;
     status: string;
     inactiveDate: any;
   } = {
@@ -59,6 +63,7 @@ export class TenantEditorComponent implements OnInit {
     name: "",
     address: "",
     mobileNo: "",
+    alternateMobileNo: "",
     countryId: undefined,
     stateId: undefined,
     cityId: undefined,
@@ -67,6 +72,9 @@ export class TenantEditorComponent implements OnInit {
     nextOfKinName: "",
     nextOfKinMobileNo: "",
     nextOfKinAddress: "",
+    employerName: "",
+    employerContactNo: "",
+    employerAddress: "",
     status: "Active",
     inactiveDate: null,
   };
@@ -214,6 +222,7 @@ export class TenantEditorComponent implements OnInit {
             name: tenant.name,
             address: tenant.address,
             mobileNo: tenant.mobileNo,
+            alternateMobileNo: tenant.alternateMobileNo,
             countryId: tenant.countryId,
             stateId: tenant.stateId,
             cityId: tenant.cityId,
@@ -222,6 +231,9 @@ export class TenantEditorComponent implements OnInit {
             nextOfKinName: tenant.nextOfKinName,
             nextOfKinMobileNo: tenant.nextOfKinMobileNo,
             nextOfKinAddress: tenant.nextOfKinAddress,
+            employerName: tenant.employerName,
+            employerContactNo: tenant.employerContactNo,
+            employerAddress: tenant.employerAddress,
             status: tenant.status,
             inactiveDate: tenant.inactiveDate
               ? moment(tenant.inactiveDate).toDate()
@@ -261,6 +273,7 @@ export class TenantEditorComponent implements OnInit {
       name: this.tenant.name,
       address: this.tenant.address,
       mobileNo: this.tenant.mobileNo,
+      alternateMobileNo: this.tenant.alternateMobileNo,
       countryId: this.tenant.countryId,
       stateId: this.tenant.stateId,
       cityId: this.tenant.cityId,
@@ -269,6 +282,9 @@ export class TenantEditorComponent implements OnInit {
       nextOfKinName: this.tenant.nextOfKinName,
       nextOfKinMobileNo: this.tenant.nextOfKinMobileNo,
       nextOfKinAddress: this.tenant.nextOfKinAddress,
+      employerName: this.tenant.employerName,
+      employerContactNo: this.tenant.employerContactNo,
+      employerAddress: this.tenant.employerAddress,
       status: this.tenant.status,
       inactiveDate:
         this.tenant.status === "Inactive" && this.tenant.inactiveDate
@@ -321,6 +337,7 @@ export class TenantEditorComponent implements OnInit {
       name: "",
       address: "",
       mobileNo: "",
+      alternateMobileNo: "",
       countryId: undefined,
       stateId: undefined,
       cityId: undefined,
@@ -329,6 +346,9 @@ export class TenantEditorComponent implements OnInit {
       nextOfKinName: "",
       nextOfKinMobileNo: "",
       nextOfKinAddress: "",
+      employerName: "",
+      employerContactNo: "",
+      employerAddress: "",
       status: "Active",
       inactiveDate: null,
     };

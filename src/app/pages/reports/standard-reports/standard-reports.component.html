@@ -481,7 +481,14 @@
           </button>
           <button
             type="button"
-            *ngIf="reportCode !== 'outstanding'"
+            *ngIf="
+              reportCode !== 'outstanding' &&
+              authService.findActivityPermission(
+                'RegistrationReports',
+                'Reports',
+                'Print'
+              )
+            "
             (click)="print()"
             class="btn btn-secondary me-2"
             [disabled]="!(rowData || []).length"
