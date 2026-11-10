@@ -1,0 +1,59 @@
+<div class="container-fluid">
+  <!-- Header and Test Group Filter -->
+  <div class="row mb-3 align-items-end">
+    <div class="col-md-4">
+      <h4>Test Master</h4>
+
+      <label for="testGroupFilter" class="form-label mb-1">
+        Test Group
+      </label>
+
+      <select
+        id="testGroupFilter"
+        class="form-select"
+        [(ngModel)]="selectedGroupId"
+        (change)="onGroupChange()"
+      >
+        <option value="all">All Groups</option>
+
+        <option *ngFor="let group of testGroups" [value]="group.groupId">
+          {{ group.groupName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center p-3">
+    Loading tests...
+  </div>
+
+  <!-- Grid -->
+  <ag-grid-angular
+    *ngIf="!isLoading"
+    class="ag-theme-alpine"
+    style="width: 100%; height: 500px;"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [defaultColDef]="{
+      sortable: true,
+      filter: true,
+      resizable: true
+    }"
+    (cellClicked)="onCellClicked($event)"
+  >
+  </ag-grid-angular>
+
+  <!-- Bottom: Total Records and Add Test -->
+  <div class="row mt-3 align-items-start">
+    <div class="col-md-4">
+      <div class="fw-bold mb-2">Total Records: {{ rowData.length }}</div>
+
+      <button type="button" class="btn btn-primary" (click)="addTest()">
+        Add Test
+      </button>
+    </div>
+  </div>
+</div>

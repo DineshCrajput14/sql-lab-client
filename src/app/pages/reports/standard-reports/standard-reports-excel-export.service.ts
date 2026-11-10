@@ -214,6 +214,32 @@ export class StandardReportsExcelExportService {
         searchObj,
         reportCode
       );
+    } else if (reportCode === "patient-register") {
+      const exportRows = (reportDataRaw || []).map((row, index) => {
+        return {
+          "No.": index + 1,
+          "Ref.No": row.refNo,
+          Date: row.date ? moment(row.date).format("DD-MM-YYYY") : "",
+          "Patient Name": row.patientName,
+          "F/H Name": row.fhName,
+          Age: row.age,
+          Gender: row.gender,
+          Amount: row.amount ? Number(row.amount).toFixed(2) : "0.00",
+        };
+      });
+
+      const exportFileName =
+        fileName || `Patient_Register_${moment().format("DD_MM_YYYY")}`;
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Patient Register",
+        searchObj,
+        reportCode,
+        reportDataRaw,
+        months,
+        isPrint
+      );
     } else if (reportCode === "tenant-ledger") {
       const exportRows = (reportDataRaw || []).map((row) => {
         return {

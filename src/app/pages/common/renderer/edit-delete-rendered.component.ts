@@ -159,7 +159,8 @@ import { AuthService } from "src/app/utils/services/auth.service";
   `,
 })
 export class EditDeleteRendererComponent implements ICellRendererAngularComp {
-  params;
+  params: any;
+
   editData: {
     id: number;
     enquiryStatusTypeId: number;
@@ -170,6 +171,7 @@ export class EditDeleteRendererComponent implements ICellRendererAngularComp {
     setupExamId: number;
     calculateFromOtherExams: boolean;
   };
+
   deleteData: {
     id: number;
     enquiryStatusTypeId: number;
@@ -178,10 +180,11 @@ export class EditDeleteRendererComponent implements ICellRendererAngularComp {
 
   constructor(public authService: AuthService) {}
 
-  agInit(params): void {
+  agInit(params: any): void {
     this.params = params;
+
     this.editData = {
-      id: params.data.id,
+      id: params.data?.id,
       enquiryStatusTypeId: params.data?.enquiryStatusType?.id || undefined,
       applicationStatusTypeId:
         params.data?.applicationStatusType?.id || undefined,
@@ -192,33 +195,35 @@ export class EditDeleteRendererComponent implements ICellRendererAngularComp {
       calculateFromOtherExams:
         params.data?.exam?.calculateFromOtherExams || undefined,
     };
+
     this.deleteData = {
-      id: params.data.id,
+      id: params.data?.id,
       enquiryStatusTypeId: params.data?.enquiryStatusType?.id || undefined,
       applicationStatusTypeId:
         params.data?.applicationStatusType?.id || undefined,
     };
   }
 
-  refresh(params?): boolean {
+  refresh(params?: any): boolean {
     return true;
   }
 
-  onEdit($event) {
+  onEdit($event: any): void {
     if (this.params.onEdit instanceof Function) {
-      this.params.onEdit(this.editData);
+      this.params.onEdit(this.params.data);
     }
   }
 
-  onView($event) {
+  onView($event: any): void {
     if (this.params.onView instanceof Function) {
       this.params.onView(this.editData);
     }
   }
 
-  onDelete($event) {
+  onDelete($event: any): void {
     if (this.params.onDelete instanceof Function) {
-      this.params.onDelete(this.deleteData);
+      // Pass complete row data so Group Master can access groupId/groupid/id
+      this.params.onDelete(this.params.data);
     }
   }
 }

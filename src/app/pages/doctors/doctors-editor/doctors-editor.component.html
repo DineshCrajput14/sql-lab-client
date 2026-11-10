@@ -1,0 +1,321 @@
+<div class="modal-content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm" (ngSubmit)="save(f)">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fa fa-md fas fa-building pe-1"></i>
+          {{ formState === "EDIT" ? "Edit" : "New" }} Doctor
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          [disabled]="isLoading"
+          (click)="cancel()"
+          aria-hidden="true"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row" [hidden]="isLoading">
+          <!-- Doctor Name -->
+          <div class="col-sm-10 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="doctorname">
+                Doctor Name:
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                name="doctorname"
+                id="doctorname"
+                [(ngModel)]="doctorname"
+                placeholder="Enter Doctor Name"
+                required
+                #doctorNameInput="ngModel"
+                maxlength="255"
+                [ngClass]="{
+                  'is-invalid':
+                    doctorNameInput.invalid &&
+                    (f.submitted || doctorNameInput.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  doctorNameInput.invalid &&
+                  (f.submitted || doctorNameInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="doctorNameInput.errors?.['required']">
+                  Please enter a Doctor name.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="col-sm-10 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="paddress">
+                Address:
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                name="paddress"
+                id="paddress"
+                [(ngModel)]="paddress"
+                placeholder="Enter Address"
+                required
+                #paddressInput="ngModel"
+                maxlength="255"
+                [ngClass]="{
+                  'is-invalid':
+                    paddressInput.invalid &&
+                    (f.submitted || paddressInput.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  paddressInput.invalid &&
+                  (f.submitted || paddressInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="paddressInput.errors?.['required']">
+                  Please enter Address.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Correspondence Address -->
+          <div class="col-sm-10 mb-3">
+            <div class="form-group">
+              <label class="form-label" for="caddress">
+                Correspondence Address:
+              </label>
+
+              <input
+                type="text"
+                class="form-control"
+                name="caddress"
+                id="caddress"
+                [(ngModel)]="caddress"
+                placeholder="Enter Correspondence Address"
+                #caddressInput="ngModel"
+                maxlength="255"
+                [ngClass]="{
+                  'is-invalid':
+                    caddressInput.invalid &&
+                    (f.submitted || caddressInput.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  caddressInput.invalid &&
+                  (f.submitted || caddressInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                Please enter a valid Correspondence Address.
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="phone">
+                Phone No:
+              </label>
+
+              <input
+                type="tel"
+                class="form-control"
+                name="phone"
+                id="phone"
+                [(ngModel)]="phone"
+                placeholder="Enter Phone No"
+                required
+                pattern="[0-9]{10,15}"
+                #phoneInput="ngModel"
+                maxlength="15"
+                inputmode="numeric"
+                [ngClass]="{
+                  'is-invalid':
+                    phoneInput.invalid && (f.submitted || phoneInput.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  phoneInput.invalid && (f.submitted || phoneInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="phoneInput.errors?.['required']">
+                  Please enter Phone No.
+                </div>
+
+                <div *ngIf="phoneInput.errors?.['pattern']">
+                  Phone No must contain 10 to 15 digits only.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email ID -->
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label required" for="emailid">
+                Email ID:
+              </label>
+
+              <input
+                type="email"
+                class="form-control"
+                name="emailid"
+                id="emailid"
+                [(ngModel)]="emailid"
+                placeholder="Enter Email ID"
+                required
+                email
+                maxlength="254"
+                #emailInput="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    emailInput.invalid && (f.submitted || emailInput.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  emailInput.invalid && (f.submitted || emailInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="emailInput.errors?.['required']">
+                  Please enter Email ID.
+                </div>
+
+                <div *ngIf="emailInput.errors?.['email']">
+                  Please enter a valid Email ID.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Commission Value -->
+          <div class="col-sm-6 mb-3">
+            <div class="form-group">
+              <label class="form-label" for="commissionpvalue">
+                Commission Value:
+              </label>
+
+              <input
+                type="number"
+                class="form-control"
+                name="commissionpvalue"
+                id="commissionpvalue"
+                [(ngModel)]="commissionpvalue"
+                placeholder="Enter Commission Value"
+                min="0"
+                step="any"
+                #commissionInput="ngModel"
+                [ngClass]="{
+                  'is-invalid':
+                    commissionInput.invalid &&
+                    (f.submitted || commissionInput.touched)
+                }"
+              />
+
+              <div
+                *ngIf="
+                  commissionInput.invalid &&
+                  (f.submitted || commissionInput.touched)
+                "
+                class="invalid-feedback text-break"
+              >
+                <div *ngIf="commissionInput.errors?.['min']">
+                  Commission Value cannot be negative.
+                </div>
+
+                <div *ngIf="commissionInput.errors?.['number']">
+                  Please enter a valid numeric value.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="row" [hidden]="!isLoading">
+          <div class="col-12">
+            <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn me-auto"
+          (click)="cancel()"
+          [disabled]="isLoading"
+          data-bs-dismiss="modal"
+        >
+          <i class="far fa-window-close pe-1"></i>
+          Close
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+
+          <i
+            *ngIf="!isLoading && formState === 'EDIT'"
+            class="fas fa-edit pe-1"
+          ></i>
+
+          <i
+            *ngIf="!isLoading && formState !== 'EDIT'"
+            class="far fa-save pe-1"
+          ></i>
+
+          {{ formState === "EDIT" ? "Update" : "Save" }}
+        </button>
+
+        <button
+          class="btn btn-vk"
+          type="button"
+          (click)="f.submitted = true; f.form.valid && saveAndAddMore()"
+          *ngIf="formState === 'NEW'"
+          [disabled]="isLoading"
+        >
+          <i
+            *ngIf="isLoading"
+            class="spinner-border spinner-border-sm me-1"
+          ></i>
+
+          <i *ngIf="!isLoading" class="fas fa-folder-plus pe-1"></i>
+
+          Save & Add More
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

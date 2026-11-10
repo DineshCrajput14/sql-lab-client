@@ -195,6 +195,19 @@ export class StandardReportsComponent implements OnInit {
         { id: "unitNo", name: "Unit" },
         { id: "tenantName", name: "Tenant Name" },
       ];
+    } else if (this.reportCode === "patient-register") {
+      this.reportTitle = "Patient Register";
+      this.statusList = [
+        { id: "ALL", name: "All" },
+        { id: "Active", name: "Active" },
+        { id: "In-Active", name: "In-Active" },
+      ];
+      this.searchOptionsList = [
+        { id: "ALL", name: "All" },
+        { id: "regNo", name: "Reg. No." },
+        { id: "patientName", name: "Patient Name" },
+        { id: "mobileNo", name: "Mobile No." },
+      ];
     } else {
       this.reportTitle = "Standard Report";
       this.statusList = [

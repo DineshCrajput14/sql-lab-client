@@ -77,7 +77,7 @@
               <span class="nav-link-title">Masters</span>
             </a>
             <div class="dropdown-menu" [class.show]="openMenu === 'masters'">
-              <div
+              <!-- <div
                 class="dropdown-submenu"
                 *ngIf="
                   authService.findActivityPermission('PMS', 'Masters', 'View')
@@ -128,8 +128,8 @@
                     >Amenities</a
                   >
                 </div>
-              </div>
-              <div
+              </div> -->
+              <!-- <div
                 class="dropdown-submenu"
                 *ngIf="
                   authService.findActivityPermission(
@@ -166,7 +166,46 @@
                     >Cities</a
                   >
                 </div>
-              </div>
+              </div> -->
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/doctors']"
+                (click)="hideNavDropdownMenu()"
+                >Doctors</a
+              >
+
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/testgroup-master']"
+                (click)="hideNavDropdownMenu()"
+                >Test Groups</a
+              >
+
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/test-master']"
+                (click)="hideNavDropdownMenu()"
+                >Test Names</a
+              >
+
+              <!-- <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/lab/letter-templates']"
+                (click)="hideNavDropdownMenu()"
+                >Letter Templates</a
+              > -->
+
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                [routerLink]="['/patient-title']"
+                (click)="hideNavDropdownMenu()"
+                >Patient Titles</a
+              >
             </div>
           </li>
 
@@ -257,6 +296,21 @@
                 (click)="hideNavDropdownMenu()"
                 >Release Room</a
               >
+
+              <a
+                class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RoomsAllotment',
+                    'Transactions',
+                    'View'
+                  )
+                "
+                routerLinkActive="active"
+                [routerLink]="['/lab-test']"
+                (click)="hideNavDropdownMenu()"
+                >Lab Test</a
+              >
             </div>
           </li>
 
@@ -310,6 +364,35 @@
               <span class="nav-link-title">Reports</span>
             </a>
             <div class="dropdown-menu" [class.show]="openMenu === 'reports'">
+              <a
+                class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RegistrationReports',
+                    'Reports',
+                    'View'
+                  )
+                "
+                routerLinkActive="active"
+                [routerLink]="['/reports/patient-register']"
+                (click)="hideNavDropdownMenu()"
+                >Patient Register</a
+              >
+
+              <a
+                class="dropdown-item"
+                *ngIf="
+                  authService.findActivityPermission(
+                    'RegistrationReports',
+                    'Reports',
+                    'View'
+                  )
+                "
+                routerLinkActive="active"
+                [routerLink]="['/reports/tenant-register']"
+                (click)="hideNavDropdownMenu()"
+                >Doctor Summary</a
+              >
               <a
                 class="dropdown-item"
                 *ngIf="

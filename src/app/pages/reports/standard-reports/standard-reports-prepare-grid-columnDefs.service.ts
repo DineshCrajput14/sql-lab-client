@@ -576,6 +576,94 @@ export class StandardReportsPrepareGridColumnDefsService {
           cellClass: "text-center",
         },
       ];
+    } else if (reportCode === "patient-register") {
+      return [
+        {
+          headerName: "No.",
+          valueGetter: (params) => {
+            if (params.node.rowPinned) return "";
+            return params.node.rowIndex + 1;
+          },
+          width: 80,
+          sortable: false,
+          filter: false,
+          pinned: "left",
+          cellClass: "text-center",
+        },
+        {
+          headerName: "Ref.No",
+          field: "refNo",
+          width: 120,
+          sortable: true,
+          filter: true,
+          cellClass: "text-center",
+        },
+        {
+          headerName: "Date",
+          field: "date",
+          width: 140,
+          sortable: true,
+          filter: true,
+          cellRenderer: (params) => {
+            if (params.node.rowPinned || !params.value) return "";
+            return moment(params.value).format("DD-MM-YYYY");
+          },
+          cellClass: "text-center",
+        },
+        {
+          headerName: "Patient Name",
+          field: "patientName",
+          width: 220,
+          sortable: true,
+          filter: true,
+          cellStyle: (params) =>
+            params.node.rowPinned
+              ? { fontWeight: "bold" }
+              : { fontWeight: "500" },
+        },
+        {
+          headerName: "F/H Name",
+          field: "fhName",
+          width: 200,
+          sortable: true,
+          filter: true,
+        },
+        {
+          headerName: "Age",
+          field: "age",
+          width: 110,
+          sortable: true,
+          filter: true,
+          cellClass: "text-center",
+        },
+        {
+          headerName: "Gender",
+          field: "gender",
+          width: 120,
+          sortable: true,
+          filter: true,
+          cellClass: (params) =>
+            params.node.rowPinned ? "text-end fw-bold" : "text-center",
+        },
+        {
+          headerName: "Amount",
+          field: "amount",
+          width: 150,
+          sortable: true,
+          filter: true,
+          cellClass: (params) =>
+            params.node.rowPinned ? "text-end fw-bold" : "text-end",
+          cellRenderer: (params) => {
+            if (
+              params.value === null ||
+              params.value === undefined ||
+              params.value === ""
+            )
+              return "";
+            return Number(params.value).toFixed(2);
+          },
+        },
+      ];
     } else if (reportCode === "occupancy-report") {
       return [
         {

@@ -1,0 +1,111 @@
+<div class="page-header d-print-none mt-1">
+  <div class="container-xl p-0 pb-2">
+    <div class="row g-2 align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          Test Groups
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="content">
+  <div class="container-fluid p-0">
+    <form #f="ngForm">
+      <div class="row" *ngIf="!(gridRowDataGroups || []).length && isLoading">
+        <app-is-loading></app-is-loading>
+      </div>
+
+      <div class="row" *ngIf="!(gridRowDataGroups || []).length && !isLoading">
+        <div class="col-12">
+          <div class="d-flex justify-content-center align-items-center">
+            <app-no-record-found-image
+              [masterName]="'Test Groups'"
+              [permittedToAddNew]="
+                authService.findActivityPermission(
+                  'PMS',
+                  'Masters',
+                  'CreateNew'
+                )
+              "
+            ></app-no-record-found-image>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="!isLoading && (gridRowDataGroups || []).length">
+        <div class="col-12">
+          <!-- Grid and Arrow Buttons -->
+          <div class="d-flex align-items-stretch gap-2">
+            <!-- AG Grid -->
+            <div class="flex-grow-1" style="width: 0; min-width: 0;">
+              <ag-grid-angular
+                style="width: 100%; height: 55vh;"
+                class="ag-theme-alpine"
+                [enableCellTextSelection]="true"
+                [rowSelection]="'single'"
+                (gridReady)="onGridReady($event)"
+                (filterChanged)="onFilterChanged($event)"
+                [columnDefs]="gridColumnDefsGroups"
+                [rowData]="gridRowDataGroups"
+                [defaultColDef]="defaultColDef"
+              >
+              </ag-grid-angular>
+            </div>
+
+            <!-- Up / Down Arrows at Grid Right Side -->
+            <div
+              class="d-flex flex-column justify-content-center align-items-center gap-2"
+              style="width: 40px; flex-shrink: 0;"
+            >
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                style="width: 36px; height: 36px;"
+                (click)="moveGroup('up')"
+                [disabled]="isLoading || selectedGroupIndex <= 0"
+                title="Move Up"
+              >
+                <i class="fas fa-arrow-up"></i>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm"
+                style="width: 36px; height: 36px;"
+                (click)="moveGroup('down')"
+                [disabled]="
+                  isLoading ||
+                  selectedGroupIndex < 0 ||
+                  selectedGroupIndex >= gridRowDataGroups.length - 1
+                "
+                title="Move Down"
+              >
+                <i class="fas fa-arrow-down"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="gridRowDataGroups?.length" class="ms-1 fw-bold mt-2">
+            <label>Total records: {{ rowCount }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add New Test Group Button -->
+      <div class="row p-1 my-2">
+        <div class="col-12">
+          <button
+            type="button"
+            (click)="newGroupModal()"
+            class="btn btn-primary me-2"
+          >
+            <i class="fas fa-building pe-1"></i>
+            Add New Test Group
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

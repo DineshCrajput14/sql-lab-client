@@ -1,0 +1,74 @@
+<div class="modal-header py-2">
+  <h5 class="modal-title">
+    {{ patientTitleEditId ? "Edit Patient Title" : "Add Patient Title" }}
+  </h5>
+
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="close()"
+  ></button>
+</div>
+
+<div class="modal-body py-2">
+  <form #f="ngForm" (ngSubmit)="save(f)">
+    <div class="mb-3">
+      <label for="patienttitle" class="form-label mb-1">
+        Title <span class="text-danger">*</span>
+      </label>
+
+      <input
+        id="patienttitle"
+        type="text"
+        name="patienttitle"
+        class="form-control"
+        style="height: 38px;"
+        [(ngModel)]="patienttitle"
+        required
+        maxlength="100"
+        autofocus
+      />
+    </div>
+
+    <div
+      class="d-flex justify-content-end flex-wrap"
+      style="gap: 12px; margin-top: 16px;"
+    >
+      <!-- Save: New Title -->
+      <button
+        *ngIf="!patientTitleEditId"
+        type="button"
+        class="btn btn-primary"
+        style="min-width: 100px; height: 38px;"
+        [disabled]="isLoading || f.invalid"
+        (click)="saveAndAddMore = false; save(f)"
+      >
+        {{ isLoading ? "Saving..." : "Save" }}
+      </button>
+
+      <!-- Save & Add More -->
+      <button
+        *ngIf="!patientTitleEditId"
+        type="button"
+        class="btn btn-success"
+        style="min-width: 150px; height: 38px;"
+        [disabled]="isLoading || f.invalid"
+        (click)="saveMore(f)"
+      >
+        {{ isLoading && saveAndAddMore ? "Saving..." : "Save & Add More" }}
+      </button>
+
+      <!-- Update: Edit Title -->
+      <button
+        *ngIf="patientTitleEditId"
+        type="submit"
+        class="btn btn-primary"
+        style="min-width: 100px; height: 38px;"
+        [disabled]="isLoading || f.invalid"
+      >
+        {{ isLoading ? "Updating..." : "Update" }}
+      </button>
+    </div>
+  </form>
+</div>

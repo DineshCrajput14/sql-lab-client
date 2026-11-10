@@ -1,0 +1,399 @@
+/* ==============================
+   MAIN REPORT
+================================ */
+.print-report {
+  width: 100%;
+  font-family: Arial, sans-serif;
+  color: #000;
+  background: #fff;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+/* ==============================
+   HOSPITAL HEADER
+================================ */
+.report-header {
+  text-align: center;
+  line-height: 1.4;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #000;
+  width: 100%;
+}
+
+.hospital-name {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.department-name {
+  font-weight: bold;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+/* ==============================
+   PATIENT DETAILS
+================================ */
+.patient-info-section {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.patient-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+  color: #000;
+  border: none !important;
+}
+
+.patient-info-table td {
+  border: none !important;
+  padding: 4px 5px;
+  vertical-align: top;
+  text-align: left;
+  background: transparent !important;
+}
+
+.patient-info-table .info-label {
+  width: 18%;
+  font-weight: normal;
+  white-space: normal;
+}
+
+.patient-info-table .info-value {
+  width: 32%;
+  font-weight: normal;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* ==============================
+   TEST REPORT TABLE
+================================ */
+.test-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: #000;
+  font-size: 12px;
+  border: none !important;
+}
+
+.test-report-table th,
+.test-report-table td {
+  border: none !important;
+  padding: 5px 6px;
+  vertical-align: top;
+  color: #000;
+  background: transparent;
+}
+
+/* Table Header */
+.test-report-table thead th {
+  font-weight: bold;
+  text-align: left;
+  border-bottom: 1px solid #000 !important;
+}
+
+/* Column Widths */
+.test-report-table th:nth-child(1),
+.test-report-table td:nth-child(1) {
+  width: 40%;
+}
+
+.test-report-table th:nth-child(2),
+.test-report-table td:nth-child(2) {
+  width: 25%;
+}
+
+.test-report-table th:nth-child(3),
+.test-report-table td:nth-child(3) {
+  width: 35%;
+}
+
+/* ==============================
+   GROUP NAME
+================================ */
+.test-report-table .group-header td {
+  text-align: left !important;
+  font-weight: bold !important;
+  color: #000 !important;
+  background: #fff !important;
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+/* Test Rows */
+.test-report-table .test-detail-row td {
+  text-align: left;
+}
+
+/* Out of Range Result */
+.test-report-table .text-danger {
+  color: red !important;
+  font-weight: bold;
+}
+
+/* Bold Test */
+.test-report-table .test-bold {
+  font-weight: bold !important;
+}
+
+/* ==============================
+   REPORT FOOTER
+================================ */
+.report-footer {
+  font-size: 12px;
+  color: #000;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.report-footer strong {
+  font-weight: bold;
+}
+
+/* ==============================
+   PDF LOADER - SCREEN
+   IMPORTANT: OUTSIDE @media print
+================================ */
+.pdf-generating-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.pdf-generating-box {
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  text-align: center;
+  min-width: 320px;
+  max-width: 90%;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.pdf-generating-box h5 {
+  margin-top: 20px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.pdf-generating-box p {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+/* Modern Spinner */
+.pdf-modern-loader {
+  width: 70px;
+  height: 70px;
+  position: relative;
+  margin: 0 auto 20px;
+}
+
+.spinner-ring {
+  width: 70px;
+  height: 70px;
+  box-sizing: border-box;
+  border: 5px solid #e5e7eb;
+  border-top-color: #0d6efd;
+  border-right-color: #0d6efd;
+  border-radius: 50%;
+  animation: pdfSpin 0.8s linear infinite;
+}
+
+.spinner-core {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #0d6efd;
+  border-radius: 50%;
+  top: 28px;
+  left: 28px;
+}
+
+@keyframes pdfSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==============================
+   PRINT SETTINGS
+================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #000;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Main Report */
+  .print-report {
+    position: relative;
+    width: 100%;
+    min-height: 277mm;
+    margin: 0;
+    padding: 0 0 40mm 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    color: #000;
+    background: #fff;
+    font-size: 11px;
+  }
+
+  /* Hospital Header */
+  .report-header {
+    width: 100%;
+    page-break-after: avoid;
+  }
+
+  .hospital-name {
+    font-size: 15px;
+  }
+
+  .department-name {
+    font-size: 12px;
+  }
+
+  /* Patient Information */
+  .patient-info-section {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+
+  .patient-info-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 11px;
+    border: none !important;
+  }
+
+  .patient-info-table td {
+    padding: 5px;
+    border: none !important;
+    color: #000;
+    background: transparent !important;
+  }
+
+  .patient-info-table .info-label {
+    width: 18%;
+  }
+
+  .patient-info-table .info-value {
+    width: 32%;
+  }
+
+  /* Test Details */
+  .table-responsive {
+    width: 100%;
+    margin-top: 10px;
+    overflow: visible !important;
+  }
+
+  .test-report-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 11px;
+    border: none !important;
+  }
+
+  .test-report-table th,
+  .test-report-table td {
+    border: none !important;
+    padding: 4px 5px;
+    color: #000;
+    background: transparent !important;
+  }
+
+  .test-report-table thead th {
+    border-bottom: 1px solid #000 !important;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  /* Group Heading */
+  .test-report-table .group-header td {
+    color: #000 !important;
+    font-weight: bold !important;
+    background: #fff !important;
+    text-align: left !important;
+    padding-top: 8px;
+    padding-bottom: 5px;
+  }
+
+  /* Test Result */
+  .test-report-table .text-danger {
+    color: red !important;
+    font-weight: bold !important;
+  }
+
+  .test-report-table .test-bold {
+    font-weight: bold !important;
+  }
+
+  /* Page Break Handling */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  .report-header,
+  .patient-info-section {
+    page-break-inside: avoid;
+  }
+
+  /* Footer - Single Page Report */
+  .report-footer {
+    position: absolute;
+    bottom: 15mm;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: 0 !important;
+    font-size: 11px;
+    color: #000;
+    page-break-inside: avoid;
+  }
+
+  /* Print Colors */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

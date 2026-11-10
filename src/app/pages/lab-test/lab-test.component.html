@@ -1,0 +1,637 @@
+<div class="container-fluid p-2">
+  <!-- SEARCH FILTERS -->
+  <div class="card mb-2 shadow-sm">
+    <div class="card-body py-2">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-4">
+          <div class="row g-2 align-items-center">
+            <label class="col-4 col-form-label">From Date</label>
+            <div class="col-8">
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                [(ngModel)]="filters.fromDate"
+              />
+            </div>
+
+            <label class="col-4 col-form-label">Ref. By Doctor</label>
+            <div class="col-8">
+              <select
+                class="form-select form-select-sm"
+                [(ngModel)]="filters.refdoctor"
+              >
+                <option value="">All</option>
+                <option
+                  *ngFor="let doctor of doctors"
+                  [value]="doctor.doctorid ?? doctor.doctorId ?? doctor.id"
+                >
+                  {{ doctor.doctorname ?? doctor.doctorName ?? doctor.name }}
+                </option>
+              </select>
+            </div>
+
+            <label class="col-4 col-form-label">Test Status</label>
+            <div class="col-8">
+              <select
+                class="form-select form-select-sm"
+                [(ngModel)]="filters.testStatus"
+              >
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <label class="col-4 col-form-label">Widal Status</label>
+            <div class="col-8">
+              <select
+                class="form-select form-select-sm"
+                [(ngModel)]="filters.widalStatus"
+              >
+                <option value="All">All</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row g-2 align-items-center">
+            <label class="col-4 col-form-label">To Date</label>
+            <div class="col-8">
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                [(ngModel)]="filters.toDate"
+              />
+            </div>
+
+            <label class="col-4 col-form-label">Gender</label>
+            <div class="col-8">
+              <select
+                class="form-select form-select-sm"
+                [(ngModel)]="filters.gender"
+              >
+                <option value="All">All</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+
+            <label class="col-4 col-form-label">Print Status</label>
+            <div class="col-8">
+              <select
+                class="form-select form-select-sm"
+                [(ngModel)]="filters.printStatus"
+              >
+                <option value="All">All</option>
+                <option value="Printed">Printed</option>
+                <option value="Not Printed">Not Printed</option>
+              </select>
+            </div>
+
+            <label class="col-4 col-form-label">Ref. No.</label>
+            <div class="col-8">
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="filters.refNo"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row g-2 align-items-center">
+            <label class="col-4 col-form-label">Patient Name</label>
+            <div class="col-8">
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="filters.patientName"
+              />
+            </div>
+
+            <label class="col-4 col-form-label">F/H Name</label>
+            <div class="col-8">
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                [(ngModel)]="filters.fhName"
+              />
+            </div>
+
+            <div class="col-12 text-end mt-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm px-4"
+                (click)="showRecords()"
+              >
+                Show
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm ms-2"
+                (click)="clearFilters()"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="row g-2">
+    <!-- LEFT: LAB TEST RECORDS -->
+
+    <!-- LEFT: LAB TEST RECORDS -->
+    <div class="col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-header py-2 bg-light">
+          <strong>Lab Test Records</strong>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive overflow-auto" style="height: 390px;">
+            <table class="table table-bordered table-sm table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Date</th>
+                  <th>Patient Name</th>
+                  <th>Ref. No.</th>
+                  <th>Ref. Doctor</th>
+                  <th style="width: 65px;">Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr
+                  *ngFor="let item of filteredLabTests"
+                  (click)="selectLabTest(item)"
+                  [class.table-primary]="selectedLabTest === item"
+                  style="cursor: pointer;"
+                >
+                  <td>{{ item.date | date: "dd/MM/yyyy" }}</td>
+                  <td>{{ item.patientname }}</td>
+                  <td>{{ item.serialno }}</td>
+                  <td>{{ item.refdoctorname }}</td>
+
+                  <td class="text-center">
+                    <button
+                      type="button"
+                      class="btn btn-warning btn-sm"
+                      title="Edit Patient Test"
+                      (click)="editLabTest(item); $event.stopPropagation()"
+                    >
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr *ngIf="!isLoading && filteredLabTests.length === 0">
+                  <td colspan="5" class="text-center p-3 text-muted">
+                    No records found.
+                  </td>
+                </tr>
+
+                <tr *ngIf="isLoading">
+                  <td colspan="5" class="text-center p-3">
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card-footer py-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span>Total records: {{ filteredLabTests.length }}</span>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              (click)="addLabTest()"
+            >
+              Add Lab Test
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: TEST DETAILS -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div
+          class="card-header py-2 bg-light d-flex justify-content-between align-items-center flex-wrap gap-2"
+        >
+          <strong>
+            Test Details
+            <span *ngIf="selectedLabTest">
+              - {{ selectedLabTest.patientname }}
+            </span>
+          </strong>
+
+          <div class="d-flex align-items-center flex-wrap gap-2">
+            <!-- PRINT BUTTON -->
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm"
+              (click)="printTestDetails()"
+              [disabled]="!selectedLabTest"
+            >
+              <i class="fa fa-print me-1"></i>
+              Print
+            </button>
+
+            <!-- NEW PRINT - SEPARATE REPORT -->
+            <button
+              type="button"
+              class="btn btn-outline-success btn-sm"
+              (click)="printNewLabReport()"
+              [disabled]="!selectedLabTest"
+            >
+              <i class="fa fa-print me-1"></i>
+              New Print
+            </button>
+
+            <ul class="nav nav-pills gap-1">
+              <li class="nav-item">
+                <button
+                  type="button"
+                  class="nav-link py-1 px-2"
+                  [class.active]="activeSpecialTestTab === 'LAB'"
+                  (click)="activeSpecialTestTab = 'LAB'"
+                >
+                  Lab Test
+                </button>
+              </li>
+
+              <li class="nav-item">
+                <button
+                  type="button"
+                  class="nav-link py-1 px-2"
+                  [class.active]="activeSpecialTestTab === 'WIDAL'"
+                  (click)="activeSpecialTestTab = 'WIDAL'"
+                >
+                  WIDAL Test
+                </button>
+              </li>
+
+              <li class="nav-item">
+                <button
+                  type="button"
+                  class="nav-link py-1 px-2"
+                  [class.active]="activeSpecialTestTab === 'VDRL'"
+                  (click)="activeSpecialTestTab = 'VDRL'"
+                >
+                  VDRL Test
+                </button>
+              </li>
+
+              <li class="nav-item">
+                <button
+                  type="button"
+                  class="nav-link py-1 px-2"
+                  [class.active]="activeSpecialTestTab === 'RA'"
+                  (click)="activeSpecialTestTab = 'RA'"
+                >
+                  RA Test
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-body p-0" id="testDetailsPrint">
+          <!-- LAB TEST GRID -->
+          <div *ngIf="activeSpecialTestTab === 'LAB'">
+            <div class="px-2 py-2 border-bottom bg-white">
+              <label class="form-check-label small">
+                <input
+                  type="checkbox"
+                  class="form-check-input me-2"
+                  [(ngModel)]="highlightAbnormalValues"
+                />
+                <strong>Highlight Abnormal Values</strong>
+              </label>
+            </div>
+
+            <div class="table-responsive overflow-auto" style="height: 350px;">
+              <table class="table table-bordered table-sm table-hover mb-0">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th style="width: 22%;">Group Name</th>
+                    <th style="width: 33%;">Test Name</th>
+                    <th style="width: 20%;">Test Value</th>
+                    <th style="width: 25%;">Test Normal Value</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr
+                    *ngFor="let test of selectedTests; let i = index"
+                    (click)="selectTest(test, i)"
+                    [class.table-primary]="selectedTestIndex === i"
+                    style="cursor: pointer;"
+                  >
+                    <!-- GROUP NAME -->
+                    <td class="fw-bold">
+                      {{ displayGroupName(i) }}
+                    </td>
+
+                    <!-- TEST NAME -->
+                    <td>
+                      {{ test.testname || test.testName }}
+                    </td>
+
+                    <!-- READ-ONLY TEST VALUE -->
+                    <td
+                      [class.fw-bold]="isAbnormalValue(test)"
+                      [class.text-danger]="isAbnormalValue(test)"
+                    >
+                      {{ test.testvalue ?? test.testValue ?? "" }}
+                    </td>
+
+                    <!-- NORMAL VALUE -->
+                    <td
+                      [class.fw-bold]="isAbnormalValue(test)"
+                      [class.text-danger]="isAbnormalValue(test)"
+                    >
+                      {{ getNormalValue(test) }}
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="selectedTests.length === 0">
+                    <td colspan="4" class="text-center p-4 text-muted">
+                      Select a Lab Test record to view its tests.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- WIDAL TEST -->
+          <div *ngIf="activeSpecialTestTab === 'WIDAL'">
+            <div class="table-responsive overflow-auto" style="height: 400px;">
+              <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Test Name</th>
+                    <th *ngFor="let dilution of widalDilutions">
+                      {{ dilution }}
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of widalTests">
+                    <td>{{ item.testname }}</td>
+
+                    <td *ngFor="let dilution of widalDilutions">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        [(ngModel)]="item.values[dilution]"
+                      />
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="widalTests.length === 0">
+                    <td
+                      [attr.colspan]="widalDilutions.length + 1"
+                      class="text-center p-3"
+                    >
+                      No WIDAL tests loaded.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- VDRL TEST -->
+          <div *ngIf="activeSpecialTestTab === 'VDRL'">
+            <div class="table-responsive overflow-auto" style="height: 400px;">
+              <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Test Value</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of vdrlTests">
+                    <td>{{ item.testname }}</td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        [(ngModel)]="item.testvalue"
+                      />
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="vdrlTests.length === 0">
+                    <td colspan="2" class="text-center p-3">
+                      No VDRL tests loaded.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- RA TEST -->
+          <div *ngIf="activeSpecialTestTab === 'RA'">
+            <div class="table-responsive overflow-auto" style="height: 400px;">
+              <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th>Test Name</th>
+                    <th>Test Value</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let item of raTests">
+                    <td>{{ item.testname }}</td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        [(ngModel)]="item.testvalue"
+                      />
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="raTests.length === 0">
+                    <td colspan="2" class="text-center p-3">
+                      No RA tests loaded.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div
+          class="card-footer py-2 d-flex justify-content-between align-items-center"
+          *ngIf="activeSpecialTestTab === 'LAB'"
+        >
+          <span class="small text-muted">
+            Total Tests: {{ selectedTests.length }}
+          </span>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-sm px-3"
+            (click)="openTestValueEditor()"
+            [disabled]="!selectedLabTest || selectedTests.length === 0"
+          >
+            <i class="fa fa-edit me-1"></i>
+            Enter Test Values
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MULTI-TEST VALUE EDITOR MODAL -->
+<div
+  class="modal fade show"
+  *ngIf="showTestValueEditor"
+  style="display: block; background: rgba(0, 0, 0, 0.45);"
+  tabindex="-1"
+>
+  <div
+    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+  >
+    <div class="modal-content shadow-lg border-0">
+      <!-- MODAL HEADER -->
+      <div class="modal-header bg-primary text-white py-3">
+        <div>
+          <h5 class="modal-title fw-bold mb-1">
+            Test Value Editor
+          </h5>
+
+          <small>
+            Patient: {{ selectedLabTest?.patientname }}
+
+            <span class="mx-2">|</span>
+
+            Ref. No: {{ selectedLabTest?.serialno }}
+          </small>
+        </div>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Close"
+          (click)="closeTestValueEditor()"
+        ></button>
+      </div>
+
+      <!-- MODAL BODY -->
+      <div class="modal-body bg-light">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table
+                class="table table-bordered table-hover table-sm align-middle mb-0"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 22%;">Group Name</th>
+                    <th style="width: 30%;">Test Name</th>
+                    <th style="width: 22%;">Test Value</th>
+                    <th style="width: 26%;">Test Normal Value</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let test of selectedTests; let i = index">
+                    <!-- GROUP NAME -->
+                    <td class="fw-bold text-primary">
+                      {{ displayGroupName(i) }}
+                    </td>
+
+                    <!-- TEST NAME -->
+                    <td class="fw-semibold">
+                      {{ test.testname || test.testName }}
+                    </td>
+
+                    <!-- EDITABLE TEST VALUE -->
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        [(ngModel)]="test.testvalue"
+                        (ngModelChange)="test.testValue = $event"
+                        placeholder="Enter test value"
+                        [class.border-danger]="isAbnormalValue(test)"
+                        [class.text-danger]="isAbnormalValue(test)"
+                        [class.fw-bold]="isAbnormalValue(test)"
+                      />
+                    </td>
+
+                    <!-- NORMAL VALUE -->
+                    <td
+                      [class.text-danger]="isAbnormalValue(test)"
+                      [class.fw-bold]="isAbnormalValue(test)"
+                    >
+                      {{ getNormalValue(test) }}
+                    </td>
+                  </tr>
+
+                  <tr *ngIf="selectedTests.length === 0">
+                    <td colspan="4" class="text-center p-4 text-muted">
+                      No tests available for this patient.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL FOOTER -->
+      <div class="modal-footer bg-white py-2">
+        <span class="me-auto small text-muted">
+          Total Tests: {{ selectedTests.length }}
+        </span>
+
+        <button
+          type="button"
+          class="btn btn-primary px-4"
+          (click)="saveTestValue()"
+        >
+          <i class="fa fa-save me-1"></i>
+          Update
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="closeTestValueEditor()"
+        >
+          Exit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

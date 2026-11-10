@@ -1,0 +1,400 @@
+<div class="modal-header py-2" style="background-color: #e2e2e2;">
+  <h5 class="modal-title">
+    {{ testtranid ? "Edit Lab Test" : "Add Lab Test" }}
+  </h5>
+
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="close()"
+  ></button>
+</div>
+
+<div class="modal-body p-2" style="background-color: #eeeeee;">
+  <form #f="ngForm" (ngSubmit)="save(f)">
+    <!-- Patient Details -->
+    <div class="row g-1 mb-2">
+      <!-- Reference No -->
+      <div class="col-4 col-md-2">
+        <label class="form-label mb-0">Reference No.</label>
+
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          name="serialno"
+          [(ngModel)]="patient.serialno"
+          readonly
+        />
+      </div>
+
+      <!-- Date -->
+      <div class="col-8 col-md-3">
+        <label class="form-label mb-0">Date</label>
+
+        <input
+          type="datetime-local"
+          class="form-control form-control-sm"
+          name="date"
+          [(ngModel)]="patient.date"
+        />
+      </div>
+
+      <div class="col-md-7 d-none d-md-block"></div>
+
+      <!-- Patient Name -->
+      <div class="col-12 col-md-5">
+        <label class="form-label mb-0">Patient Name</label>
+
+        <div class="input-group input-group-sm">
+          <select
+            class="form-select"
+            style="max-width: 100px;"
+            name="titleid"
+            [(ngModel)]="patient.titleid"
+          >
+            <option
+              *ngFor="let title of patientTitles"
+              [ngValue]="title.patientTitleId"
+            >
+              {{ title.patientTitle }}
+            </option>
+          </select>
+          <input
+            type="text"
+            class="form-control"
+            name="patientname"
+            [(ngModel)]="patient.patientname"
+            required
+            maxlength="100"
+          />
+        </div>
+      </div>
+
+      <!-- F/H Name -->
+      <div class="col-12 col-md-7">
+        <label class="form-label mb-0">F/H Name</label>
+
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          name="fhname"
+          [(ngModel)]="patient.fhname"
+          maxlength="100"
+        />
+      </div>
+
+      <!-- Ref Doctor -->
+      <div class="col-12 col-md-5">
+        <label class="form-label mb-0">Ref. By Doctor</label>
+
+        <select
+          class="form-select form-select-sm"
+          name="refdoctor"
+          [(ngModel)]="patient.refdoctor"
+        >
+          <option value="">Select Doctor</option>
+
+          <option
+            *ngFor="let doctor of doctors"
+            [value]="doctor.doctorid ?? doctor.doctorId"
+          >
+            {{ doctor.doctorname ?? doctor.doctorName }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Age -->
+      <div class="col-4 col-md-2">
+        <label class="form-label mb-0">Age</label>
+
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          name="age"
+          [(ngModel)]="patient.age"
+          maxlength="20"
+        />
+      </div>
+
+      <!-- Age Unit -->
+      <div class="col-4 col-md-2">
+        <label class="form-label mb-0">Age Unit</label>
+
+        <select
+          class="form-select form-select-sm"
+          name="agetime"
+          [(ngModel)]="patient.agetime"
+        >
+          <option value="Year">Year</option>
+          <option value="Month">Month</option>
+          <option value="Day">Day</option>
+        </select>
+      </div>
+
+      <!-- Gender -->
+      <div class="col-4 col-md-3">
+        <label class="form-label mb-0">Gender</label>
+
+        <select
+          class="form-select form-select-sm"
+          name="gender"
+          [(ngModel)]="patient.gender"
+        >
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <!-- Address -->
+      <div class="col-12">
+        <label class="form-label mb-0">Address</label>
+
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          name="address1"
+          [(ngModel)]="patient.address1"
+          maxlength="255"
+        />
+      </div>
+
+      <!-- Phone -->
+      <div class="col-12 col-md-6">
+        <label class="form-label mb-0">Phone No.</label>
+
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          name="phone"
+          [(ngModel)]="patient.phone"
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="col-12 col-md-6">
+        <label class="form-label mb-0">E-Mail ID</label>
+
+        <input
+          type="email"
+          class="form-control form-control-sm"
+          name="emailid"
+          [(ngModel)]="patient.emailid"
+          maxlength="150"
+        />
+      </div>
+    </div>
+
+    <!-- Test Selection -->
+    <div class="row g-1">
+      <!-- Available Tests -->
+      <div class="col-12 col-md-5">
+        <div class="border rounded p-1 h-100 bg-white">
+          <!-- Group Selection -->
+          <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+            <label class="mb-0">Group</label>
+
+            <select
+              class="form-select form-select-sm"
+              name="selectedGroupId"
+              [(ngModel)]="selectedGroupId"
+            >
+              <option [ngValue]="null">ANY OTHER</option>
+
+              <option
+                *ngFor="let group of testGroups"
+                [ngValue]="group.groupId ?? group.groupid"
+              >
+                {{ group.groupName ?? group.groupname }}
+              </option>
+            </select>
+
+            <!-- Select All -->
+            <label class="mb-0 text-nowrap">Select All</label>
+
+            <input
+              type="checkbox"
+              [checked]="isAllTestsSelected()"
+              (change)="selectAllTests($any($event.target).checked)"
+            />
+          </div>
+
+          <!-- Available Test List -->
+          <div class="border" style="height: 220px; overflow-y: auto;">
+            <table class="table table-sm table-bordered table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th>Test Name</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let test of filteredTests">
+                  <td>
+                    <label
+                      class="d-flex align-items-center gap-1 mb-0"
+                      style="cursor: pointer;"
+                    >
+                      <input
+                        type="checkbox"
+                        [checked]="
+                          selectedAvailableTestIds.includes(getTestId(test))
+                        "
+                        (change)="
+                          toggleAvailableTest(test, $any($event.target).checked)
+                        "
+                      />
+
+                      {{ getTestName(test) }}
+                    </label>
+                  </td>
+                </tr>
+
+                <tr *ngIf="filteredTests.length === 0">
+                  <td class="text-center text-muted">
+                    No tests available.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div
+        class="col-12 col-md-1 d-flex flex-row flex-md-column justify-content-center gap-2"
+      >
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm flex-fill"
+          (click)="addTests()"
+        >
+          Add &gt;&gt;
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm flex-fill"
+          (click)="editSelectedTest()"
+        >
+          &lt;&lt; Edit
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-danger btn-sm flex-fill"
+          (click)="removeSelectedTest()"
+        >
+          Remove
+        </button>
+      </div>
+
+      <!-- Selected Tests -->
+      <div class="col-12 col-md-6">
+        <div class="border rounded p-1 h-100 bg-white">
+          <!-- Selected Tests Header -->
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <strong>Selected Tests</strong>
+
+            <label class="mb-0">
+              Widal Test
+
+              <input
+                type="checkbox"
+                class="ms-1"
+                name="widaltest"
+                [(ngModel)]="patient.widaltest"
+              />
+            </label>
+          </div>
+
+          <!-- Selected Test List -->
+          <div class="border" style="height: 220px; overflow-y: auto;">
+            <table class="table table-bordered table-sm table-hover mb-0">
+              <thead class="table-light sticky-top">
+                <tr>
+                  <th style="width: 38%;">Group Name</th>
+                  <th>Test Name</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr
+                  *ngFor="let test of selectedTests; let i = index"
+                  (click)="selectSelectedTest(i)"
+                  [class.table-active]="selectedTestIndex === i"
+                  style="cursor: pointer;"
+                >
+                  <!-- Group Name: show only once for consecutive group rows -->
+                  <td
+                    *ngIf="
+                      i === 0 ||
+                      getGroupId(test) !== getGroupId(selectedTests[i - 1])
+                    "
+                    class="fw-bold"
+                    style="background-color: #d6d6d6; color: #222222;"
+                  >
+                    {{ getGroupName(test) }}
+                  </td>
+
+                  <!-- Empty group cell for same group -->
+                  <td
+                    *ngIf="
+                      i !== 0 &&
+                      getGroupId(test) === getGroupId(selectedTests[i - 1])
+                    "
+                    style="background-color: #f5f5f5;"
+                  ></td>
+
+                  <!-- Test Name -->
+                  <td>
+                    {{ getTestName(test) }}
+                  </td>
+                </tr>
+
+                <tr *ngIf="selectedTests.length === 0">
+                  <td colspan="2" class="text-center text-muted">
+                    No tests selected.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="d-flex justify-content-end gap-2 mt-2">
+      <!-- Save / Update Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm"
+        style="min-width: 90px;"
+        [disabled]="isLoading || f.invalid"
+      >
+        {{
+          isLoading
+            ? testtranid
+              ? "Updating..."
+              : "Saving..."
+            : testtranid
+            ? "Update"
+            : "Save"
+        }}
+      </button>
+
+      <!-- Exit Button -->
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        style="min-width: 90px;"
+        (click)="close()"
+      >
+        Exit
+      </button>
+    </div>
+  </form>
+</div>

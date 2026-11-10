@@ -1,0 +1,321 @@
+<div class="modal-header py-2">
+  <h5 class="modal-title">
+    {{ testEditId ? "Edit Test" : "Add Test" }}
+  </h5>
+
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="close()"
+  ></button>
+</div>
+
+<div class="modal-body py-2">
+  <form #f="ngForm" (ngSubmit)="save(f)">
+    <!-- Test Group -->
+    <div class="mb-2">
+      <label for="groupid" class="form-label mb-1">
+        Test Group <span class="text-danger">*</span>
+      </label>
+
+      <select
+        id="groupid"
+        name="groupid"
+        class="form-select"
+        style="height: 38px;"
+        [(ngModel)]="groupid"
+        required
+      >
+        <option [ngValue]="null">Select Test Group</option>
+
+        <option
+          *ngFor="let group of testGroups"
+          [ngValue]="group.groupId ?? group.groupid ?? group.id"
+        >
+          {{ group.groupName ?? group.groupname ?? group.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Test Name -->
+    <div class="mb-2">
+      <label for="testname" class="form-label mb-1">
+        Test Name <span class="text-danger">*</span>
+      </label>
+
+      <input
+        id="testname"
+        type="text"
+        name="testname"
+        class="form-control"
+        style="height: 38px;"
+        [(ngModel)]="testname"
+        required
+        maxlength="255"
+      />
+    </div>
+
+    <!-- Test Price -->
+    <div class="mb-2">
+      <label for="testprice" class="form-label mb-1">
+        Test Price
+      </label>
+
+      <input
+        id="testprice"
+        type="number"
+        name="testprice"
+        class="form-control"
+        style="height: 38px;"
+        placeholder="Enter Test Price"
+        [(ngModel)]="testprice"
+        min="0"
+        step="any"
+      />
+    </div>
+
+    <!-- Male Normal Value -->
+    <div class="mb-2">
+      <label class="form-label fw-semibold mb-1">
+        Male Normal Value
+      </label>
+
+      <div class="row g-2 mb-2">
+        <!-- Male Minimum -->
+        <div class="col-4">
+          <label for="normalMinM" class="form-label mb-1">
+            Minimum
+          </label>
+
+          <input
+            id="normalMinM"
+            type="number"
+            step="any"
+            name="normalMinM"
+            class="form-control"
+            style="height: 38px;"
+            placeholder="Minimum"
+            [(ngModel)]="normalMinM"
+            (ngModelChange)="generateMaleRange()"
+          />
+        </div>
+
+        <!-- Male Maximum -->
+        <div class="col-4">
+          <label for="normalMaxM" class="form-label mb-1">
+            Maximum
+          </label>
+
+          <input
+            id="normalMaxM"
+            type="number"
+            step="any"
+            name="normalMaxM"
+            class="form-control"
+            style="height: 38px;"
+            placeholder="Maximum"
+            [(ngModel)]="normalMaxM"
+            (ngModelChange)="generateMaleRange()"
+          />
+        </div>
+
+        <!-- Male Unit -->
+        <div class="col-4">
+          <label for="normalUnitM" class="form-label mb-1">
+            Unit
+          </label>
+
+          <input
+            id="normalUnitM"
+            type="text"
+            name="normalUnitM"
+            class="form-control"
+            style="height: 38px;"
+            placeholder="e.g. gm/dl"
+            [(ngModel)]="normalUnitM"
+            (ngModelChange)="generateMaleRange()"
+          />
+        </div>
+      </div>
+
+      <!-- Generated Male Normal Range -->
+      <input
+        type="text"
+        name="normalvaluem"
+        class="form-control"
+        style="height: 38px;"
+        placeholder="Male normal range"
+        [(ngModel)]="normalvaluem"
+        readonly
+      />
+    </div>
+
+    <!-- Female Normal Value -->
+    <div class="mb-2">
+      <label class="form-label fw-semibold mb-1">
+        Female Normal Value
+      </label>
+
+      <div class="row g-2 mb-2">
+        <!-- Female Minimum -->
+        <div class="col-4">
+          <label for="normalMinF" class="form-label mb-1">
+            Minimum
+          </label>
+
+          <input
+            id="normalMinF"
+            type="number"
+            step="any"
+            name="normalMinF"
+            class="form-control"
+            style="height: 38px;"
+            placeholder="Minimum"
+            [(ngModel)]="normalMinF"
+            (ngModelChange)="generateFemaleRange()"
+          />
+        </div>
+
+        <!-- Female Maximum -->
+        <div class="col-4">
+          <label for="normalMaxF" class="form-label mb-1">
+            Maximum
+          </label>
+
+          <input
+            id="normalMaxF"
+            type="number"
+            step="any"
+            name="normalMaxF"
+            class="form-control"
+            style="height: 38px;"
+            placeholder="Maximum"
+            [(ngModel)]="normalMaxF"
+            (ngModelChange)="generateFemaleRange()"
+          />
+        </div>
+
+        <!-- Female Unit -->
+        <div class="col-4">
+          <label for="normalUnitF" class="form-label mb-1">
+            Unit
+          </label>
+
+          <input
+            id="normalUnitF"
+            type="text"
+            name="normalUnitF"
+            class="form-control"
+            style="height: 38px;"
+            placeholder="e.g. gm/dl"
+            [(ngModel)]="normalUnitF"
+            (ngModelChange)="generateFemaleRange()"
+          />
+        </div>
+      </div>
+
+      <!-- Generated Female Normal Range -->
+      <input
+        type="text"
+        name="normalvaluef"
+        class="form-control"
+        style="height: 38px;"
+        placeholder="Female normal range"
+        [(ngModel)]="normalvaluef"
+        readonly
+      />
+    </div>
+
+    <!-- Order No and Checkboxes -->
+    <div
+      class="d-flex align-items-center flex-wrap"
+      style="gap: 32px; margin: 12px 0; height: 38px;"
+    >
+      <!-- Order No -->
+      <div class="d-flex align-items-center" style="gap: 8px; height: 38px;">
+        <label
+          for="orderno"
+          style="margin: 0; padding: 0; line-height: 1; white-space: nowrap;"
+        >
+          Order No.
+        </label>
+
+        <input
+          id="orderno"
+          type="text"
+          inputmode="numeric"
+          name="orderno"
+          class="form-control text-center"
+          style="width: 60px; height: 38px; margin: 0;"
+          [(ngModel)]="orderno"
+          maxlength="3"
+          readonly
+        />
+      </div>
+
+      <!-- Print Bold -->
+      <div class="d-flex align-items-center" style="gap: 8px; height: 38px;">
+        <input
+          id="prnbold"
+          type="checkbox"
+          name="prnbold"
+          class="form-check-input"
+          style="width: 18px; height: 18px; margin: 0; padding: 0; float: none;"
+          [(ngModel)]="prnbold"
+        />
+
+        <label
+          for="prnbold"
+          style="margin: 0; padding: 0; line-height: 1; white-space: nowrap;"
+        >
+          Print Bold
+        </label>
+      </div>
+
+      <!-- Disabled in New Transaction -->
+      <div class="d-flex align-items-center" style="gap: 8px; height: 38px;">
+        <input
+          id="disabledinnewtran"
+          type="checkbox"
+          name="disabledinnewtran"
+          class="form-check-input"
+          style="width: 18px; height: 18px; margin: 0; padding: 0; float: none;"
+          [(ngModel)]="disabledinnewtran"
+        />
+
+        <label
+          for="disabledinnewtran"
+          style="margin: 0; padding: 0; line-height: 1; white-space: nowrap;"
+        >
+          Disabled in New Transaction
+        </label>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div
+      class="d-flex justify-content-end"
+      style="gap: 12px; margin-top: 16px;"
+    >
+      <button
+        type="button"
+        class="btn btn-secondary"
+        style="min-width: 100px; height: 38px;"
+        (click)="close()"
+        [disabled]="isLoading"
+      >
+        Cancel
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="min-width: 100px; height: 38px;"
+        [disabled]="isLoading || f.invalid"
+      >
+        {{ isLoading ? "Saving..." : "Save" }}
+      </button>
+    </div>
+  </form>
+</div>

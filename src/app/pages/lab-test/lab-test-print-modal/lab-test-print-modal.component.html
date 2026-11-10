@@ -1,0 +1,209 @@
+<!-- COMPLETE PRINT REPORT -->
+<div class="print-report">
+  <!-- HOSPITAL HEADER -->
+  <div class="report-header text-center">
+    <h4 class="hospital-name">
+      {{ organization.name }}
+    </h4>
+
+    <div *ngIf="organization.addressLine1">
+      {{ organization.addressLine1 }}
+    </div>
+
+    <div *ngIf="organization.addressLine2">
+      {{ organization.addressLine2 }}
+    </div>
+
+    <div>
+      {{ organization.city }}
+
+      <span *ngIf="organization.state">
+        , {{ organization.state.name || organization.state }}
+      </span>
+
+      <span *ngIf="organization.postalCode">
+        - {{ organization.postalCode }}
+      </span>
+    </div>
+
+    <h6 class="department-name">
+      DEPARTMENT OF PATHOLOGY &amp; LAB MEDICINE
+    </h6>
+  </div>
+
+  <!-- PATIENT DETAILS SECTION -->
+  <div class="patient-info-section">
+    <table class="patient-info-table">
+      <tbody>
+        <tr>
+          <td class="info-label">Patient Name</td>
+          <td class="info-value">
+            {{ patientData?.patientname }}
+          </td>
+
+          <td class="info-label">Lab No.</td>
+          <td class="info-value">
+            {{ patientData?.testtranid }}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="info-label">Father/Husband Name</td>
+          <td class="info-value">
+            {{ patientData?.fhname }}
+          </td>
+
+          <td class="info-label">Sample Date</td>
+          <td class="info-value">
+            {{ patientData?.date }}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="info-label">Age / Gender</td>
+          <td class="info-value">
+            {{ patientData?.age }} / {{ patientData?.gender }}
+          </td>
+
+          <td class="info-label">Report Date</td>
+          <td class="info-value">
+            {{ patientData?.date }}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="info-label">Referred By</td>
+          <td class="info-value">
+            {{ patientData?.refdoctorname }}
+          </td>
+
+          <td class="info-label">Report Status</td>
+          <td class="info-value">
+            Final
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LAB TEST REPORT DETAILS -->
+  <div class="table-responsive mt-3">
+    <table class="table table-sm test-report-table">
+      <thead>
+        <tr>
+          <th style="width: 40%;">
+            Test Name
+          </th>
+
+          <th style="width: 25%;">
+            Result
+          </th>
+
+          <th style="width: 35%;">
+            Biological Reference Range
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="let test of selectedTests; let i = index">
+          <!-- TEST GROUP HEADER -->
+          <tr class="group-header">
+            <td colspan="3">
+              {{ test.groupname }}
+            </td>
+          </tr>
+
+          <!-- TEST DETAILS -->
+          <tr class="test-detail-row">
+            <td [ngClass]="{ 'fw-bold': isTestBold(test) }">
+              {{ test.testname }}
+            </td>
+
+            <td
+              [ngClass]="{
+                'text-danger fw-bold': isOutOfRange(test)
+              }"
+            >
+              {{ test.testvalue }}
+            </td>
+
+            <td>
+              {{ getReferenceRange(test) }}
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- REPORT FOOTER -->
+  <div class="report-footer mt-5">
+    <div class="row">
+      <div class="col-6 text-start">
+        <strong>Lab Technician</strong>
+        <div>Signature</div>
+      </div>
+
+      <div class="col-6 text-end">
+        <strong>Authorized Signatory</strong>
+        <div>Signature</div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <small>
+        This report is intended for medical interpretation by the referring
+        doctor.
+      </small>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT BUTTONS - OUTSIDE REPORT -->
+<div class="text-end mt-3 no-print">
+  <!-- PRINT REPORT BUTTON -->
+  <button type="button" class="btn btn-primary" (click)="printReport()">
+    <i class="fa fa-print"></i>
+    Print Report
+  </button>
+
+  <!-- DOWNLOAD PDF BUTTON -->
+  <button
+    type="button"
+    class="btn btn-success ms-2"
+    (click)="downloadPDF()"
+    [disabled]="isGeneratingPDF"
+  >
+    <i class="fa fa-file-pdf me-1"></i>
+
+    {{ isGeneratingPDF ? "Generating PDF..." : "Download PDF" }}
+  </button>
+
+  <!-- PDF GENERATING OVERLAY -->
+  <div class="pdf-generating-overlay" *ngIf="isGeneratingPDF">
+    <div class="pdf-generating-box">
+      <div class="pdf-modern-loader">
+        <div class="spinner-ring"></div>
+        <div class="spinner-core"></div>
+      </div>
+
+      <h5>
+        Generating PDF...
+      </h5>
+
+      <p>
+        Please wait while your Lab Test Report is being generated.
+      </p>
+    </div>
+  </div>
+
+  <!-- CLOSE BUTTON -->
+  <button
+    type="button"
+    class="btn btn-secondary ms-2"
+    (click)="bsModalRef.hide()"
+  >
+    Close
+  </button>
+</div>

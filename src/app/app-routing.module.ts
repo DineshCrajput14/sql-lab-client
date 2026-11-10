@@ -115,6 +115,57 @@ const routes: Routes = [
           activity: ["View"],
         },
       },
+
+      {
+        path: "doctors",
+        loadChildren: () =>
+          import("./pages/doctors/doctors.module").then((m) => m.DoctorsModule),
+        data: {
+          module: ["Miscellaneous"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
+      },
+
+      {
+        path: "testgroup-master",
+        loadChildren: () =>
+          import("./pages/testgroup-master/testgroup-master.module").then(
+            (m) => m.TestgroupMasterModule
+          ),
+        data: {
+          module: ["Miscellaneous"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
+      },
+
+      {
+        path: "test-master",
+        loadChildren: () =>
+          import("./pages/test-master/test-master.module").then(
+            (m) => m.TestMasterModule
+          ),
+        data: {
+          module: ["Miscellaneous"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
+      },
+
+      {
+        path: "patient-title",
+        loadChildren: () =>
+          import("./pages/patient-title/patient-title.module").then(
+            (m) => m.PatientTitleModule
+          ),
+        data: {
+          module: ["Miscellaneous"],
+          resource: ["Masters"],
+          activity: ["View"],
+        },
+      },
+
       {
         path: "users",
         loadChildren: () =>
@@ -147,6 +198,19 @@ const routes: Routes = [
           activity: ["View"],
         },
       },
+      {
+        path: "lab-test",
+        loadChildren: () =>
+          import("./pages/lab-test/lab-test.module").then(
+            (m) => m.LabTestModule
+          ),
+        data: {
+          module: ["Receipt"],
+          resource: ["Transactions"],
+          activity: ["View"],
+        },
+      },
+
       {
         path: "release-room",
         loadChildren: () =>

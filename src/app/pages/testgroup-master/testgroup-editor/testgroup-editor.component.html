@@ -1,0 +1,138 @@
+<div class="modal-content">
+  <form #f="ngForm" (ngSubmit)="save(f)">
+    <div class="modal-header">
+      <h5 class="modal-title">
+        {{ formState === "EDIT" ? "Edit" : "New" }} Group
+      </h5>
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        [disabled]="isLoading"
+        (click)="cancel()"
+      ></button>
+    </div>
+
+    <div class="modal-body">
+      <div class="row" [hidden]="isLoading">
+        <div class="col-sm-12 mb-3">
+          <label class="form-label required" for="groupName">
+            Group Name:
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="groupName"
+            name="groupName"
+            [(ngModel)]="groupName"
+            required
+            maxlength="255"
+            placeholder="Enter Group Name"
+            #groupNameInput="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                groupNameInput.invalid &&
+                (f.submitted || groupNameInput.touched)
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              groupNameInput.invalid && (f.submitted || groupNameInput.touched)
+            "
+          >
+            Please enter Group Name.
+          </div>
+        </div>
+
+        <div class="col-sm-12 mb-3">
+          <label class="form-label" for="description">Description:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="description"
+            name="description"
+            [(ngModel)]="description"
+            maxlength="1000"
+            placeholder="Enter Description"
+          />
+        </div>
+
+        <div class="col-sm-12 mb-3">
+          <label class="form-label" for="parentId">Parent Group:</label>
+          <select
+            class="form-select"
+            id="parentId"
+            name="parentId"
+            [(ngModel)]="parentId"
+          >
+            <option [ngValue]="0">Primary / No Parent</option>
+            <option *ngFor="let group of groups" [ngValue]="group.groupId">
+              {{ group.groupName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-sm-6 mb-3">
+          <label class="form-label" for="orderNo">Order No:</label>
+          <input
+            type="number"
+            class="form-control"
+            id="orderNo"
+            name="orderNo"
+            [(ngModel)]="orderNo"
+            min="0"
+            step="1"
+          />
+        </div>
+
+        <div class="col-sm-12 mb-3">
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="disabledInNewTran"
+              name="disabledInNewTran"
+              [(ngModel)]="disabledInNewTran"
+            />
+            <label class="form-check-label" for="disabledInNewTran">
+              Disabled In New Transaction
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" [hidden]="!isLoading">
+        <div class="col-12">
+          <app-is-loading [isFormStateEdit]="true"></app-is-loading>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-secondary me-auto"
+        (click)="cancel()"
+        [disabled]="isLoading"
+      >
+        Cancel
+      </button>
+
+      <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+        {{ formState === "EDIT" ? "Update" : "Save" }}
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-vk"
+        *ngIf="formState === 'NEW'"
+        [disabled]="isLoading || f.invalid"
+        (click)="saveAndAddMore()"
+      >
+        Save &amp; Add More
+      </button>
+    </div>
+  </form>
+</div>
