@@ -214,6 +214,36 @@ export class StandardReportsExcelExportService {
         searchObj,
         reportCode
       );
+    } else if (reportCode === "doctor-summary") {
+      const exportRows = (reportDataRaw || []).map((row, index) => {
+        return {
+          "No.": index + 1,
+          "Ref.No": row.refNo,
+          Date: row.date ? moment(row.date).format("DD-MM-YYYY") : "",
+          "Patient Name": row.patientName,
+          "F/H Name": row.fhName,
+          Age: row.age,
+          Gender: row.gender,
+          Amount: row.amount ? Number(row.amount).toFixed(2) : "0.00",
+          "%": row.commissionPercent
+            ? Number(row.commissionPercent).toFixed(2)
+            : "0.00",
+          Incentive: row.incentive ? Number(row.incentive).toFixed(2) : "0.00",
+        };
+      });
+
+      const exportFileName =
+        fileName || `Doctor_Summary_${moment().format("DD_MM_YYYY")}`;
+      this.excelService.exportStyledReportExcel(
+        exportRows,
+        exportFileName,
+        "Doctor Summary",
+        searchObj,
+        reportCode,
+        reportDataRaw,
+        months,
+        isPrint
+      );
     } else if (reportCode === "patient-register") {
       const exportRows = (reportDataRaw || []).map((row, index) => {
         return {

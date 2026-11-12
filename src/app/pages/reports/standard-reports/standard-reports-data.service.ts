@@ -82,6 +82,19 @@ export class StandardReportsDataService {
         gender: reportRow.gender,
         amount: reportRow.amount,
       }));
+    } else if (reportCode === "doctor-summary") {
+      return (reportRows || []).map((reportRow) => ({
+        id: reportRow.id,
+        refNo: reportRow.refNo,
+        date: reportRow.date,
+        patientName: reportRow.patientName,
+        fhName: reportRow.fhName,
+        age: reportRow.age,
+        gender: reportRow.gender,
+        amount: reportRow.amount,
+        commissionPercent: reportRow.commissionPercent,
+        incentive: reportRow.incentive,
+      }));
     } else if (reportCode === "occupancy-report") {
       const groupedFloorMap = new Map();
 
@@ -156,6 +169,17 @@ export class StandardReportsDataService {
         }
       });
 
+      return [totalObject];
+    } else if (reportCode === "doctor-summary") {
+      const totalObject = {
+        gender: "Total",
+        amount: 0,
+        incentive: 0,
+      };
+      (gridRows || []).forEach((reportRow) => {
+        totalObject.amount += Number(reportRow.amount) || 0;
+        totalObject.incentive += Number(reportRow.incentive) || 0;
+      });
       return [totalObject];
     } else if (reportCode === "patient-register") {
       const totalObject = {

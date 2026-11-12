@@ -99,6 +99,14 @@ export class StandardReportsComponent implements OnInit {
     private excelExportService: StandardReportsExcelExportService
   ) {}
 
+  // Lab-style reports (patient / doctor): no Property/Block/Unit, Status = Gender
+  get isLabReport(): boolean {
+    return (
+      this.reportCode === "patient-register" ||
+      this.reportCode === "doctor-summary"
+    );
+  }
+
   ngOnInit() {
     this.route.params.subscribe((params) => {
       this.reportCode = params["reportCode"];
@@ -199,14 +207,30 @@ export class StandardReportsComponent implements OnInit {
       this.reportTitle = "Patient Register";
       this.statusList = [
         { id: "ALL", name: "All" },
-        { id: "Active", name: "Active" },
-        { id: "In-Active", name: "In-Active" },
+        { id: "Male", name: "Male" },
+        { id: "Female", name: "Female" },
+        { id: "Other", name: "Other" },
       ];
       this.searchOptionsList = [
         { id: "ALL", name: "All" },
         { id: "regNo", name: "Reg. No." },
         { id: "patientName", name: "Patient Name" },
         { id: "mobileNo", name: "Mobile No." },
+      ];
+    } else if (this.reportCode === "doctor-summary") {
+      this.reportTitle = "Doctor Summary";
+      this.statusList = [
+        { id: "ALL", name: "All" },
+        { id: "Male", name: "Male" },
+        { id: "Female", name: "Female" },
+        { id: "Other", name: "Other" },
+      ];
+      this.searchOptionsList = [
+        { id: "ALL", name: "All" },
+        { id: "refDoctor", name: "Ref. By Doctor" },
+        { id: "refNo", name: "Ref. No." },
+        { id: "patientName", name: "Patient Name" },
+        { id: "fhName", name: "F/H Name" },
       ];
     } else {
       this.reportTitle = "Standard Report";

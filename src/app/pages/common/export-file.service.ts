@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { AuthService } from "src/app/utils/services/auth.service";
 import { ErrorHandlingService } from "src/app/utils/services/error-handling.service";
 import * as FileSaver from "file-saver";
+import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import moment from "moment";
 
@@ -48,26 +49,36 @@ export class ExcelService {
     const isLedger =
       reportCode === "tenant-ledger" || reportCode === "tenant-security-ledger";
 
+    const isLabReport =
+      reportCode === "doctor-summary" || reportCode === "patient-register";
+
     const hasTotalRow =
       reportCode === "monthly-rent-register" ||
       reportCode === "monthly-refund-register" ||
-      reportCode === "outstanding";
+      reportCode === "outstanding" ||
+      isLabReport;
 
     const rowsWithTotal = [...(exportRows || [])];
+
     if (hasTotalRow && rowsWithTotal.length) {
-      const totalRow: Record<string, any> = { Floor: "Total" };
+      const totalRow: Record<string, any> = isLabReport
+        ? { Gender: "Total" }
+        : { Floor: "Total" };
+
       headers.forEach((headerName) => {
         if (
-          /amount|amt/i.test(headerName) ||
-          /^[a-z]{3}-\d{2,4}$/i.test(headerName.trim())
+          /amount|amt|incentive/i.test(headerName) ||
+          (!isLabReport && /^[a-z]{3}-\d{2,4}$/i.test(headerName.trim()))
         ) {
           const columnTotal = (exportRows || []).reduce(
             (sum, rowItem) => sum + (Number(rowItem[headerName]) || 0),
             0
           );
+
           totalRow[headerName] = columnTotal.toFixed(2);
         }
       });
+
       rowsWithTotal.push(totalRow);
     }
 
@@ -76,10 +87,12 @@ export class ExcelService {
     );
 
     const hasDateFilter = reportCode !== "occupancy-report";
+
     const hasSearchOption =
       reportCode !== "occupancy-report" &&
       reportCode !== "agreement-expiry" &&
       !isLedger;
+
     const hasStatusFilter = reportCode !== "agreement-expiry" && !isLedger;
 
     const displayHeaders = headers.map((headerName) =>
@@ -108,6 +121,7 @@ export class ExcelService {
 
     if (isLedger) {
       const midCol = Math.floor(totalColumns / 2);
+
       merges.push(
         { s: { r: 5, c: 0 }, e: { r: 5, c: midCol - 1 } },
         { s: { r: 5, c: midCol }, e: { r: 5, c: lastColumnIndex } },
@@ -116,18 +130,32 @@ export class ExcelService {
     } else {
       merges.push({
         s: { r: 5, c: 0 },
-        e: { r: 5, c: Math.min(hasDateFilter ? 2 : 1, lastColumnIndex) },
+        e: {
+          r: 5,
+          c: Math.min(hasDateFilter ? 2 : 1, lastColumnIndex),
+        },
       });
-      if (hasDateFilter && totalColumns >= 7) {
+
+      if (hasDateFilter && totalColumns >= 7 && !isLabReport) {
         merges.push(
           { s: { r: 6, c: 0 }, e: { r: 6, c: 2 } },
           { s: { r: 6, c: 3 }, e: { r: 6, c: 5 } },
-          { s: { r: 6, c: 6 }, e: { r: 6, c: Math.min(8, lastColumnIndex) } }
+          {
+            s: { r: 6, c: 6 },
+            e: { r: 6, c: Math.min(8, lastColumnIndex) },
+          }
         );
       }
-      if (totalColumns >= 9 && hasSearchOption) {
+
+      if (isLabReport && hasSearchOption && totalColumns >= 6) {
+        merges.push({
+          s: { r: 5, c: 4 },
+          e: { r: 5, c: lastColumnIndex - 1 },
+        });
+      } else if (totalColumns >= 9 && hasSearchOption) {
         const searchMergeEndColumn =
           reportCode === "outstanding" ? 7 : Math.min(8, lastColumnIndex - 1);
+
         merges.push({
           s: { r: 5, c: 6 },
           e: { r: 5, c: searchMergeEndColumn },
@@ -136,16 +164,22 @@ export class ExcelService {
     }
 
     if (reportCode === "occupancy-report" && lastColumnIndex > 3) {
-      merges.push({ s: { r: 8, c: 3 }, e: { r: 8, c: lastColumnIndex } });
+      merges.push({
+        s: { r: 8, c: 3 },
+        e: { r: 8, c: lastColumnIndex },
+      });
     }
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetRows);
+
     worksheet["!merges"] = merges;
+
     worksheet["!cols"] = this.calculateColumnWidths(
       displayHeaders,
       dataRows,
       reportCode
     );
+
     worksheet["!rows"] = sheetRows.map((_, rowIndex) => ({
       hpt: rowIndex === 0 ? 22 : rowIndex === 8 ? 20 : 18,
     }));
@@ -154,6 +188,7 @@ export class ExcelService {
       Sheets: { data: worksheet },
       SheetNames: ["data"],
     };
+
     const rawExcelBuffer = XLSX.write(workbook, {
       bookType: "xlsx",
       type: "array",
@@ -166,11 +201,10 @@ export class ExcelService {
       rawRows,
       months
     );
-    const totalRowNumber = isLedger
-      ? 9 + rowsWithTotal.length
-      : hasTotalRow
-      ? 9 + rowsWithTotal.length
-      : 0;
+
+    const totalRowNumber =
+      isLedger || hasTotalRow ? 9 + rowsWithTotal.length : 0;
+
     const openingRowNumber = isLedger ? 10 : undefined;
 
     const styledExcelBuffer = this.applyReportStyles(
@@ -180,6 +214,7 @@ export class ExcelService {
       totalRowNumber,
       openingRowNumber
     );
+
     this.saveAsExcelFile(styledExcelBuffer, excelFileName);
   }
 
@@ -263,6 +298,8 @@ export class ExcelService {
       reportCode !== "agreement-expiry" &&
       !isLedger;
     const hasStatusFilter = reportCode !== "agreement-expiry" && !isLedger;
+    const isLabReport =
+      reportCode === "doctor-summary" || reportCode === "patient-register";
 
     const organization: any = this.authService?.authentication?.organization;
     const addressLine = [
@@ -314,17 +351,25 @@ export class ExcelService {
         }
       } else {
         filterRowCells[0] = `From ${fromDate} to ${toDate}`;
-        if (totalColumns >= 7) {
-          subFilterRowCells[0] = `Property: ${
-            searchObj?.propertyName || "All"
-          }`;
-          subFilterRowCells[3] = `Block: ${searchObj?.buildingName || "All"}`;
-          subFilterRowCells[6] = `Unit: ${searchObj?.unitName || "All"}`;
-        }
-        if (totalColumns >= 9 && hasSearchOption) {
-          filterRowCells[6] = `Search Option: ${
-            searchObj?.searchOptionName || "All"
-          }${searchKeyword}`;
+        if (isLabReport) {
+          if (hasSearchOption) {
+            filterRowCells[4] = `Search Option: ${
+              searchObj?.searchOptionName || "All"
+            }${searchKeyword}`;
+          }
+        } else {
+          if (totalColumns >= 7) {
+            subFilterRowCells[0] = `Property: ${
+              searchObj?.propertyName || "All"
+            }`;
+            subFilterRowCells[3] = `Block: ${searchObj?.buildingName || "All"}`;
+            subFilterRowCells[6] = `Unit: ${searchObj?.unitName || "All"}`;
+          }
+          if (totalColumns >= 9 && hasSearchOption) {
+            filterRowCells[6] = `Search Option: ${
+              searchObj?.searchOptionName || "All"
+            }${searchKeyword}`;
+          }
         }
         if (reportCode === "outstanding" && totalColumns >= 10) {
           filterRowCells[8] = `Monthwise: ${
@@ -341,7 +386,9 @@ export class ExcelService {
     }
 
     if (hasStatusFilter) {
-      filterRowCells[lastColumnIndex] = `Status: ${statusValue}`;
+      filterRowCells[lastColumnIndex] = `${
+        isLabReport ? "Gender" : "Status"
+      }: ${statusValue}`;
     }
 
     const createRow = (cellValues: Record<number, string | number> = {}) =>
@@ -565,9 +612,11 @@ export class ExcelService {
       if (/^(reg\.?\s*no\.?|rcpt\s*no\.?)$/i.test(headerName.trim())) {
         return "center";
       }
-      if (/amount|amt/i.test(headerName)) {
+
+      if (/amount|amt|incentive/i.test(headerName)) {
         return "right";
       }
+
       return "left";
     };
 
@@ -583,7 +632,10 @@ export class ExcelService {
     const bodyRowsHtml = (exportRows || [])
       .map((rowItem) => {
         const rowClass =
-          rowItem["Floor"] === "Total" ? ` class="total-row"` : "";
+          rowItem["Floor"] === "Total" || rowItem["Gender"] === "Total"
+            ? ` class="total-row"`
+            : "";
+
         return `<tr${rowClass}>${headers
           .map(
             (headerName) =>
@@ -596,63 +648,171 @@ export class ExcelService {
       .join("");
 
     document.getElementById("standardReportPrintIframe")?.remove();
+
     const printIframe = document.createElement("iframe");
+
     printIframe.id = "standardReportPrintIframe";
+
     printIframe.style.cssText =
       "position:fixed;top:-10000px;left:-10000px;width:0;height:0;border:none;";
+
     document.body.appendChild(printIframe);
 
     const iframeDocument = printIframe.contentWindow?.document;
+
     if (!iframeDocument) {
       return;
     }
 
     const lastColumnIndex = Math.max(headers.length - 1, 0);
+
     iframeDocument.open();
+
     iframeDocument.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>${sheetRows[4]?.[0] || ""}</title>
-          <style>
-            @page { size: A4 landscape; margin: 0; }
-            * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { margin: 0; padding: 10mm; font-family: "Times New Roman", Times, serif; color: #000; background: #fff; }
-            .report-box { border: 1px solid #000; min-height: 188mm; width: 100%; }
-            .org-header { text-align: center; padding: 8px 12px 2px 12px; line-height: 1.25; }
-            .org-name { font-size: 20px; font-weight: bold; }
-            .org-line { font-size: 13px; }
-            .report-title { font-size: 15px; font-weight: bold; margin-top: 8px; }
-            .filter-bar { display: flex; justify-content: space-between; font-size: 10.5px; padding: 2px 6px 5px 6px; }
-            .double-top-line { border-top: 1px solid #000; margin-bottom: 2px; }
-            table { width: 100%; border-collapse: collapse; border-top: 1px solid #000; border-bottom: 1px solid #000; }
-            th, td { border-right: 1px solid #000; padding: 3px 5px; font-size: 10.5px; }
-            th:last-child, td:last-child { border-right: none; }
-            th { border-bottom: 1px solid #000; font-weight: bold; font-size: 11px; }
-            .total-row td { border-top: 1px solid #000; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <div class="report-box">
-            <div class="org-header">
-              <div class="org-name">${sheetRows[0]?.[0] || ""}</div>
-              <div class="org-line">${sheetRows[1]?.[0] || ""}</div>
-              <div class="org-line">${sheetRows[2]?.[0] || ""}</div>
-              <div class="report-title">${sheetRows[4]?.[0] || ""}</div>
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>${sheetRows[4]?.[0] || ""}</title>
+
+        <style>
+          @page {
+            size: A4 landscape;
+            margin: 0;
+          }
+
+          * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
+          body {
+            margin: 0;
+            padding: 10mm;
+            font-family: "Times New Roman", Times, serif;
+            color: #000;
+            background: #fff;
+          }
+
+          .report-box {
+            border: 1px solid #000;
+            min-height: 188mm;
+            width: 100%;
+          }
+
+          .org-header {
+            text-align: center;
+            padding: 8px 12px 2px 12px;
+            line-height: 1.25;
+          }
+
+          .org-name {
+            font-size: 20px;
+            font-weight: bold;
+          }
+
+          .org-line {
+            font-size: 13px;
+          }
+
+          .report-title {
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 8px;
+          }
+
+          .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            padding: 2px 6px 5px 6px;
+          }
+
+          .double-top-line {
+            border-top: 1px solid #000;
+            margin-bottom: 2px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+          }
+
+          th,
+          td {
+            border-right: 1px solid #000;
+            padding: 3px 5px;
+            font-size: 10.5px;
+          }
+
+          th:last-child,
+          td:last-child {
+            border-right: none;
+          }
+
+          th {
+            border-bottom: 1px solid #000;
+            font-weight: bold;
+            font-size: 11px;
+          }
+
+          .total-row td {
+            border-top: 1px solid #000;
+            font-weight: bold;
+          }
+        </style>
+      </head>
+
+      <body>
+        <div class="report-box">
+          <div class="org-header">
+            <div class="org-name">
+              ${sheetRows[0]?.[0] || ""}
             </div>
-            <div class="filter-bar">
-              <span>${sheetRows[5]?.[0] || ""}</span>
-              <span>${sheetRows[5]?.[lastColumnIndex] || ""}</span>
+
+            <div class="org-line">
+              ${sheetRows[1]?.[0] || ""}
             </div>
-            <div class="double-top-line"></div>
-            <table>
-              <thead><tr>${headerCellsHtml}</tr></thead>
-              <tbody>${bodyRowsHtml}</tbody>
-            </table>
+
+            <div class="org-line">
+              ${sheetRows[2]?.[0] || ""}
+            </div>
+
+            <div class="report-title">
+              ${sheetRows[4]?.[0] || ""}
+            </div>
           </div>
-        </body>
-      </html>
-    `);
+
+          <div class="filter-bar">
+            <span>
+              ${sheetRows[5]?.[0] || ""}
+            </span>
+
+            <span>
+              ${sheetRows[5]?.[lastColumnIndex] || ""}
+            </span>
+          </div>
+
+          <div class="double-top-line"></div>
+
+          <table>
+            <thead>
+              <tr>
+                ${headerCellsHtml}
+              </tr>
+            </thead>
+
+            <tbody>
+              ${bodyRowsHtml}
+            </tbody>
+          </table>
+        </div>
+      </body>
+    </html>
+  `);
+
     iframeDocument.close();
 
     setTimeout(() => {
@@ -662,15 +822,19 @@ export class ExcelService {
   }
 
   private saveAsExcelFile(
-    buffer: ArrayBuffer | BlobPart,
+    buffer: ArrayBuffer | Uint8Array,
     fileName: string
   ): void {
-    if (!buffer || !fileName) {
-      this.errorHandlingService.errors("Invalid file data or name.");
-      return;
-    }
+    const uint8Array = new Uint8Array(buffer);
 
-    const data = new Blob([buffer], { type: EXCEL_TYPE });
-    FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
+    const blobBuffer = new ArrayBuffer(uint8Array.byteLength);
+
+    new Uint8Array(blobBuffer).set(uint8Array);
+
+    const blob = new Blob([blobBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(blob, `${fileName}.xlsx`);
   }
 }

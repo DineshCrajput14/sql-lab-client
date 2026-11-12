@@ -295,7 +295,8 @@
             />
           </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <!-- Property / Block / Unit are hidden for patient-register -->
+        <div class="col-sm-6 col-md-3 col-lg-2" *ngIf="!isLabReport">
           <div class="form-group">
             <label class="form-label" for="propertyId">Property:</label>
             <select
@@ -315,7 +316,7 @@
             </select>
           </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="col-sm-6 col-md-3 col-lg-2" *ngIf="!isLabReport">
           <div class="form-group">
             <label class="form-label" for="buildingId">Block:</label>
             <select
@@ -335,7 +336,7 @@
             </select>
           </div>
         </div>
-        <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="col-sm-6 col-md-3 col-lg-2" *ngIf="!isLabReport">
           <div class="form-group">
             <label class="form-label" for="unitId">Unit:</label>
             <select
@@ -353,7 +354,9 @@
         </div>
         <div class="col-sm-6 col-md-3 col-lg-2">
           <div class="form-group">
-            <label class="form-label" for="status">Status:</label>
+            <label class="form-label" for="status">
+              {{ isLabReport ? "Gender:" : "Status:" }}
+            </label>
             <select
               class="form-select"
               name="status"
