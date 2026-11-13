@@ -1,20 +1,28 @@
-import { Component, HostListener } from "@angular/core";
+import { Component, HostListener, OnInit } from "@angular/core";
 import { LocationStrategy } from "@angular/common";
 import { ToastrMessage } from "./utils/services/toastrmessage.service";
+import { AuthService } from "./utils/services/auth.service";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = "PMS";
   openedModals = undefined;
 
   constructor(
     private locationStrategy: LocationStrategy,
-    private toastrMessage: ToastrMessage
+    private toastrMessage: ToastrMessage,
+    private authService: AuthService
   ) {}
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn) {
+      this.authService.refreshTestTranDataAvailability();
+    }
+  }
 
   // https://stackoverflow.com/questions/36357204/how-to-disable-browser-back-button-in-angular-2
 
@@ -30,10 +38,12 @@ export class AppComponent {
   @HostListener("window:popstate", ["$event"])
   onPopState(event) {
     this.openedModals = document.getElementsByTagName("modal-container");
+
     if (this.openedModals && (this.openedModals || []).length) {
       this.toastrMessage.showWarning(
         "Please close the open popups to proceed. * NOTE - If you are editing any form then please complete it and after clicking save/update button kindly refresh the page to see your recently saved changes. *"
       );
+
       this.preventBackButton();
     }
   }

@@ -3,7 +3,7 @@ import { BsModalRef } from "ngx-bootstrap/modal";
 import { Subject } from "rxjs";
 import { NgForm } from "@angular/forms";
 import { LabTestService } from "../lab-test.service";
-
+import { SettingsService } from "../../../pages/settings/settings.service";
 @Component({
   selector: "app-lab-test-editor",
   templateUrl: "./lab-test-editor.component.html",
@@ -51,7 +51,8 @@ export class LabTestEditorComponent implements OnInit {
 
   constructor(
     public bsModalRef: BsModalRef,
-    private labTestService: LabTestService
+    private labTestService: LabTestService,
+    private settingsService: SettingsService
   ) {}
 
   ngOnInit(): void {
@@ -492,24 +493,64 @@ export class LabTestEditorComponent implements OnInit {
   // =========================
   // NEXT REFERENCE NO
   // =========================
-
   loadNextReferenceNo(): void {
-    this.labTestService.getNextReferenceNo().subscribe({
-      next: (response: any) => {
-        const nextReferenceNo =
-          response?.data?.nextReferenceNo ??
-          response?.data ??
-          response?.nextReferenceNo ??
-          response;
+    this.settingsService.getControlPanel().subscribe({
+      next: (settingsResponse: any) => {
+        // Keep the existing backend GET response structure unchanged.
+        const controlPanelSettings =
+          settingsResponse?.controlPanelSetting ??
+          settingsResponse?.data?.controlPanelSetting ??
+          settingsResponse?.data ??
+          settingsResponse;
 
-        this.patient.serialno = Number(nextReferenceNo);
+        const autoSerialNumberEnabled =
+          controlPanelSettings.serialno === true ||
+          controlPanelSettings.serialno === 1 ||
+          controlPanelSettings.serialno === "1";
 
-        console.log("Next Reference No:", this.patient.serialno);
+        const configuredStartSerialNo = Number(
+          controlPanelSettings.startSerialno
+        );
+
+        this.labTestService.getNextReferenceNo().subscribe({
+          next: (response: any) => {
+            const nextReferenceNo =
+              response?.data?.nextReferenceNo ??
+              response?.nextReferenceNo ??
+              response?.data ??
+              response;
+
+            const serialNo = Number(nextReferenceNo);
+
+            // If tbtesttran is empty, API returns 1 as its initial value.
+            // In that case, use the Control Panel's configured start number.
+            if (
+              serialNo === 1 &&
+              autoSerialNumberEnabled &&
+              controlPanelSettings.startSerialno !== null &&
+              controlPanelSettings.startSerialno !== undefined &&
+              controlPanelSettings.startSerialno !== "" &&
+              Number.isFinite(configuredStartSerialNo)
+            ) {
+              this.patient.serialno = configuredStartSerialNo;
+            } else {
+              // If records exist, use the next number returned by the database.
+              this.patient.serialno = serialNo;
+            }
+
+            console.log("Control Panel Settings:", controlPanelSettings);
+            console.log("API Next Reference No:", serialNo);
+            console.log("Final Reference No:", this.patient.serialno);
+          },
+          error: (error: any) => {
+            console.error("Reference No. loading failed:", error);
+            alert("Unable to load Reference Number.");
+          },
+        });
       },
       error: (error: any) => {
-        console.error("Reference No. loading failed:", error);
-
-        alert("Unable to load Reference Number.");
+        console.error("Control Panel Settings loading failed:", error);
+        alert("Unable to load Control Panel Settings.");
       },
     });
   }

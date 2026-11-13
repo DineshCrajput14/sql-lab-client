@@ -13,12 +13,18 @@ import { SettingsService } from "./settings.service";
   styleUrls: ["./settings.component.scss"],
 })
 export class SettingsComponent implements OnInit {
-  isLoading: boolean;
+  isLoading: boolean = false;
+
+  testTranDataAvailable: boolean = false;
 
   controlPanel: {
     tenantRegistrationNumberAuto: boolean;
+    serialno: boolean;
+    startSerialno: number | string;
   } = {
     tenantRegistrationNumberAuto: true,
+    serialno: false,
+    startSerialno: 1,
   };
 
   nextNumber: {
@@ -43,18 +49,55 @@ export class SettingsComponent implements OnInit {
 
   getControlPanel() {
     this.isLoading = true;
+
     this.settingsService.getControlPanel().subscribe({
       next: (resultGetControlPanelSettings) => {
-        this.isLoading = false;
         if (resultGetControlPanelSettings?.controlPanelSetting) {
+          const setting = resultGetControlPanelSettings.controlPanelSetting;
+
           this.controlPanel.tenantRegistrationNumberAuto =
-            resultGetControlPanelSettings.controlPanelSetting.tenantRegistrationNumberAuto;
+            setting.tenantRegistrationNumberAuto;
+
+          this.controlPanel.serialno =
+            setting.serialno === true ||
+            setting.serialno === 1 ||
+            setting.serialno === "1";
+
+          this.controlPanel.startSerialno = setting.startSerialno ?? 1;
         }
+
         if (resultGetControlPanelSettings?.nextNumber) {
           this.nextNumber.nextNumberTenant =
             resultGetControlPanelSettings.nextNumber.nextNumberTenant;
         }
+
+        this.checkTestTranData();
       },
+
+      error: (error) => {
+        this.isLoading = false;
+        this.errorHandlingService.errors(error);
+      },
+    });
+  }
+
+  checkTestTranData() {
+    this.settingsService.checkTestTranData().subscribe({
+      next: (result) => {
+        this.testTranDataAvailable =
+          result?.dataAvailable === true ||
+          result?.dataAvailable === 1 ||
+          result?.dataAvailable === "1";
+
+        // Update existing global Control Panel settings
+        this.authService.authentication.controlPanelSettings = {
+          ...this.authService.authentication.controlPanelSettings,
+          testTranDataAvailable: this.testTranDataAvailable,
+        };
+
+        this.isLoading = false;
+      },
+
       error: (error) => {
         this.isLoading = false;
         this.errorHandlingService.errors(error);
@@ -78,6 +121,7 @@ export class SettingsComponent implements OnInit {
         if (resultConfirm) {
           this.save();
         }
+
         subscription.unsubscribe();
       },
     });
@@ -85,19 +129,28 @@ export class SettingsComponent implements OnInit {
 
   save() {
     this.isLoading = true;
+
     const params = {
       tenantRegistrationNumberAuto: this.controlPanel
         .tenantRegistrationNumberAuto,
+
       nextNumberTenant: this.controlPanel.tenantRegistrationNumberAuto
         ? this.nextNumber.nextNumberTenant
         : undefined,
+
+      serialno: this.controlPanel.serialno ? 1 : 0,
+
+      startSerialno: this.controlPanel.startSerialno,
     };
 
     this.settingsService.save(params).subscribe({
       next: () => {
-        this.isLoading = false;
         this.toastrMessage.showSuccessMessage("Settings saved successfully");
+
+        // Refresh global data availability after saving
+        this.checkTestTranData();
       },
+
       error: (error) => {
         this.isLoading = false;
         this.errorHandlingService.errors(error);

@@ -22,4 +22,10 @@ export class SettingsService {
       data
     );
   }
+
+  checkTestTranData(): Observable<any> {
+    return this.http.get(
+      environment.apiBasePath + "v1/control-panel-settings/check-test-tran"
+    );
+  }
 }

@@ -96,6 +96,14 @@ export class UsersEditorComponent implements OnInit {
           view: false,
         },
         {
+          code: "LAB",
+          name: "LAB",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+        },
+        {
           code: "Miscellaneous",
           name: "Miscellaneous",
           createNew: false,
@@ -109,6 +117,15 @@ export class UsersEditorComponent implements OnInit {
       resource: "Transactions",
       items: [
         {
+          code: "LabTest",
+          name: "Lab Test",
+          createNew: false,
+          edit: false,
+          delete: false,
+          view: false,
+        },
+
+        {
           code: "TenantRegistration",
           name: "Tenant Registration",
           createNew: false,
@@ -116,6 +133,7 @@ export class UsersEditorComponent implements OnInit {
           delete: false,
           view: false,
         },
+
         {
           code: "RoomsAllotment",
           name: "Rooms Allotment",
@@ -138,6 +156,18 @@ export class UsersEditorComponent implements OnInit {
     {
       resource: "Reports",
       items: [
+        {
+          code: "PatientRegister",
+          name: "Patient Register",
+          view: false,
+          print: false,
+        },
+        {
+          code: "DoctorSummary",
+          name: "Doctor Summary",
+          view: false,
+          print: false,
+        },
         {
           code: "RegistrationReports",
           name: "Registration Reports",

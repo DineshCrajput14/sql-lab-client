@@ -28,7 +28,9 @@ export class AuthService {
       toDate: "",
       name: "",
     },
-    controlPanelSettings: <any>{},
+    controlPanelSettings: <any>{
+      testTranDataAvailable: false,
+    },
     user: <any>{
       id: null,
       name: "",
@@ -74,14 +76,67 @@ export class AuthService {
         }
       },
     });
+
     let authData: any = localStorage.getItem("erpLoginData");
     authData = JSON.parse(authData);
+
     if (authData && authData.token) {
       this.idletimeService.startWatching();
       this.isLoggedIn = true;
+
       this.updateAuthToken(authData);
       this.getDateFormatForDatePipe();
+
+      // // Refresh test transaction data availability globally
+      // this.refreshTestTranDataAvailability();
     }
+  }
+
+  /**
+   * Checks whether test transactions exist.
+   * Updates authentication settings and localStorage globally.
+   */
+  refreshTestTranDataAvailability(): void {
+    this.settingsService.checkTestTranData().subscribe({
+      next: (result: any) => {
+        const dataAvailable =
+          result?.dataAvailable === true ||
+          result?.dataAvailable === 1 ||
+          result?.dataAvailable === "1";
+
+        this.authentication.controlPanelSettings = {
+          ...this.authentication.controlPanelSettings,
+          testTranDataAvailable: dataAvailable,
+        };
+
+        // Update localStorage
+        try {
+          const authData = JSON.parse(
+            localStorage.getItem("erpLoginData") || "null"
+          );
+
+          if (authData) {
+            authData.controlPanelSettings = {
+              ...authData.controlPanelSettings,
+              testTranDataAvailable: dataAvailable,
+            };
+
+            localStorage.setItem("erpLoginData", JSON.stringify(authData));
+          }
+        } catch (error) {
+          console.error(
+            "Failed to update test transaction availability in localStorage",
+            error
+          );
+        }
+      },
+      error: (error) => {
+        console.error(
+          "Failed to check test transaction data availability",
+          error
+        );
+      },
+    });
   }
 
   login(username: string, password: string): Observable<any> {
@@ -100,19 +155,29 @@ export class AuthService {
 
           if (token && user) {
             this.isLoggedIn = true;
+
             this.authentication.token = token;
             this.authentication.username = user.name;
             this.authentication.userRoleCode = user.userRoleCode;
+
             this.authentication.user = {
               id: user.id,
               name: user.name,
               mobileNo: user.mobileNo,
               imageUrl: user.imageUrl,
             };
+
             this.authentication.organization = authData.organization;
             this.authentication.allowedAppActivities =
               authData.allowedAppActivities;
             this.authentication.allowedAppModules = authData.allowedAppModules;
+
+            this.authentication.controlPanelSettings = {
+              ...(authData.controlPanelSettings || {}),
+              testTranDataAvailable:
+                authData.controlPanelSettings?.testTranDataAvailable === true,
+            };
+
             localStorage.setItem(
               "erpLoginData",
               JSON.stringify({
@@ -130,11 +195,16 @@ export class AuthService {
                 organization: authData.organization,
                 allowedAppActivities: authData.allowedAppActivities,
                 allowedAppModules: authData.allowedAppModules,
-                controlPanelSettings: authData.controlPanelSettings,
+                controlPanelSettings: this.authentication.controlPanelSettings,
               })
             );
+
+            // Refresh status after login
+            this.refreshTestTranDataAvailability();
+
             return response;
           }
+
           return response;
         }),
         catchError(this.handleError)
@@ -183,7 +253,9 @@ export class AuthService {
         toDate: "",
         name: "",
       },
-      controlPanelSettings: {},
+      controlPanelSettings: <any>{
+        testTranDataAvailable: false,
+      },
       user: <any>{
         id: null,
         name: "",
@@ -219,6 +291,7 @@ export class AuthService {
     this.idletimeService.idleStatus.subscribe({
       next: (value) => {
         localStorage.removeItem("erpLoginData");
+
         if (value === "TIMEDOUT") {
           this.router.navigate(["/login"], {
             state: { logoutReason: "timeout" },
@@ -238,20 +311,27 @@ export class AuthService {
         }
       },
     });
+
     this.cacheService.clearSearchCache();
     this.settingsService.setCurrentTabIndex = 0;
     this.settingsService.setCurrentTabName = "";
+
     localStorage.clear();
   }
 
-  updateAuthToken(response) {
+  updateAuthToken(response: any): void {
     const userRoleCode = response.user?.userRoleCode;
 
     this.authentication = {
       username: response.user?.name,
       userRoleCode: userRoleCode,
       token: response.token,
-      session: response.session,
+      session: response.session || {
+        id: 0,
+        fromDate: "",
+        toDate: "",
+        name: "",
+      },
       user: <any>{
         id: response.user?.id,
         name: response.user?.name,
@@ -262,7 +342,13 @@ export class AuthService {
       allowedAppActivities: response.allowedAppActivities || [],
       allowedAppModules: response.allowedAppModules || [],
       organization: response.organization || {},
-      controlPanelSettings: response.controlPanelSettings || {},
+      controlPanelSettings: {
+        ...(response.controlPanelSettings || {}),
+        testTranDataAvailable:
+          response.controlPanelSettings?.testTranDataAvailable === true ||
+          response.controlPanelSettings?.testTranDataAvailable === 1 ||
+          response.controlPanelSettings?.testTranDataAvailable === "1",
+      },
     };
   }
 
@@ -274,6 +360,7 @@ export class AuthService {
     ) {
       return roles.includes(this.authentication.userRoleCode);
     }
+
     return false;
   }
 
@@ -281,11 +368,13 @@ export class AuthService {
     if (!moduleName || !(this.authentication.allowedAppModules || []).length) {
       return false;
     }
+
     let resultObject = this.authentication.allowedAppModules.find(
       (element: string) => {
         return element === moduleName;
       }
     );
+
     return !!resultObject;
   }
 
@@ -293,6 +382,7 @@ export class AuthService {
     if (!this.authentication || this.authentication.userRoleCode === "ADMIN") {
       return true;
     }
+
     if (Array.isArray(module)) {
       return module.some((moduleName) =>
         this.findActivityPermission(moduleName, resource, activity)
@@ -302,9 +392,11 @@ export class AuthService {
     if (!this.isModuleAllowed(module)) {
       return false;
     }
+
     let activityPermission = (
       this.authentication.allowedAppActivities || []
     ).find((x) => x === `${module}.${resource}.${activity}`);
+
     return !!activityPermission;
   }
 
