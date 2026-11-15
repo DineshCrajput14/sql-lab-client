@@ -59,7 +59,14 @@ export class LabTestComponent implements OnInit {
   // Special Test Tabs
   activeSpecialTestTab: string = "LAB";
 
-  widalDilutions: string[] = ["1:20", "1:40", "1:80", "1:160", "1:320"];
+  widalDilutions: string[] = [
+    "1:20",
+    "1:40",
+    "1:80",
+    "1:160",
+    "1:320",
+    "1:640",
+  ];
 
   widalTests: any[] = [];
   vdrlTests: any[] = [];

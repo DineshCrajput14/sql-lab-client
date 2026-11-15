@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { NgForm } from "@angular/forms";
 import { LabTestService } from "../lab-test.service";
 import { SettingsService } from "../../../pages/settings/settings.service";
+
 @Component({
   selector: "app-lab-test-editor",
   templateUrl: "./lab-test-editor.component.html",
@@ -19,10 +20,15 @@ export class LabTestEditorComponent implements OnInit {
 
   patient = {
     serialno: null as number | null,
-    date: this.getCurrentDateTime(),
+    date: this.getCurrentDateOnly(),
+
+    samplereceivedon: this.getCurrentDateTime(),
+    reportstatus: false,
+    reportdate: "",
+    finalpayment: false,
+
     titleid: null as number | null,
     patientname: "",
-    phone: "",
     fhname: "",
     refdoctor: "",
     age: "",
@@ -34,6 +40,10 @@ export class LabTestEditorComponent implements OnInit {
     samplename: "",
     sampledrawnby: "",
     reportnumber: "",
+    testtotal: 0,
+    wtestvalue: 0,
+    discp: 0,
+    discAmount: 0,
     amount: 0,
     widaltest: false,
   };
@@ -49,6 +59,10 @@ export class LabTestEditorComponent implements OnInit {
   selectedAvailableTestIds: number[] = [];
   selectedTestIndex: number | null = null;
 
+  subtotal = 0;
+
+  private discountEntryMode: "percent" | "amount" = "percent";
+
   constructor(
     public bsModalRef: BsModalRef,
     private labTestService: LabTestService,
@@ -62,9 +76,17 @@ export class LabTestEditorComponent implements OnInit {
     this.loadDoctors();
 
     if (this.labTestData) {
+      // EDIT MODE
+      // address2 is the database field. Do not use phoneno / phoneNo / phone.
       this.patient = {
         ...this.patient,
         ...this.labTestData,
+        date: this.normalizeDateOnly(this.labTestData.date),
+        address2:
+          this.labTestData.address2 !== null &&
+          this.labTestData.address2 !== undefined
+            ? String(this.labTestData.address2)
+            : "",
       };
 
       this.testtranid =
@@ -74,7 +96,27 @@ export class LabTestEditorComponent implements OnInit {
             this.labTestData.id
         ) || null;
 
-      // Existing tests modal data mein available hain to use karo
+      // Normalize Report Status BIT value (0/1, boolean, or Buffer)
+      this.patient.reportstatus = this.normalizeBitValue(
+        this.labTestData.reportstatus
+      );
+
+      // Normalize Final Payment BIT value
+      this.patient.finalpayment = this.normalizeBitValue(
+        this.labTestData.finalpayment
+      );
+
+      // Date input expects YYYY-MM-DD format
+      this.patient.samplereceivedon = this.normalizeDate(
+        this.labTestData.samplereceivedon
+      );
+
+      this.patient.reportdate = this.normalizeDate(this.labTestData.reportdate);
+
+      if (!this.patient.reportstatus) {
+        this.patient.reportdate = "";
+      }
+
       if (
         Array.isArray(this.labTestData.details) &&
         this.labTestData.details.length > 0
@@ -85,17 +127,124 @@ export class LabTestEditorComponent implements OnInit {
           groupname: test.groupname ?? test.groupName,
           testid: test.testid ?? test.testId,
           testname: test.testname ?? test.testName,
+          testprice:
+            test.testprice ??
+            test.testPrice ??
+            test.price ??
+            test.amount ??
+            null,
           testvalue: test.testvalue ?? test.testValue ?? "",
         }));
+
+        this.calculateTotals();
       } else if (this.testtranid) {
-        // Parent record se details nahi aayi to separate API call
         this.loadExistingTestDetails(this.testtranid);
       }
     } else {
+      // CREATE MODE
       this.testtranid = null;
+
+      this.patient.reportstatus = false;
+      this.patient.reportdate = "";
+      this.patient.finalpayment = false;
+
       this.loadNextReferenceNo();
     }
   }
+
+  // =========================
+  // NORMALIZE BIT VALUE
+  // =========================
+
+  normalizeBitValue(value: any): boolean {
+    if (value === true || value === 1 || value === "1") {
+      return true;
+    }
+
+    if (value && typeof value === "object") {
+      if (value instanceof Uint8Array) {
+        return value[0] === 1;
+      }
+
+      if (value.data && Array.isArray(value.data)) {
+        return value.data[0] === 1;
+      }
+    }
+
+    return false;
+  }
+
+  // =========================
+  // NORMALIZE DATE ONLY (date input)
+  // =========================
+
+  normalizeDateOnly(value: any): string {
+    if (!value) {
+      return "";
+    }
+
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, "0");
+      const day = String(value.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    const dateString = String(value).trim().replace(" ", "T");
+    return dateString.length >= 10 ? dateString.slice(0, 10) : dateString;
+  }
+
+  // =========================
+  // NORMALIZE DATE (datetime-local)
+  // =========================
+
+  normalizeDate(value: any): string {
+    if (!value) {
+      return "";
+    }
+
+    if (value instanceof Date) {
+      const year = value.getFullYear();
+      const month = String(value.getMonth() + 1).padStart(2, "0");
+      const day = String(value.getDate()).padStart(2, "0");
+      const hours = String(value.getHours()).padStart(2, "0");
+      const minutes = String(value.getMinutes()).padStart(2, "0");
+
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    const dateString = String(value).trim().replace(" ", "T");
+
+    if (dateString.length >= 16) {
+      return dateString.slice(0, 16);
+    }
+
+    if (dateString.length === 10) {
+      return `${dateString}T00:00`;
+    }
+
+    return dateString;
+  }
+
+  // =========================
+  // REPORT STATUS CHANGE
+  // =========================
+
+  onReportStatusChange(status: any): void {
+    this.patient.reportstatus = this.normalizeBitValue(status);
+
+    if (this.patient.reportstatus) {
+      if (!this.patient.reportdate) {
+        this.patient.reportdate = this.getCurrentDateTime();
+      }
+    } else {
+      this.patient.reportdate = "";
+    }
+  }
+
+  // =========================
+  // LOAD EXISTING TEST DETAILS
+  // =========================
 
   loadExistingTestDetails(id: number): void {
     this.isLoading = true;
@@ -112,9 +261,16 @@ export class LabTestEditorComponent implements OnInit {
           groupname: test.groupname ?? test.groupName,
           testid: test.testid ?? test.testId,
           testname: test.testname ?? test.testName,
+          testprice:
+            test.testprice ??
+            test.testPrice ??
+            test.price ??
+            test.amount ??
+            null,
           testvalue: test.testvalue ?? test.testValue ?? "",
         }));
 
+        this.calculateTotals();
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -124,6 +280,10 @@ export class LabTestEditorComponent implements OnInit {
     });
   }
 
+  // =========================
+  // SELECT ALL TESTS CHECK
+  // =========================
+
   isAllTestsSelected(): boolean {
     return (
       this.filteredTests.length > 0 &&
@@ -132,6 +292,7 @@ export class LabTestEditorComponent implements OnInit {
       )
     );
   }
+
   // =========================
   // LOAD TEST GROUPS
   // =========================
@@ -164,6 +325,8 @@ export class LabTestEditorComponent implements OnInit {
       next: (response: any) => {
         this.availableTests =
           response?.data?.tests || response?.tests || response?.data || [];
+
+        this.calculateTotals();
       },
       error: (error: any) => {
         console.error("Error loading Tests:", error);
@@ -181,7 +344,6 @@ export class LabTestEditorComponent implements OnInit {
       next: (response: any) => {
         this.patientTitles = response?.data?.patientTitles || [];
 
-        // Add mode: Automatically select first row's title
         if (this.testtranid === null && this.patientTitles.length > 0) {
           this.patient.titleid = Number(this.patientTitles[0].patientTitleId);
         }
@@ -189,7 +351,6 @@ export class LabTestEditorComponent implements OnInit {
         console.log("Patient Titles:", this.patientTitles);
         console.log("Selected Title ID:", this.patient.titleid);
       },
-
       error: (error: any) => {
         console.error("Error loading Patient Titles:", error);
         this.patientTitles = [];
@@ -211,11 +372,11 @@ export class LabTestEditorComponent implements OnInit {
           response?.doctor ||
           response?.data ||
           [];
+
         if (!this.labTestData && this.doctors.length > 0) {
           const first = this.doctors[0];
           const id = first.doctorid ?? first.doctorId;
 
-          // HTML me [value] use ho raha hai (string), isliye string me set karo
           this.patient.refdoctor =
             id !== undefined && id !== null ? String(id) : "";
         }
@@ -254,6 +415,42 @@ export class LabTestEditorComponent implements OnInit {
 
   getTestName(item: any): string {
     return item.testname ?? item.testName ?? "";
+  }
+
+  getTestPrice(item: any): number {
+    const directPrice =
+      item?.testprice ??
+      item?.testPrice ??
+      item?.price ??
+      item?.amount ??
+      item?.rate;
+
+    if (
+      directPrice !== null &&
+      directPrice !== undefined &&
+      directPrice !== ""
+    ) {
+      const price = Number(directPrice);
+      return Number.isFinite(price) ? price : 0;
+    }
+
+    const testId = this.getTestId(item);
+
+    const masterTest = this.availableTests.find(
+      (test: any) => this.getTestId(test) === testId
+    );
+
+    const masterPrice =
+      masterTest?.testprice ??
+      masterTest?.testPrice ??
+      masterTest?.price ??
+      masterTest?.amount ??
+      masterTest?.rate ??
+      0;
+
+    const price = Number(masterPrice);
+
+    return Number.isFinite(price) ? price : 0;
   }
 
   // =========================
@@ -308,10 +505,10 @@ export class LabTestEditorComponent implements OnInit {
         groupName: this.getGroupName(test),
         testid: testId,
         testname: this.getTestName(test),
+        testprice: this.getTestPrice(test),
         testvalue: "",
       };
 
-      // Find the last row of this group
       let lastGroupIndex = -1;
 
       for (let i = 0; i < this.selectedTests.length; i++) {
@@ -321,16 +518,16 @@ export class LabTestEditorComponent implements OnInit {
       }
 
       if (lastGroupIndex !== -1) {
-        // Insert after the last row of the same group
         this.selectedTests.splice(lastGroupIndex + 1, 0, newTest);
       } else {
-        // Group not present: add at the end
         this.selectedTests.push(newTest);
       }
     });
 
     this.selectedAvailableTestIds = [];
     this.selectedTestIndex = null;
+
+    this.calculateTotals();
   }
 
   // =========================
@@ -353,11 +550,14 @@ export class LabTestEditorComponent implements OnInit {
 
     this.selectedTests.splice(this.selectedTestIndex, 1);
     this.selectedTestIndex = null;
+
+    this.calculateTotals();
   }
 
   // =========================
   // EDIT GROUP
   // =========================
+
   editSelectedTest(): void {
     if (this.selectedTestIndex === null) {
       alert("Please select a test to edit.");
@@ -365,27 +565,97 @@ export class LabTestEditorComponent implements OnInit {
     }
 
     const selectedTest = this.selectedTests[this.selectedTestIndex];
-
     const groupId = this.getGroupId(selectedTest);
 
-    // Group dropdown select
     this.selectedGroupId = groupId;
 
-    // Right side se selected group ke saare tests ke IDs
     const groupTestIds = this.selectedTests
       .filter((test: any) => this.getGroupId(test) === groupId)
       .map((test: any) => this.getTestId(test));
 
-    // Left side par group ke saare tests automatically selected
     this.selectedAvailableTestIds = [...groupTestIds];
 
-    // Right side se poora group remove
     this.selectedTests = this.selectedTests.filter(
       (test: any) => this.getGroupId(test) !== groupId
     );
 
-    // Selected row reset
     this.selectedTestIndex = null;
+
+    this.calculateTotals();
+  }
+
+  // =========================
+  // DISCOUNT PERCENT CHANGE
+  // =========================
+
+  onDiscountPercentChange(): void {
+    this.discountEntryMode = "percent";
+    this.calculateTotals();
+  }
+
+  // =========================
+  // DISCOUNT AMOUNT CHANGE
+  // =========================
+
+  onDiscountAmountChange(): void {
+    this.discountEntryMode = "amount";
+    this.calculateTotals();
+  }
+
+  // =========================
+  // CALCULATE TOTALS
+  // =========================
+
+  calculateTotals(): void {
+    const testTotal = (this.selectedTests || []).reduce(
+      (total: number, test: any) => {
+        return total + Number(this.getTestPrice(test) || 0);
+      },
+      0
+    );
+
+    this.patient.testtotal = Number(testTotal.toFixed(2));
+
+    const widalValue = this.patient.widaltest
+      ? Number(this.patient.wtestvalue || 0)
+      : 0;
+
+    this.subtotal = Number((this.patient.testtotal + widalValue).toFixed(2));
+
+    if (this.discountEntryMode === "amount") {
+      let discountAmount = Number(this.patient.discAmount || 0);
+
+      if (!Number.isFinite(discountAmount)) {
+        discountAmount = 0;
+      }
+
+      discountAmount = Math.max(0, Math.min(discountAmount, this.subtotal));
+
+      this.patient.discAmount = Number(discountAmount.toFixed(2));
+
+      this.patient.discp =
+        this.subtotal > 0
+          ? Number(((discountAmount / this.subtotal) * 100).toFixed(2))
+          : 0;
+    } else {
+      let discountPercent = Number(this.patient.discp || 0);
+
+      if (!Number.isFinite(discountPercent)) {
+        discountPercent = 0;
+      }
+
+      discountPercent = Math.max(0, Math.min(discountPercent, 100));
+
+      this.patient.discp = Number(discountPercent.toFixed(2));
+
+      this.patient.discAmount = Number(
+        ((this.subtotal * discountPercent) / 100).toFixed(2)
+      );
+    }
+
+    this.patient.amount = Number(
+      (this.subtotal - Number(this.patient.discAmount || 0)).toFixed(2)
+    );
   }
 
   // =========================
@@ -406,6 +676,7 @@ export class LabTestEditorComponent implements OnInit {
       Object.values(form.controls).forEach((control) => {
         control.markAsTouched();
       });
+
       return;
     }
 
@@ -419,6 +690,8 @@ export class LabTestEditorComponent implements OnInit {
       return;
     }
 
+    this.calculateTotals();
+
     this.isLoading = true;
 
     const titleId = this.patient.titleid ?? null;
@@ -430,6 +703,19 @@ export class LabTestEditorComponent implements OnInit {
 
       patientname: this.patient.patientname.trim(),
 
+      // address2 remains address2 throughout the payload
+      address2: this.patient.address2 ?? "",
+
+      // Report status is stored as Yes/No BIT
+      reportstatus: this.patient.reportstatus ? 1 : 0,
+
+      // Final Payment is hidden from this editor.
+      // New transaction default = No.
+      finalpayment: this.patient.finalpayment ? 1 : 0,
+
+      // Keep report date empty when status is No.
+      reportdate: this.patient.reportstatus ? this.patient.reportdate : null,
+
       details: this.selectedTests.map((test: any) => ({
         masterid: this.testtranid,
         groupid: test.groupid ?? test.groupId,
@@ -437,9 +723,6 @@ export class LabTestEditorComponent implements OnInit {
         testvalue: test.testvalue || "",
       })),
     };
-
-    console.log("Patient Title ID:", titleId);
-    console.log("Save Lab Test Payload:", payload);
 
     const isEditMode = this.testtranid !== null;
 
@@ -460,6 +743,7 @@ export class LabTestEditorComponent implements OnInit {
 
         this.onClose.next(true);
         this.onClose.complete();
+
         this.bsModalRef.hide();
       },
 
@@ -479,24 +763,46 @@ export class LabTestEditorComponent implements OnInit {
       },
     });
   }
+
   // =========================
   // CURRENT DATE TIME
   // =========================
 
-  getCurrentDateTime(): string {
+  getCurrentDateTime1(): string {
     const now = new Date();
     const offset = now.getTimezoneOffset() * 60000;
 
     return new Date(now.getTime() - offset).toISOString().slice(0, 16);
   }
 
+  private getCurrentDateOnly(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private getCurrentDateTime(): string {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
   // =========================
   // NEXT REFERENCE NO
   // =========================
+
   loadNextReferenceNo(): void {
     this.settingsService.getControlPanel().subscribe({
       next: (settingsResponse: any) => {
-        // Keep the existing backend GET response structure unchanged.
         const controlPanelSettings =
           settingsResponse?.controlPanelSetting ??
           settingsResponse?.data?.controlPanelSetting ??
@@ -522,8 +828,6 @@ export class LabTestEditorComponent implements OnInit {
 
             const serialNo = Number(nextReferenceNo);
 
-            // If tbtesttran is empty, API returns 1 as its initial value.
-            // In that case, use the Control Panel's configured start number.
             if (
               serialNo === 1 &&
               autoSerialNumberEnabled &&
@@ -534,7 +838,6 @@ export class LabTestEditorComponent implements OnInit {
             ) {
               this.patient.serialno = configuredStartSerialNo;
             } else {
-              // If records exist, use the next number returned by the database.
               this.patient.serialno = serialNo;
             }
 
@@ -542,17 +845,54 @@ export class LabTestEditorComponent implements OnInit {
             console.log("API Next Reference No:", serialNo);
             console.log("Final Reference No:", this.patient.serialno);
           },
+
           error: (error: any) => {
             console.error("Reference No. loading failed:", error);
             alert("Unable to load Reference Number.");
           },
         });
       },
+
       error: (error: any) => {
         console.error("Control Panel Settings loading failed:", error);
         alert("Unable to load Control Panel Settings.");
       },
     });
+  }
+
+  // =========================
+  // ALLOW NUMERIC DECIMAL
+  // =========================
+
+  allowNumericDecimal(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const key = event.key;
+
+    if (
+      event.ctrlKey ||
+      event.metaKey ||
+      [
+        "Backspace",
+        "Delete",
+        "Tab",
+        "ArrowLeft",
+        "ArrowRight",
+        "Home",
+        "End",
+      ].includes(key)
+    ) {
+      return;
+    }
+
+    if (/^\d$/.test(key)) {
+      return;
+    }
+
+    if (key === "." && !input.value.includes(".")) {
+      return;
+    }
+
+    event.preventDefault();
   }
 
   // =========================
@@ -562,6 +902,7 @@ export class LabTestEditorComponent implements OnInit {
   close(): void {
     this.onClose.next(false);
     this.onClose.complete();
+
     this.bsModalRef.hide();
   }
 }

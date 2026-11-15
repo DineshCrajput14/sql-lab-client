@@ -14,10 +14,10 @@
 <div class="modal-body p-2" style="background-color: #eeeeee;">
   <form #f="ngForm" (ngSubmit)="save(f)">
     <!-- Patient Details -->
-    <div class="row g-1 mb-2">
+    <div class="row g-2 align-items-end mb-2">
       <!-- Reference No -->
-      <div class="col-4 col-md-2">
-        <label class="form-label mb-0">Reference No.</label>
+      <div class="col-6 col-md-2">
+        <label class="form-label mb-1">Serial No.</label>
 
         <input
           type="text"
@@ -29,18 +29,53 @@
       </div>
 
       <!-- Date -->
-      <div class="col-8 col-md-3">
-        <label class="form-label mb-0">Date</label>
+      <div class="col-6 col-md-2">
+        <label class="form-label mb-1">Date</label>
 
         <input
-          type="datetime-local"
+          type="date"
           class="form-control form-control-sm"
           name="date"
           [(ngModel)]="patient.date"
         />
       </div>
 
-      <div class="col-md-7 d-none d-md-block"></div>
+      <!-- Sample Received -->
+      <!-- Sample Received -->
+      <div class="col-6 col-md-3">
+        <label class="form-label mb-1">Sample Received</label>
+        <input
+          type="datetime-local"
+          class="form-control form-control-sm"
+          [(ngModel)]="patient.samplereceivedon"
+          name="samplereceivedon"
+        />
+      </div>
+
+      <!-- Report Status -->
+      <div class="col-6 col-md-2">
+        <label class="form-label mb-1">Report Status (Y/N)</label>
+        <select
+          class="form-select form-select-sm"
+          [(ngModel)]="patient.reportstatus"
+          name="reportstatus"
+          (ngModelChange)="onReportStatusChange($event)"
+        >
+          <option [ngValue]="false">No</option>
+          <option [ngValue]="true">Yes</option>
+        </select>
+      </div>
+
+      <!-- Report Date -->
+      <div class="col-6 col-md-3" *ngIf="patient.reportstatus">
+        <label class="form-label mb-1">Report Date</label>
+        <input
+          type="datetime-local"
+          class="form-control form-control-sm"
+          [(ngModel)]="patient.reportdate"
+          name="reportdate"
+        />
+      </div>
 
       <!-- Patient Name -->
       <div class="col-12 col-md-5">
@@ -60,6 +95,7 @@
               {{ title.patientTitle }}
             </option>
           </select>
+
           <input
             type="text"
             class="form-control"
@@ -167,8 +203,8 @@
         <input
           type="text"
           class="form-control form-control-sm"
-          name="phone"
-          [(ngModel)]="patient.phone"
+          name="address2"
+          [(ngModel)]="patient.address2"
         />
       </div>
 
@@ -200,7 +236,7 @@
               name="selectedGroupId"
               [(ngModel)]="selectedGroupId"
             >
-              <option [ngValue]="null">ANY OTHER</option>
+              <option [ngValue]="null">All</option>
 
               <option
                 *ngFor="let group of testGroups"
@@ -226,6 +262,7 @@
               <thead class="table-light sticky-top">
                 <tr>
                   <th>Test Name</th>
+                  <th class="text-end" style="width: 90px;">Test Price</th>
                 </tr>
               </thead>
 
@@ -249,10 +286,14 @@
                       {{ getTestName(test) }}
                     </label>
                   </td>
+
+                  <td class="text-end">
+                    {{ getTestPrice(test) | number: "1.2-2" }}
+                  </td>
                 </tr>
 
                 <tr *ngIf="filteredTests.length === 0">
-                  <td class="text-center text-muted">
+                  <td colspan="2" class="text-center text-muted">
                     No tests available.
                   </td>
                 </tr>
@@ -306,6 +347,7 @@
                 class="ms-1"
                 name="widaltest"
                 [(ngModel)]="patient.widaltest"
+                (ngModelChange)="calculateTotals()"
               />
             </label>
           </div>
@@ -315,8 +357,9 @@
             <table class="table table-bordered table-sm table-hover mb-0">
               <thead class="table-light sticky-top">
                 <tr>
-                  <th style="width: 38%;">Group Name</th>
+                  <th style="width: 32%;">Group Name</th>
                   <th>Test Name</th>
+                  <th class="text-end" style="width: 100px;">Test Price</th>
                 </tr>
               </thead>
 
@@ -327,7 +370,7 @@
                   [class.table-active]="selectedTestIndex === i"
                   style="cursor: pointer;"
                 >
-                  <!-- Group Name: show only once for consecutive group rows -->
+                  <!-- Group Name -->
                   <td
                     *ngIf="
                       i === 0 ||
@@ -339,7 +382,7 @@
                     {{ getGroupName(test) }}
                   </td>
 
-                  <!-- Empty group cell for same group -->
+                  <!-- Empty group cell -->
                   <td
                     *ngIf="
                       i !== 0 &&
@@ -352,15 +395,150 @@
                   <td>
                     {{ getTestName(test) }}
                   </td>
+
+                  <!-- Test Price -->
+                  <td class="text-end">
+                    {{ getTestPrice(test) | number: "1.2-2" }}
+                  </td>
                 </tr>
 
                 <tr *ngIf="selectedTests.length === 0">
-                  <td colspan="2" class="text-center text-muted">
+                  <td colspan="3" class="text-center text-muted">
                     No tests selected.
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- Test Total / Widal Value / Discount / Net Payable -->
+          <div class="border rounded p-2 mt-2 bg-light">
+            <div class="row g-2 align-items-center">
+              <!-- Test Total -->
+              <div class="col-6">
+                <label class="form-label mb-0 fw-bold">Test Total</label>
+              </div>
+
+              <div class="col-6">
+                <input
+                  type="text"
+                  inputmode="decimal"
+                  class="form-control form-control-sm text-end"
+                  name="testtotal"
+                  [(ngModel)]="patient.testtotal"
+                  readonly
+                />
+              </div>
+
+              <!-- Widal Value + Subtotal -->
+              <ng-container *ngIf="patient.widaltest">
+                <!-- Widal Test Value -->
+                <div class="col-6">
+                  <label class="form-label mb-0">Widal Test</label>
+                </div>
+
+                <div class="col-6">
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    class="form-control form-control-sm text-end"
+                    name="wtestvalue"
+                    [(ngModel)]="patient.wtestvalue"
+                    (ngModelChange)="calculateTotals()"
+                    placeholder="Enter Widal value"
+                  />
+                </div>
+
+                <!-- Subtotal -->
+                <div class="col-6">
+                  <label class="form-label mb-0 fw-bold">Subtotal</label>
+                </div>
+
+                <div class="col-6">
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    class="form-control form-control-sm text-end"
+                    name="subtotal"
+                    [ngModel]="subtotal"
+                    readonly
+                  />
+                </div>
+              </ng-container>
+
+              <!-- Discount % -->
+              <div class="col-6">
+                <div class="d-flex align-items-center gap-2 w-100">
+                  <label
+                    class="form-label mb-0 text-nowrap"
+                    style="width: 78px; flex-shrink: 0;"
+                  >
+                    Discount %
+                  </label>
+
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    class="form-control form-control-sm text-end"
+                    style="width: 65px; flex: 0 0 65px; min-width: 65px;"
+                    name="discp"
+                    [(ngModel)]="patient.discp"
+                    maxlength="6"
+                    pattern="^\d{1,3}(\.\d{0,2})?$"
+                    (ngModelChange)="onDiscountPercentChange()"
+                    (keydown)="allowNumericDecimal($event)"
+                    placeholder="100.00"
+                  />
+                </div>
+              </div>
+
+              <!-- Discount Amount -->
+              <div class="col-6">
+                <div class="d-flex align-items-center gap-2 w-100">
+                  <label
+                    class="form-label mb-0 text-nowrap"
+                    style="width: 100px; flex-shrink: 0;"
+                  >
+                    Disc. Amount
+                  </label>
+
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    class="form-control form-control-sm text-end"
+                    style="
+                      width: 90px;
+                      flex: 0 0 90px;
+                      min-width: 90px;
+                      margin-left: auto;
+                    "
+                    name="discAmount"
+                    [(ngModel)]="patient.discAmount"
+                    maxlength="9"
+                    pattern="^\d{1,7}(\.\d{0,2})?$"
+                    (ngModelChange)="onDiscountAmountChange()"
+                    (keydown)="allowNumericDecimal($event)"
+                    placeholder="9999.00"
+                  />
+                </div>
+              </div>
+
+              <!-- Net Payable -->
+              <div class="col-6">
+                <label class="form-label mb-0 fw-bold">Net Payable</label>
+              </div>
+
+              <div class="col-6">
+                <input
+                  type="text"
+                  inputmode="decimal"
+                  class="form-control form-control-sm text-end fw-bold"
+                  name="amount"
+                  [(ngModel)]="patient.amount"
+                  readonly
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -368,7 +546,7 @@
 
     <!-- Footer Buttons -->
     <div class="d-flex justify-content-end gap-2 mt-2">
-      <!-- Save / Update Button -->
+      <!-- Save / Update -->
       <button
         type="submit"
         class="btn btn-primary btn-sm"
@@ -386,7 +564,7 @@
         }}
       </button>
 
-      <!-- Exit Button -->
+      <!-- Exit -->
       <button
         type="button"
         class="btn btn-secondary btn-sm"
