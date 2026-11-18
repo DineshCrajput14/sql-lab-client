@@ -405,12 +405,11 @@
                   <tr *ngFor="let item of widalTests">
                     <td>{{ item.testname }}</td>
 
-                    <td *ngFor="let dilution of widalDilutions">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        [(ngModel)]="item.values[dilution]"
-                      />
+                    <td
+                      *ngFor="let dilution of widalDilutions"
+                      class="text-center fw-bold"
+                    >
+                      {{ item.values[dilution] }}
                     </td>
                   </tr>
 
@@ -513,6 +512,26 @@
           >
             <i class="fa fa-edit me-1"></i>
             Enter Test Values
+          </button>
+        </div>
+
+        <!-- WIDAL TAB FOOTER -->
+        <div
+          class="card-footer py-2 d-flex justify-content-between align-items-center"
+          *ngIf="activeSpecialTestTab === 'WIDAL'"
+        >
+          <span class="small text-muted">
+            Total Widal Tests: 4
+          </span>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-sm px-3"
+            (click)="openWidalValueEditor()"
+            [disabled]="!selectedLabTest || !isWidalEnabled()"
+          >
+            <i class="fa fa-edit me-1"></i>
+            Enter Widal Test Values
           </button>
         </div>
       </div>
@@ -638,6 +657,175 @@
           type="button"
           class="btn btn-outline-secondary px-4"
           (click)="closeTestValueEditor()"
+        >
+          Exit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WIDAL TEST VALUE EDITOR MODAL -->
+<div
+  class="modal fade show"
+  *ngIf="showWidalValueEditor"
+  style="display: block; background: rgba(0, 0, 0, 0.45);"
+  tabindex="-1"
+>
+  <div
+    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+  >
+    <div class="modal-content shadow-lg border-0">
+      <!-- HEADER -->
+      <div class="modal-header bg-primary text-white py-2">
+        <div>
+          <h5 class="modal-title fw-bold mb-1">Widal Test Value Editor</h5>
+          <small>
+            Patient: {{ selectedLabTest?.patientname }}
+            <span class="mx-2">|</span>
+            Ref. No: {{ selectedLabTest?.serialno }}
+          </small>
+        </div>
+
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          aria-label="Close"
+          (click)="closeWidalValueEditor()"
+        ></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body bg-light">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Method</label>
+            <select
+              class="form-select form-select-sm"
+              name="widalMethod"
+              [(ngModel)]="widalMethod"
+            >
+              <option value="1">By Tube</option>
+              <option value="2">By Slide</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Result</label>
+            <select
+              class="form-select form-select-sm"
+              name="widalResult"
+              [(ngModel)]="widalResult"
+            >
+              <option value="Positive">Positive</option>
+              <option value="Negative">Negative</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table
+                class="table table-bordered table-hover table-sm align-middle mb-0"
+              >
+                <thead class="table-light">
+                  <tr>
+                    <th style="min-width: 250px;">Widal Test</th>
+                    <th
+                      *ngFor="let dilution of widalEntryColumns"
+                      class="text-center"
+                      style="min-width: 90px;"
+                    >
+                      {{ dilution }}
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let test of widalEntryRows">
+                    <td class="fw-semibold">{{ test.wtestname }}</td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center"
+                        [(ngModel)]="test.dilution1"
+                        [name]="'widal_dilution1_' + test.wtestid"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center"
+                        [(ngModel)]="test.dilution2"
+                        [name]="'widal_dilution2_' + test.wtestid"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center"
+                        [(ngModel)]="test.dilution3"
+                        [name]="'widal_dilution3_' + test.wtestid"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center"
+                        [(ngModel)]="test.dilution4"
+                        [name]="'widal_dilution4_' + test.wtestid"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center"
+                        [(ngModel)]="test.dilution5"
+                        [name]="'widal_dilution5_' + test.wtestid"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="text"
+                        class="form-control form-control-sm text-center"
+                        [(ngModel)]="test.dilution6"
+                        [name]="'widal_dilution6_' + test.wtestid"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer bg-white py-2">
+        <span class="me-auto small text-muted">
+          Total Widal Tests: {{ widalEntryRows.length }}
+        </span>
+
+        <button
+          type="button"
+          class="btn btn-primary px-4"
+          (click)="saveWidalTestValues()"
+        >
+          <i class="fa fa-save me-1"></i>
+          Update
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary px-4"
+          (click)="closeWidalValueEditor()"
         >
           Exit
         </button>

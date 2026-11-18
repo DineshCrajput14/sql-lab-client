@@ -100,7 +100,7 @@ export class ForgotPasswordComponent implements OnInit {
         this.publicConfig.organization.assetsBasePath +
         this.publicConfig.controlPanelSettings.logoActualFileName;
     } else {
-      this.organizationLogoUrl = "assets/img/logo.svg";
+      this.organizationLogoUrl = "assets/img/lab-logo.svg";
     }
     this.isLoading = false;
   }

@@ -17,6 +17,7 @@ export class AuthService {
   dateFormatForDatePipe: string = "dd/MM/yyyy";
   locale = "en-IN";
   onSettingsUpdate = new Subject<boolean>();
+  isTenantManagement: boolean = false;
 
   authentication = {
     username: "",
@@ -83,6 +84,11 @@ export class AuthService {
     if (authData && authData.token) {
       this.idletimeService.startWatching();
       this.isLoggedIn = true;
+
+      this.isTenantManagement =
+        authData.isTenantManagement === true ||
+        authData.isTenantManagement === 1 ||
+        authData.isTenantManagement === "1";
 
       this.updateAuthToken(authData);
       this.getDateFormatForDatePipe();
@@ -152,6 +158,10 @@ export class AuthService {
           const authData = response.data;
           const token = authData.token;
           const user = authData.user;
+          this.isTenantManagement =
+            authData.isTenantManagement === true ||
+            authData.isTenantManagement === 1 ||
+            authData.isTenantManagement === "1";
 
           if (token && user) {
             this.isLoggedIn = true;
@@ -196,6 +206,8 @@ export class AuthService {
                 allowedAppActivities: authData.allowedAppActivities,
                 allowedAppModules: authData.allowedAppModules,
                 controlPanelSettings: this.authentication.controlPanelSettings,
+                // Tenant Management
+                isTenantManagement: this.isTenantManagement,
               })
             );
 
@@ -242,7 +254,7 @@ export class AuthService {
 
   logout(reason: string = ""): void {
     this.isLoggedIn = false;
-
+    this.isTenantManagement = false;
     this.authentication = {
       username: "",
       userRoleCode: "",
@@ -320,6 +332,10 @@ export class AuthService {
   }
 
   updateAuthToken(response: any): void {
+    this.isTenantManagement =
+      response.isTenantManagement === true ||
+      response.isTenantManagement === 1 ||
+      response.isTenantManagement === "1";
     const userRoleCode = response.user?.userRoleCode;
 
     this.authentication = {

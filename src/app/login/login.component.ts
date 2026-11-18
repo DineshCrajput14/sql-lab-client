@@ -86,6 +86,16 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
         const returnUrl = this.route.snapshot.queryParams.returnUrl || "/";
         this.router.navigate([returnUrl]);
+        console.log("Login Data:", this.authService.authentication);
+        console.log(
+          "Modules:",
+          this.authService.authentication?.allowedAppModules
+        );
+        console.log(
+          "Activities:",
+          this.authService.authentication?.allowedAppActivities
+        );
+        console.log("isTenantManagement:", this.authService.isTenantManagement);
       },
       error: (err) => {
         this.showPasswordIsEnabled = false;

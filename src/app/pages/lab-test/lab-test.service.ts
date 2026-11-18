@@ -7,38 +7,56 @@ import { environment } from "src/environments/environment";
   providedIn: "root",
 })
 export class LabTestService {
-  private apiUrl = environment.apiBasePath + "v1/test-tran";
-
   constructor(private http: HttpClient) {}
 
   // Get all Lab Test transactions
   getAll(): Observable<any> {
-    return this.http.get(this.apiUrl);
+    return this.http.get(environment.apiBasePath + "v1/test-tran");
   }
 
   // Get Lab Test transaction by ID
   getById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}`);
+    return this.http.get(environment.apiBasePath + `v1/test-tran/${id}`);
   }
 
   // Get Lab Test transaction details
   getDetails(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}/details`);
+    return this.http.get(
+      environment.apiBasePath + `v1/test-tran/${id}/details`
+    );
   }
 
-  // Create Lab Test transaction with details
+  // Get Widal data by Lab Test ID
+  getWidalData(id: number): Observable<any> {
+    return this.http.get(
+      environment.apiBasePath + `v1/test-tran/${id}/widal-data`
+    );
+  }
+
+  // Save Widal data separately
+  saveWidalData(id: number, data: any): Observable<any> {
+    return this.http.put(
+      environment.apiBasePath + `v1/test-tran/${id}/widal-data`,
+      data
+    );
+  }
+
+  // Create Lab Test transaction
   create(params: any): Observable<any> {
-    return this.http.post(this.apiUrl, params);
+    return this.http.post(environment.apiBasePath + "v1/test-tran", params);
   }
 
-  // Update Lab Test transaction with details
+  // Update Lab Test transaction
   update(id: number, params: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, params);
+    return this.http.put(
+      environment.apiBasePath + `v1/test-tran/${id}`,
+      params
+    );
   }
 
   // Delete Lab Test transaction
   delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(environment.apiBasePath + `v1/test-tran/${id}`);
   }
 
   // Get available Test Groups
@@ -51,16 +69,25 @@ export class LabTestService {
     return this.http.get(environment.apiBasePath + "v1/test-master");
   }
 
+  // Get Next Reference Number
   getNextReferenceNo(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/next-reference-no`);
+    return this.http.get(
+      environment.apiBasePath + "v1/test-tran/next-reference-no"
+    );
   }
 
+  // Get Patient Titles
   getPatientTitle(): Observable<any> {
     return this.http.get(environment.apiBasePath + "v1/patient-title");
   }
 
+  // Get Doctors
   getDoctors(): Observable<any> {
-    const url = environment.apiBasePath + "v1/doctors";
     return this.http.get(environment.apiBasePath + "v1/doctors");
+  }
+
+  // Get Widal Method options (By Tube / By Slide)
+  getWidalMethods(): Observable<any> {
+    return this.http.get(environment.apiBasePath + "v1/widal-methods");
   }
 }

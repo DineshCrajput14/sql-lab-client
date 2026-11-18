@@ -51,6 +51,66 @@ export class LabTestComponent implements OnInit {
   // Test Value Editor Modal
   showTestValueEditor = false;
 
+  // Widal Test Value Editor Modal (frontend-only until backend APIs are added)
+  showWidalValueEditor = false;
+  widalMethod = "1"; // tbwmethod: 1 = By Tube, 2 = By Slide
+  widalResult = "Positive"; // Static frontend result: Positive=1, Negative=2
+  widalMethods: any[] = [];
+  isWidalDataLoading = false;
+  isWidalSaving = false;
+
+  widalEntryRows: any[] = [
+    {
+      wtestid: 1,
+      wtestname: "Salmonella Typhi O",
+      dilution1: "",
+      dilution2: "",
+      dilution3: "",
+      dilution4: "",
+      dilution5: "",
+      dilution6: "",
+    },
+    {
+      wtestid: 2,
+      wtestname: "Salmonella Typhi H",
+      dilution1: "",
+      dilution2: "",
+      dilution3: "",
+      dilution4: "",
+      dilution5: "",
+      dilution6: "",
+    },
+    {
+      wtestid: 3,
+      wtestname: "Salmonella Paratyphi A (H)",
+      dilution1: "",
+      dilution2: "",
+      dilution3: "",
+      dilution4: "",
+      dilution5: "",
+      dilution6: "",
+    },
+    {
+      wtestid: 4,
+      wtestname: "Salmonella Paratyphi B (H)",
+      dilution1: "",
+      dilution2: "",
+      dilution3: "",
+      dilution4: "",
+      dilution5: "",
+      dilution6: "",
+    },
+  ];
+
+  widalEntryColumns: string[] = [
+    "1:20",
+    "1:40",
+    "1:80",
+    "1:160",
+    "1:320",
+    "1:640",
+  ];
+
   filteredRecords: any[] = [];
 
   fromDate: string = "";
@@ -84,6 +144,7 @@ export class LabTestComponent implements OnInit {
     this.filters.toDate = this.today;
 
     this.loadDoctors();
+    this.loadWidalMethods();
     this.loadLabTests();
   }
 
@@ -322,7 +383,9 @@ export class LabTestComponent implements OnInit {
     this.selectedTestIndex = -1;
     this.testValueInput = "";
     this.showTestValueEditor = false;
+    this.showWidalValueEditor = false;
 
+    // Load VDRL and RA data
     this.loadSpecialTests(item);
 
     const id = Number(item.testtranid ?? item.testTranId);
@@ -333,6 +396,9 @@ export class LabTestComponent implements OnInit {
       return;
     }
 
+    // ==========================================
+    // LOAD NORMAL LAB TEST DETAILS
+    // ==========================================
     this.labTestService.getDetails(id).subscribe({
       next: (response: any) => {
         console.log("Selected Patient Test Details API:", response);
@@ -372,6 +438,82 @@ export class LabTestComponent implements OnInit {
           error?.error?.message ||
             "Unable to load selected patient's test details."
         );
+      },
+    });
+
+    // ==========================================
+    // LOAD WIDAL TEST DATA
+    // ==========================================
+    this.labTestService.getWidalData(id).subscribe({
+      next: (response: any) => {
+        console.log("Selected Patient Widal Data API:", response);
+
+        const data = response?.data?.widalData ?? response?.data ?? {};
+
+        const tests = data?.tests ?? data?.widalTests ?? data?.widaltests ?? [];
+
+        // ==========================================
+        // LOAD WIDAL METHOD AND RESULT
+        // ==========================================
+        const methodResult = data?.methodResult ?? data?.methodresult ?? {};
+
+        this.widalMethod = methodResult.methodid ?? methodResult.methodId ?? "";
+
+        this.widalResult = methodResult.resultid ?? methodResult.resultId ?? "";
+
+        // ==========================================
+        // LOAD RIGHT SIDE WIDAL GRID
+        // ==========================================
+        if (Array.isArray(tests)) {
+          this.widalTests = tests.map((test: any) => {
+            const values: any = {};
+
+            // Actual database dilution values
+            const dilutionValues = [
+              test.Dilution1 ?? test.dilution1 ?? "",
+              test.Dilution2 ?? test.dilution2 ?? "",
+              test.Dilution3 ?? test.dilution3 ?? "",
+              test.Dilution4 ?? test.dilution4 ?? "",
+              test.Dilution5 ?? test.dilution5 ?? "",
+              test.Dilution6 ?? test.dilution6 ?? "",
+            ];
+
+            this.widalDilutions.forEach((dilution: string, index: number) => {
+              // Store actual value, NOT boolean true/false
+              values[dilution] = dilutionValues[index];
+            });
+
+            return {
+              ...test,
+
+              // Widal Test Name
+              testname:
+                test.wtestname ??
+                test.WTestName ??
+                test.testname ??
+                test.testName ??
+                "",
+
+              // Actual dilution values
+              values: values,
+            };
+          });
+        } else {
+          this.widalTests = [];
+        }
+
+        console.log("Loaded Right Side Widal Grid:", this.widalTests);
+
+        console.log("Loaded Widal Method:", this.widalMethod);
+        console.log("Loaded Widal Result:", this.widalResult);
+      },
+
+      error: (error: any) => {
+        console.error("Error loading selected patient Widal data:", error);
+
+        this.widalTests = [];
+        this.widalMethod = "";
+        this.widalResult = "";
       },
     });
   }
@@ -416,27 +558,233 @@ export class LabTestComponent implements OnInit {
   }
 
   // Load Special Tests
+  // Load Special Tests
   private loadSpecialTests(item: any): void {
-    const widal = item?.widalTests ?? item?.widaltests ?? [];
     const vdrl = item?.vdrlTests ?? item?.vdrltests ?? [];
     const ra = item?.raTests ?? item?.ratests ?? [];
 
-    this.widalTests = Array.isArray(widal)
-      ? widal.map((test: any) => ({
+    // Widal data will be loaded separately from API
+    // this.widalTests = [];
+
+    // Load VDRL Tests
+    this.vdrlTests = Array.isArray(vdrl)
+      ? vdrl.map((test: any) => ({
           ...test,
-          values: { ...(test.values ?? {}) },
         }))
       : [];
 
-    this.vdrlTests = Array.isArray(vdrl)
-      ? vdrl.map((test: any) => ({ ...test }))
-      : [];
-
+    // Load RA Tests
     this.raTests = Array.isArray(ra)
-      ? ra.map((test: any) => ({ ...test }))
+      ? ra.map((test: any) => ({
+          ...test,
+        }))
       : [];
   }
 
+  // Check whether Widal entry is enabled for the selected transaction
+  isWidalEnabled(): boolean {
+    const value =
+      this.selectedLabTest?.widaltest ??
+      this.selectedLabTest?.widalTest ??
+      this.selectedLabTest?.widaltests;
+
+    return (
+      value === true ||
+      value === 1 ||
+      value === "1" ||
+      String(value).toLowerCase() === "true" ||
+      String(value).toLowerCase() === "yes"
+    );
+  }
+
+  // Load Widal Method dropdown options from API
+  loadWidalMethods(): void {
+    this.labTestService.getWidalMethods().subscribe({
+      next: (response: any) => {
+        const records =
+          response?.data?.methods ?? response?.methods ?? response?.data ?? [];
+
+        this.widalMethods = Array.isArray(records) ? records : [];
+
+        if (
+          this.widalMethods.length > 0 &&
+          !this.widalMethods.some(
+            (method: any) =>
+              String(method.methodid) === String(this.widalMethod)
+          )
+        ) {
+          this.widalMethod = String(this.widalMethods[0].methodid);
+        }
+      },
+      error: (error: any) => {
+        console.error("Error loading Widal Methods:", error);
+        this.widalMethods = [];
+        alert(error?.error?.message || "Unable to load Widal Methods.");
+      },
+    });
+  }
+
+  // Open Widal Test Value Editor and load previously saved Widal data
+  openWidalValueEditor(): void {
+    if (!this.selectedLabTest) {
+      alert("Please select a Lab Test record first.");
+      return;
+    }
+
+    if (!this.isWidalEnabled()) {
+      alert("Widal Test is not enabled for this patient.");
+      return;
+    }
+
+    const patientId = Number(
+      this.selectedLabTest.testtranid ?? this.selectedLabTest.testTranId
+    );
+
+    if (!patientId) {
+      alert("Lab Test ID not found.");
+      return;
+    }
+
+    this.showWidalValueEditor = true;
+    this.isWidalDataLoading = true;
+
+    this.labTestService.getWidalData(patientId).subscribe({
+      next: (response: any) => {
+        const data =
+          response?.data?.widalData ??
+          response?.widalData ??
+          response?.data ??
+          {};
+
+        const methodResult = data?.methodResult ?? data?.methodresult ?? null;
+
+        if (methodResult) {
+          this.widalMethod = String(
+            methodResult.methodid ?? methodResult.MethodId ?? "1"
+          );
+
+          const resultId = Number(
+            methodResult.resultid ?? methodResult.ResultId ?? 1
+          );
+
+          this.widalResult = resultId === 2 ? "Negative" : "Positive";
+        } else {
+          this.widalMethod = this.widalMethods.length
+            ? String(this.widalMethods[0].methodid)
+            : "1";
+          this.widalResult = "Positive";
+        }
+
+        const savedTests = Array.isArray(data?.tests) ? data.tests : [];
+
+        this.widalEntryRows = this.widalEntryRows.map((defaultRow: any) => {
+          const savedRow = savedTests.find(
+            (row: any) =>
+              Number(row.WTestId ?? row.wtestid ?? row.wtestId) ===
+              Number(defaultRow.wtestid)
+          );
+
+          return {
+            ...defaultRow,
+            dilution1: String(savedRow?.Dilution1 ?? savedRow?.dilution1 ?? ""),
+            dilution2: String(savedRow?.Dilution2 ?? savedRow?.dilution2 ?? ""),
+            dilution3: String(savedRow?.Dilution3 ?? savedRow?.dilution3 ?? ""),
+            dilution4: String(savedRow?.Dilution4 ?? savedRow?.dilution4 ?? ""),
+            dilution5: String(savedRow?.Dilution5 ?? savedRow?.dilution5 ?? ""),
+            dilution6: String(savedRow?.Dilution6 ?? savedRow?.dilution6 ?? ""),
+          };
+        });
+
+        this.isWidalDataLoading = false;
+      },
+      error: (error: any) => {
+        console.error("Error loading Widal data:", error);
+        this.isWidalDataLoading = false;
+        alert(error?.error?.message || "Unable to load Widal data.");
+      },
+    });
+  }
+
+  // Close Widal Test Value Editor
+  closeWidalValueEditor(): void {
+    this.showWidalValueEditor = false;
+  }
+
+  // Save Widal Method, Result and dilution values to backend
+
+  saveWidalTestValues(): void {
+    if (!this.isWidalEnabled()) {
+      alert("Widal Test is not enabled for this patient.");
+      return;
+    }
+
+    if (this.isWidalSaving) {
+      return;
+    }
+
+    const testTranId = Number(
+      this.selectedLabTest?.testtranid ?? this.selectedLabTest?.testTranId
+    );
+
+    if (!testTranId) {
+      alert("Lab Test ID not found.");
+      return;
+    }
+
+    const methodId = Number(this.widalMethod);
+    const resultId = this.widalResult === "Negative" ? 2 : 1;
+
+    if (![1, 2].includes(methodId)) {
+      alert("Please select a valid Widal Method.");
+      return;
+    }
+
+    // Dilution1 to Dilution6 will be saved
+    // Dilution7 to Dilution10 will remain blank in backend
+    const widalTests = this.widalEntryRows.map((row: any) => ({
+      wtestid: Number(row.wtestid),
+      dilution1: String(row.dilution1 ?? ""),
+      dilution2: String(row.dilution2 ?? ""),
+      dilution3: String(row.dilution3 ?? ""),
+      dilution4: String(row.dilution4 ?? ""),
+      dilution5: String(row.dilution5 ?? ""),
+      dilution6: String(row.dilution6 ?? ""),
+    }));
+
+    const payload = {
+      widalMethodId: methodId,
+      widalResultId: resultId,
+      widalTests: widalTests,
+    };
+
+    console.log("Widal Save Patient ID:", testTranId);
+    console.log("Widal Save Payload:", payload);
+
+    this.isWidalSaving = true;
+
+    // IMPORTANT: Use separate Widal API instead of Lab Test update API
+    this.labTestService.saveWidalData(testTranId, payload).subscribe({
+      next: (response: any) => {
+        console.log("Widal Save Response:", response);
+
+        this.isWidalSaving = false;
+        this.showWidalValueEditor = false;
+
+        alert(response?.message || "Widal values saved successfully.");
+      },
+
+      error: (error: any) => {
+        console.error("Error saving Widal values:", error);
+
+        this.isWidalSaving = false;
+
+        alert(
+          error?.error?.message ||
+            "Unable to save Widal values. Please try again."
+        );
+      },
+    });
+  }
   // Select Test Detail
   selectTest(test: any, index: number): void {
     this.selectedTest = test;
@@ -579,17 +927,90 @@ export class LabTestComponent implements OnInit {
 
   printNewLabReport(): void {
     if (!this.selectedLabTest) {
+      alert("Please select a Lab Test record first.");
       return;
     }
 
-    this.bsModalRef = this.modalService.show(LabTestPrintModalComponent, {
-      class: "modal-xl modal-dialog-centered",
-      backdrop: "static",
-      keyboard: true,
-      initialState: {
-        testtranid: this.selectedLabTest.testtranid,
-        patientData: this.selectedLabTest,
-        selectedTests: this.selectedTests,
+    const testTranId = Number(
+      this.selectedLabTest.testtranid ?? this.selectedLabTest.testTranId
+    );
+
+    if (!testTranId) {
+      alert("Lab Test ID not found.");
+      return;
+    }
+
+    // Fetch WIDAL data before opening print modal
+    this.labTestService.getWidalData(testTranId).subscribe({
+      next: (response: any) => {
+        console.log("WIDAL API Response for Print:", response);
+
+        const data =
+          response?.data?.widalData ??
+          response?.widalData ??
+          response?.data ??
+          {};
+
+        const tests = data?.tests ?? data?.widalTests ?? data?.widaltests ?? [];
+
+        // Prepare WIDAL data for print modal
+        const printWidalTests = Array.isArray(tests)
+          ? tests.map((test: any) => {
+              const values: any = {};
+
+              const dilutionValues = [
+                test.Dilution1 ?? test.dilution1 ?? "",
+                test.Dilution2 ?? test.dilution2 ?? "",
+                test.Dilution3 ?? test.dilution3 ?? "",
+                test.Dilution4 ?? test.dilution4 ?? "",
+                test.Dilution5 ?? test.dilution5 ?? "",
+                test.Dilution6 ?? test.dilution6 ?? "",
+              ];
+
+              this.widalDilutions.forEach((dilution: string, index: number) => {
+                values[dilution] = dilutionValues[index];
+              });
+
+              return {
+                ...test,
+
+                testname:
+                  test.wtestname ??
+                  test.WTestName ??
+                  test.testname ??
+                  test.testName ??
+                  "",
+
+                values: values,
+              };
+            })
+          : [];
+
+        console.log("WIDAL Data Passed to Print Modal:", printWidalTests);
+
+        // Update component WIDAL data
+        this.widalTests = printWidalTests;
+
+        // Open Print Modal only after WIDAL data is loaded
+        this.bsModalRef = this.modalService.show(LabTestPrintModalComponent, {
+          class: "modal-xl modal-dialog-centered",
+          backdrop: "static",
+          keyboard: true,
+          initialState: {
+            testtranid: testTranId,
+            patientData: this.selectedLabTest,
+            selectedTests: this.selectedTests,
+            widalTests: printWidalTests,
+          },
+        });
+      },
+
+      error: (error: any) => {
+        console.error("Error loading WIDAL data for print:", error);
+
+        alert(
+          error?.error?.message || "Unable to load WIDAL data for printing."
+        );
       },
     });
   }

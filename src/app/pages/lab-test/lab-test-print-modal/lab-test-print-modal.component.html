@@ -1,27 +1,27 @@
 <!-- COMPLETE PRINT REPORT -->
 <div class="print-report">
-  <!-- HOSPITAL HEADER -->
+  <!-- ================= HOSPITAL HEADER ================= -->
   <div class="report-header text-center">
     <h4 class="hospital-name">
-      {{ organization.name }}
+      {{ organization?.name }}
     </h4>
 
-    <div *ngIf="organization.addressLine1">
+    <div *ngIf="organization?.addressLine1">
       {{ organization.addressLine1 }}
     </div>
 
-    <div *ngIf="organization.addressLine2">
+    <div *ngIf="organization?.addressLine2">
       {{ organization.addressLine2 }}
     </div>
 
     <div>
-      {{ organization.city }}
+      {{ organization?.city }}
 
-      <span *ngIf="organization.state">
+      <span *ngIf="organization?.state">
         , {{ organization.state.name || organization.state }}
       </span>
 
-      <span *ngIf="organization.postalCode">
+      <span *ngIf="organization?.postalCode">
         - {{ organization.postalCode }}
       </span>
     </div>
@@ -31,7 +31,7 @@
     </h6>
   </div>
 
-  <!-- PATIENT DETAILS SECTION -->
+  <!-- ================= PATIENT DETAILS ================= -->
   <div class="patient-info-section">
     <table class="patient-info-table">
       <tbody>
@@ -41,9 +41,9 @@
             {{ patientData?.patientname }}
           </td>
 
-          <td class="info-label">Lab No.</td>
+          <td class="info-label">Serial No.</td>
           <td class="info-value">
-            {{ patientData?.testtranid }}
+            {{ patientData?.serialno }}
           </td>
         </tr>
 
@@ -55,7 +55,7 @@
 
           <td class="info-label">Sample Date</td>
           <td class="info-value">
-            {{ patientData?.date }}
+            {{ patientData?.samplereceivedon }}
           </td>
         </tr>
 
@@ -67,7 +67,11 @@
 
           <td class="info-label">Report Date</td>
           <td class="info-value">
-            {{ patientData?.date }}
+            {{
+              patientData?.reportstatus === true
+                ? patientData?.reportdate || ""
+                : ""
+            }}
           </td>
         </tr>
 
@@ -79,14 +83,14 @@
 
           <td class="info-label">Report Status</td>
           <td class="info-value">
-            Final
+            {{ patientData?.reportstatus === true ? "Final" : "Pending" }}
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- LAB TEST REPORT DETAILS -->
+  <!-- ================= NORMAL LAB TEST REPORT ================= -->
   <div class="table-responsive mt-3">
     <table class="table table-sm test-report-table">
       <thead>
@@ -137,7 +141,134 @@
     </table>
   </div>
 
-  <!-- REPORT FOOTER -->
+  <!-- ================= WIDAL REPORT - NEXT PAGE ================= -->
+  <div class="widal-report-page" *ngIf="widalTests && widalTests.length > 0">
+    <!-- WIDAL HOSPITAL HEADER -->
+    <div class="report-header text-center">
+      <h4 class="hospital-name">
+        {{ organization?.name }}
+      </h4>
+
+      <div *ngIf="organization?.addressLine1">
+        {{ organization.addressLine1 }}
+      </div>
+
+      <div *ngIf="organization?.addressLine2">
+        {{ organization.addressLine2 }}
+      </div>
+
+      <div>
+        {{ organization?.city }}
+
+        <span *ngIf="organization?.state">
+          , {{ organization.state.name || organization.state }}
+        </span>
+
+        <span *ngIf="organization?.postalCode">
+          - {{ organization.postalCode }}
+        </span>
+      </div>
+
+      <h6 class="department-name">
+        DEPARTMENT OF PATHOLOGY &amp; LAB MEDICINE
+      </h6>
+    </div>
+
+    <!-- WIDAL PATIENT DETAILS -->
+    <div class="patient-info-section">
+      <table class="patient-info-table">
+        <tbody>
+          <tr>
+            <td class="info-label">Patient Name</td>
+            <td class="info-value">
+              {{ patientData?.patientname }}
+            </td>
+
+            <td class="info-label">Serial No.</td>
+            <td class="info-value">
+              {{ patientData?.serialno }}
+            </td>
+          </tr>
+
+          <tr>
+            <td class="info-label">Father/Husband Name</td>
+            <td class="info-value">
+              {{ patientData?.fhname }}
+            </td>
+
+            <td class="info-label">Sample Date</td>
+            <td class="info-value">
+              {{ patientData?.date }}
+            </td>
+          </tr>
+
+          <tr>
+            <td class="info-label">Age / Gender</td>
+            <td class="info-value">
+              {{ patientData?.age }} / {{ patientData?.gender }}
+            </td>
+
+            <td class="info-label">Report Date</td>
+            <td class="info-value">
+              {{ patientData?.date }}
+            </td>
+          </tr>
+
+          <tr>
+            <td class="info-label">Referred By</td>
+            <td class="info-value">
+              {{ patientData?.refdoctorname }}
+            </td>
+
+            <td class="info-label">Report Status</td>
+            <td class="info-value">
+              Final
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- WIDAL TEST DETAILS -->
+    <div class="table-responsive mt-3">
+      <table class="table table-sm widal-report-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">
+              Test Name
+            </th>
+
+            <th *ngFor="let dilution of widalDilutions" class="text-center">
+              {{ dilution }}
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let item of widalTests">
+            <td class="fw-bold">
+              {{ item.testname }}
+            </td>
+
+            <td
+              *ngFor="let dilution of widalDilutions"
+              class="text-center fw-bold"
+            >
+              {{ item.values?.[dilution] }}
+            </td>
+          </tr>
+
+          <tr *ngIf="widalTests.length === 0">
+            <td [attr.colspan]="widalDilutions.length + 1" class="text-center">
+              No WIDAL tests available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================= REPORT FOOTER ================= -->
   <div class="report-footer mt-5">
     <div class="row">
       <div class="col-6 text-start">
@@ -160,7 +291,7 @@
   </div>
 </div>
 
-<!-- PRINT BUTTONS - OUTSIDE REPORT -->
+<!-- ================= PRINT BUTTONS ================= -->
 <div class="text-end mt-3 no-print">
   <!-- PRINT REPORT BUTTON -->
   <button type="button" class="btn btn-primary" (click)="printReport()">

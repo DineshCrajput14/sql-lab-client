@@ -283,7 +283,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <ng-container *ngFor="let section of permissionSections">
+                  <ng-container
+                    *ngFor="let section of visiblePermissionSections"
+                  >
                     <tr style="background-color: #e2e8f0;">
                       <td
                         colspan="6"

@@ -6,6 +6,7 @@ import { NgForm } from "@angular/forms";
 import { ErrorHandlingService } from "src/app/utils/services/error-handling.service";
 import { CancelService } from "src/app/utils/services/cancel.service";
 import { ToastrMessage } from "src/app/utils/services/toastrmessage.service";
+import { AuthService } from "src/app/utils/services/auth.service";
 
 @Component({
   selector: "app-users-editor",
@@ -13,18 +14,24 @@ import { ToastrMessage } from "src/app/utils/services/toastrmessage.service";
 })
 export class UsersEditorComponent implements OnInit {
   @ViewChild("f") form: NgForm;
-  isLoading: boolean;
-  dataChanged: boolean;
+
+  isLoading = false;
+  dataChanged = false;
   formState: string;
   editUserId: number;
   onClose = new Subject<boolean>();
-  showPassword: boolean = false;
+  showPassword = false;
+
+  // Cached filtered permissions. No getter/change-detection recalculation.
+  visiblePermissionSections: any[] = [];
 
   roles: { code: string; name: string }[] = [
     { code: "ADMIN", name: "Administrator" },
-    { code: "MANAGER", name: "Property Manager" },
-    { code: "STAFF", name: "Staff / Maintenance" },
-    { code: "TENANT", name: "Tenant" },
+    { code: "MANAGER", name: "Manager" },
+    { code: "STAFF", name: "Staff" },
+    this.authService.isTenantManagement
+      ? { code: "TENANT", name: "Tenant" }
+      : { code: "PATIENT", name: "Patient" },
   ];
 
   statuses: string[] = ["Active", "Inactive"];
@@ -53,20 +60,13 @@ export class UsersEditorComponent implements OnInit {
     { key: "print", name: "Print", label: "Print" },
   ];
 
+  // Original permission list. Always use this for saving/restoring.
   permissionSections = [
     {
       resource: "Dashboard",
       items: [
-        {
-          code: "PortfolioSummary",
-          name: "Portfolio Summary",
-          view: false,
-        },
-        {
-          code: "RentCollected",
-          name: "Rent Collected",
-          view: false,
-        },
+        { code: "PortfolioSummary", name: "Portfolio Summary", view: false },
+        { code: "RentCollected", name: "Rent Collected", view: false },
         {
           code: "OccupancyDistribution",
           name: "Occupancy Distribution",
@@ -77,11 +77,7 @@ export class UsersEditorComponent implements OnInit {
           name: "Financial Performance",
           view: false,
         },
-        {
-          code: "RecentReceipts",
-          name: "Recent Receipts",
-          view: false,
-        },
+        { code: "RecentReceipts", name: "Recent Receipts", view: false },
       ],
     },
     {
@@ -124,7 +120,6 @@ export class UsersEditorComponent implements OnInit {
           delete: false,
           view: false,
         },
-
         {
           code: "TenantRegistration",
           name: "Tenant Registration",
@@ -133,7 +128,6 @@ export class UsersEditorComponent implements OnInit {
           delete: false,
           view: false,
         },
-
         {
           code: "RoomsAllotment",
           name: "Rooms Allotment",
@@ -193,40 +187,86 @@ export class UsersEditorComponent implements OnInit {
     },
   ];
 
+  private readonly tenantManagementPermissions = [
+    // Dashboard
+    "PortfolioSummary",
+    "RentCollected",
+    "OccupancyDistribution",
+    "FinancialPerformance",
+    "RecentReceipts",
+
+    // Masters
+    "PMS",
+
+    // Transactions
+    "TenantRegistration",
+    "RoomsAllotment",
+    "Receipt",
+
+    // Reports
+    "OutstandingReports",
+    "OccupancyStatus",
+    "AgreementExpiry",
+    "RegistrationReports",
+  ];
+
   constructor(
     public bsModalRef: BsModalRef,
     private usersService: UsersService,
     private errorHandlingService: ErrorHandlingService,
     private cancelService: CancelService,
-    private toastrMessage: ToastrMessage
+    private toastrMessage: ToastrMessage,
+    public authService: AuthService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.setVisiblePermissionSections();
+
     if (this.formState === "EDIT" && this.editUserId) {
       this.getUser(this.editUserId);
     }
   }
 
-  onChangeRole() {
+  // Calculate visible permissions only when required.
+  setVisiblePermissionSections(): void {
+    const isTenantManagement = this.authService.isTenantManagement === true;
+
+    this.visiblePermissionSections = this.permissionSections
+      .map((section) => ({
+        resource: section.resource,
+        items: section.items.filter((item) => {
+          const isTenantPermission = this.tenantManagementPermissions.includes(
+            item.code
+          );
+
+          return isTenantManagement ? isTenantPermission : !isTenantPermission;
+        }),
+      }))
+      .filter((section) => section.items.length > 0);
+  }
+
+  onChangeRole(): void {
     if (this.user.userRoleCode === "ADMIN") {
       this.user.status = "Active";
     }
   }
 
-  onClickShowPassword() {
+  onClickShowPassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  checkAllPermissionsSelected() {
+  checkAllPermissionsSelected(): boolean {
     return this.activityKeys.every((activity) =>
       this.checkColumnSelected(activity.key)
     );
   }
 
-  onSelectAllPermissions(event: Event) {
+  onSelectAllPermissions(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
+
     this.form?.form?.markAsDirty();
-    this.permissionSections.forEach((section) => {
+
+    this.visiblePermissionSections.forEach((section) => {
       section.items.forEach((item) => {
         this.activityKeys.forEach((activity) => {
           if (item[activity.key] !== undefined) {
@@ -237,18 +277,20 @@ export class UsersEditorComponent implements OnInit {
     });
   }
 
-  checkColumnSelected(field) {
-    return this.permissionSections.every((section) =>
+  checkColumnSelected(field: string): boolean {
+    return this.visiblePermissionSections.every((section) =>
       section.items.every(
         (item) => item[field] === undefined || item[field] === true
       )
     );
   }
 
-  onChangeColumnPermission(field: string, event: Event) {
+  onChangeColumnPermission(field: string, event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
+
     this.form?.form?.markAsDirty();
-    this.permissionSections.forEach((section) => {
+
+    this.visiblePermissionSections.forEach((section) => {
       section.items.forEach((item) => {
         if (item[field] !== undefined) {
           item[field] = isChecked;
@@ -258,7 +300,7 @@ export class UsersEditorComponent implements OnInit {
     });
   }
 
-  onChangePermission(item, field: string) {
+  onChangePermission(item: any, field: string): void {
     if (field !== "view" && item[field]) {
       item.view = true;
     } else if (field === "view" && !item.view) {
@@ -270,9 +312,13 @@ export class UsersEditorComponent implements OnInit {
     }
   }
 
-  getSelectedPermissions() {
-    const allowedAppModules = [];
-    const allowedAppActivities = [];
+  // Save permissions from ALL sections, including hidden ones.
+  getSelectedPermissions(): {
+    allowedAppModules: string[];
+    allowedAppActivities: string[];
+  } {
+    const allowedAppModules: string[] = [];
+    const allowedAppActivities: string[] = [];
 
     this.permissionSections.forEach((section) => {
       section.items.forEach((item) => {
@@ -281,6 +327,7 @@ export class UsersEditorComponent implements OnInit {
             if (!allowedAppModules.includes(item.code)) {
               allowedAppModules.push(item.code);
             }
+
             allowedAppActivities.push(
               `${item.code}.${section.resource}.${activity.name}`
             );
@@ -292,12 +339,17 @@ export class UsersEditorComponent implements OnInit {
     return { allowedAppModules, allowedAppActivities };
   }
 
-  handlePermissionSelection(allowedAppActivities = []) {
+  // Restore permissions from ALL sections.
+  handlePermissionSelection(allowedAppActivities: any = []): void {
+    const activities = Array.isArray(allowedAppActivities)
+      ? allowedAppActivities
+      : [];
+
     this.permissionSections.forEach((section) => {
       section.items.forEach((item) => {
         this.activityKeys.forEach((activity) => {
           if (item[activity.key] !== undefined) {
-            item[activity.key] = allowedAppActivities.includes(
+            item[activity.key] = activities.includes(
               `${item.code}.${section.resource}.${activity.name}`
             );
           }
@@ -306,16 +358,19 @@ export class UsersEditorComponent implements OnInit {
     });
   }
 
-  save() {
+  save(): void {
     this.saveUser(true);
   }
 
-  saveAndAddMore() {
+  saveAndAddMore(): void {
     this.saveUser(false);
   }
 
-  saveUser(closeTheModal: boolean) {
-    let observable;
+  saveUser(closeTheModal: boolean): void {
+    if (this.isLoading) {
+      return;
+    }
+
     this.isLoading = true;
     this.dataChanged = true;
 
@@ -339,10 +394,16 @@ export class UsersEditorComponent implements OnInit {
       allowedAppActivities,
     };
 
-    if (this.formState === "EDIT") {
-      observable = this.usersService.update(this.editUserId, params);
-    } else if (this.formState === "NEW") {
-      observable = this.usersService.create(params);
+    const observable =
+      this.formState === "EDIT"
+        ? this.usersService.update(this.editUserId, params)
+        : this.formState === "NEW"
+        ? this.usersService.create(params)
+        : null;
+
+    if (!observable) {
+      this.isLoading = false;
+      return;
     }
 
     observable.subscribe({
@@ -350,6 +411,7 @@ export class UsersEditorComponent implements OnInit {
         if (closeTheModal) {
           this.onClose.next(this.dataChanged);
           this.bsModalRef.hide();
+
           if (this.formState === "NEW") {
             this.toastrMessage.showSuccessMessage("User Added Successfully");
           } else if (this.formState === "EDIT") {
@@ -357,12 +419,24 @@ export class UsersEditorComponent implements OnInit {
           }
         } else {
           this.formState = "NEW";
-          this.form.resetForm({
+          this.editUserId = null;
+
+          this.user = {
+            name: "",
+            email: "",
+            phone: "",
             userRoleCode: "STAFF",
+            password: "",
             status: "Active",
-          });
+          };
+
           this.handlePermissionSelection([]);
+          this.showPassword = false;
+
+          this.form?.resetForm(this.user);
+
           this.toastrMessage.showSuccessMessage("User Added Successfully");
+
           this.isLoading = false;
         }
       },
@@ -373,14 +447,17 @@ export class UsersEditorComponent implements OnInit {
     });
   }
 
-  getUser(userId: number) {
+  getUser(userId: number): void {
+    if (this.isLoading) {
+      return;
+    }
+
     this.isLoading = true;
+
     this.usersService.getUser(userId).subscribe({
       next: (resultGetUser) => {
-        const user =
-          resultGetUser && resultGetUser.user
-            ? resultGetUser.user
-            : resultGetUser;
+        const user = resultGetUser?.user || resultGetUser;
+
         if (user) {
           this.user.name = user.name || "";
           this.user.email = user.email || "";
@@ -388,8 +465,10 @@ export class UsersEditorComponent implements OnInit {
           this.user.userRoleCode = user.userRoleCode || "STAFF";
           this.user.status = user.status || "Active";
           this.user.password = user.password || "";
+
           this.handlePermissionSelection(user.allowedAppActivities || []);
         }
+
         this.isLoading = false;
       },
       error: (error) => {
@@ -400,23 +479,23 @@ export class UsersEditorComponent implements OnInit {
   }
 
   @HostListener("document:keydown.escape", ["$event"])
-  onKeyEscape() {
+  onKeyEscape(): void {
     if (document.getElementsByClassName("modal").length < 2) {
       this.cancel();
     }
   }
 
-  cancel() {
+  cancel(): void {
     if (this.isLoading) {
       return;
     }
-    if (!this.form.dirty) {
+
+    if (!this.form?.dirty) {
       this.onClose.next(this.dataChanged);
       this.bsModalRef.hide();
       return;
     }
-    if (this.form.dirty) {
-      this.cancelService.cancel(this.bsModalRef);
-    }
+
+    this.cancelService.cancel(this.bsModalRef);
   }
 }

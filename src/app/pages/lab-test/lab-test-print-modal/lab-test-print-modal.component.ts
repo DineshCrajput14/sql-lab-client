@@ -16,8 +16,25 @@ import html2pdf from "html2pdf.js";
 export class LabTestPrintModalComponent {
   testtranid: number;
   patientData: any = {};
+
+  // Normal LAB Tests
   selectedTests: any[] = [];
+
+  // WIDAL Tests
+  widalTests: any[] = [];
+
+  // WIDAL Dilution Columns
+  widalDilutions: string[] = [
+    "1:20",
+    "1:40",
+    "1:80",
+    "1:160",
+    "1:320",
+    "1:640",
+  ];
+
   isGeneratingPDF: boolean = false;
+
   get organization() {
     return this.authService?.authentication?.organization;
   }
@@ -28,12 +45,14 @@ export class LabTestPrintModalComponent {
     private cdr: ChangeDetectorRef
   ) {}
 
+  // ================= TEST BOLD =================
   isTestBold(test: any): boolean {
     return (
       test?.prnbold === true || test?.prnbold === 1 || test?.prnbold === "1"
     );
   }
 
+  // ================= OUT OF RANGE =================
   isOutOfRange(test: any): boolean {
     if (!test?.testvalue || !test?.normalvaluem) {
       return false;
@@ -54,6 +73,7 @@ export class LabTestPrintModalComponent {
     return value < min || value > max;
   }
 
+  // ================= REFERENCE RANGE =================
   getReferenceRange(test: any): string {
     if (!test) {
       return "";
@@ -68,8 +88,11 @@ export class LabTestPrintModalComponent {
     return test.normalvaluem || test.normalvaluef || "";
   }
 
+  // ================= PRINT REPORT =================
   printReport(): void {
-    const reportElement = document.querySelector(".print-report");
+    const reportElement = document.querySelector(
+      ".print-report"
+    ) as HTMLElement;
 
     if (!reportElement) {
       console.error("Print report element not found");
@@ -93,42 +116,74 @@ export class LabTestPrintModalComponent {
     printWindow.document.open();
 
     printWindow.document.write(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <title>Lab Test Report</title>
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Lab Test Report</title>
 
-        ${styles}
+          ${styles}
 
-        <style>
-          @page {
-            size: A4 portrait;
-            margin: 10mm;
-          }
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 10mm;
+            }
 
-          body {
-            margin: 0;
-            padding: 0;
-            background: white;
-          }
+            body {
+              margin: 0;
+              padding: 0;
+              background: white;
+            }
 
-          .no-print {
-            display: none !important;
-          }
+            .no-print {
+              display: none !important;
+            }
 
-          .print-report {
-            width: 100%;
-            font-family: Arial, sans-serif;
-            color: #000;
-          }
-        </style>
-      </head>
+            .print-report {
+              width: 100%;
+              font-family: Arial, sans-serif;
+              color: #000;
+            }
 
-      <body>
-        ${reportElement.outerHTML}
-      </body>
-    </html>
-  `);
+            /* WIDAL starts on next page */
+            .widal-report-page {
+              page-break-before: always !important;
+              break-before: page !important;
+            }
+
+            .widal-report-table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 11px;
+            }
+
+            .widal-report-table th,
+            .widal-report-table td {
+              border: 1px solid #000;
+              padding: 5px;
+            }
+
+            .widal-report-table thead {
+              display: table-header-group;
+            }
+
+            .widal-report-table tr {
+              page-break-inside: avoid;
+              break-inside: avoid;
+            }
+
+            .test-report-table tr {
+              page-break-inside: avoid;
+              break-inside: avoid;
+            }
+          </style>
+        </head>
+
+        <body>
+          ${reportElement.outerHTML}
+        </body>
+      </html>
+    `);
 
     printWindow.document.close();
 
@@ -141,13 +196,18 @@ export class LabTestPrintModalComponent {
     };
   }
 
+  // ================= DOWNLOAD PDF =================
+
   async downloadPDF(): Promise<void> {
     if (this.isGeneratingPDF) {
       return;
     }
 
-    console.log("testtranid:", this.testtranid);
-    console.log("patientData:", this.patientData);
+    // console.log("testtranid:", this.testtranid);
+    // console.log("patientData:", this.patientData);
+    // console.log("selectedTests:", this.selectedTests);
+    // console.log("widalTests:", this.widalTests);
+
     const reportElement = document.querySelector(
       ".print-report"
     ) as HTMLElement;
@@ -158,12 +218,13 @@ export class LabTestPrintModalComponent {
     }
 
     this.isGeneratingPDF = true;
+    this.cdr.detectChanges();
 
     try {
       // Clone report
       const reportClone = reportElement.cloneNode(true) as HTMLElement;
 
-      // Hide original footer from HTML
+      // Hide HTML Footer
       const htmlFooter = reportClone.querySelector(
         ".report-footer"
       ) as HTMLElement;
@@ -173,23 +234,32 @@ export class LabTestPrintModalComponent {
       }
 
       // PDF Options
+      const fileName = `LabTestReport_${this.testtranid || "Report"}.pdf`;
+
       const options = {
         margin: [10, 10, 35, 10] as [number, number, number, number],
 
-        filename: `LabTestReport_${this.testtranid || "Report"}.pdf`,
+        filename: fileName,
 
         image: {
           type: "jpeg" as const,
           quality: 0.98,
         },
 
+        // html2canvas: {
+        //   scale: 2,
+        //   useCORS: true,
+        //   backgroundColor: "#ffffff",
+        //   scrollY: 0,
+        // },
+
         html2canvas: {
-          scale: 2,
+          scale: 1.5,
           useCORS: true,
           backgroundColor: "#ffffff",
           scrollY: 0,
+          logging: false,
         },
-
         jsPDF: {
           unit: "mm" as const,
           format: "a4" as const,
@@ -198,7 +268,12 @@ export class LabTestPrintModalComponent {
 
         pagebreak: {
           mode: ["css", "legacy"] as ["css", "legacy"],
-          avoid: ["tr", ".group-header"],
+
+          // WIDAL report starts on a new page
+          before: [".widal-report-page"],
+
+          // Prevent table rows and group headers from splitting
+          avoid: ["tr", ".group-header", ".widal-report-page"],
         },
       };
 
@@ -242,14 +317,13 @@ export class LabTestPrintModalComponent {
           "This is a computer generated laboratory report.",
           pageWidth / 2,
           pageHeight - 15,
-          { align: "center" }
+          {
+            align: "center",
+          }
         );
       }
 
       // Download PDF
-      // pdf.save(`LabTestReport_${this.testtranid || "Report"}.pdf`);
-      const fileName = `LabTestReport_${this.testtranid}.pdf`;
-
       console.log("PDF filename:", fileName);
 
       pdf.save(fileName);

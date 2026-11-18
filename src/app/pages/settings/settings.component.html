@@ -21,8 +21,10 @@
         <!-- CARD HEADER -->
         <div class="card-header py-2">
           <h3 class="card-title mb-0">
-            <i class="fas fa-users-cog pe-1 text-primary"></i>
-            Tenant Registration
+            <ng-container *ngIf="authService.isTenantManagement">
+              <i class="fas fa-users-cog pe-1 text-primary"></i>
+              Tenant Registration
+            </ng-container>
           </h3>
         </div>
 
@@ -36,7 +38,10 @@
           <!-- SETTINGS -->
           <div *ngIf="!isLoading">
             <!-- TENANT REGISTRATION SETTINGS -->
-            <div class="row align-items-center">
+            <div
+              *ngIf="authService.isTenantManagement"
+              class="row align-items-center"
+            >
               <!-- REGISTRATION NUMBER AUTO -->
               <div class="col-sm-auto pe-4">
                 <div class="form-check mb-0">

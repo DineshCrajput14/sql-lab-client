@@ -13,7 +13,7 @@ export class LandingComponent implements OnInit {
   constructor(private title: Title) {}
 
   ngOnInit() {
-    this.title.setTitle("Puma Group PMS - Property Management System");
+    this.title.setTitle("Lab - laboratory  Management System");
   }
 
   scrollToSection(sectionId: string) {

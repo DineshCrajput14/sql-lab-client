@@ -38,11 +38,9 @@
             class="nav-item dropdown"
             routerLinkActive="active"
             *ngIf="
-              authService.findActivityPermission(
-                ['PMS', 'Miscellaneous'],
-                'Masters',
-                'View'
-              )
+              authService.isTenantManagement
+                ? authService.findActivityPermission('PMS', 'Masters', 'View')
+                : authService.findActivityPermission('LAB', 'Masters', 'View')
             "
             [class.show]="openMenu === 'masters'"
           >
@@ -77,9 +75,10 @@
               <span class="nav-link-title">Masters</span>
             </a>
             <div class="dropdown-menu" [class.show]="openMenu === 'masters'">
-              <!-- <div
+              <div
                 class="dropdown-submenu"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission('PMS', 'Masters', 'View')
                 "
                 [class.show]="openSubMenu === 'pms'"
@@ -128,7 +127,7 @@
                     >Amenities</a
                   >
                 </div>
-              </div> -->
+              </div>
               <!-- <div
                 class="dropdown-submenu"
                 *ngIf="
@@ -172,6 +171,9 @@
                 routerLinkActive="active"
                 [routerLink]="['/doctors']"
                 (click)="hideNavDropdownMenu()"
+                *ngIf="
+                  authService.findActivityPermission('LAB', 'Masters', 'View')
+                "
                 >Doctors</a
               >
 
@@ -214,7 +216,7 @@
             routerLinkActive="active"
             *ngIf="
               authService.findActivityPermission(
-                ['TenantRegistration', 'RoomsAllotment', 'Receipt'],
+                ['TenantRegistration', 'Receipt', 'RoomsAllotment', 'LabTest'],
                 'Transactions',
                 'View'
               )
@@ -257,6 +259,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'TenantRegistration',
                     'Transactions',
@@ -271,6 +274,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'Receipt',
                     'Transactions',
@@ -285,6 +289,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'RoomsAllotment',
                     'Transactions',
@@ -301,7 +306,7 @@
                 class="dropdown-item"
                 *ngIf="
                   authService.findActivityPermission(
-                    'RoomsAllotment',
+                    'LabTest',
                     'Transactions',
                     'View'
                   )
@@ -323,7 +328,9 @@
                   'RegistrationReports',
                   'OutstandingReports',
                   'OccupancyStatus',
-                  'AgreementExpiry'
+                  'AgreementExpiry',
+                  'DoctorSummary',
+                  'PatientRegister'
                 ],
                 'Reports',
                 'View'
@@ -368,7 +375,7 @@
                 class="dropdown-item"
                 *ngIf="
                   authService.findActivityPermission(
-                    'RegistrationReports',
+                    'PatientRegister',
                     'Reports',
                     'View'
                   )
@@ -383,7 +390,7 @@
                 class="dropdown-item"
                 *ngIf="
                   authService.findActivityPermission(
-                    'RegistrationReports',
+                    'DoctorSummary',
                     'Reports',
                     'View'
                   )
@@ -396,6 +403,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'RegistrationReports',
                     'Reports',
@@ -410,6 +418,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'RegistrationReports',
                     'Reports',
@@ -425,6 +434,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'RegistrationReports',
                     'Reports',
@@ -439,6 +449,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'OutstandingReports',
                     'Reports',
@@ -453,6 +464,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'OccupancyStatus',
                     'Reports',
@@ -467,6 +479,7 @@
               <a
                 class="dropdown-item"
                 *ngIf="
+                  authService.isTenantManagement &&
                   authService.findActivityPermission(
                     'AgreementExpiry',
                     'Reports',

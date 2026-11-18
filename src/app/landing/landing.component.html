@@ -7,13 +7,19 @@
         (click)="scrollToTop($event)"
       >
         <div class="pms-brand-emblem">
-          <i class="fas fa-building"></i>
+          <i class="fas fa-microscope"></i>
         </div>
+
         <div class="pms-brand-info">
-          <span class="pms-brand-title">PUMA <strong>GROUP</strong></span>
-          <span class="pms-brand-subtitle">Property Management • Zambia</span>
+          <span class="pms-brand-title">
+            <strong>LAB DIAGNOSTICS</strong>
+          </span>
+          <span class="pms-brand-subtitle">
+            Laboratory Management System
+          </span>
         </div>
       </a>
+
       <nav class="pms-nav-menu d-none d-lg-flex" aria-label="Main Navigation">
         <a
           [routerLink]="['/home']"
@@ -21,15 +27,19 @@
           (click)="scrollToTop($event)"
           >Home</a
         >
+
         <a (click)="scrollToSection('capabilities')" class="pms-nav-item"
           >Capabilities</a
         >
-        <a (click)="scrollToSection('portfolio')" class="pms-nav-item"
-          >Lwipa Puma Plaza</a
+
+        <a (click)="scrollToSection('services')" class="pms-nav-item"
+          >Laboratory Services</a
         >
-        <a (click)="scrollToSection('enterprise')" class="pms-nav-item"
-          >About Puma Group</a
+
+        <a (click)="scrollToSection('about')" class="pms-nav-item"
+          >About Laboratory</a
         >
+
         <a (click)="scrollToSection('contact')" class="pms-nav-item">Contact</a>
       </nav>
 
@@ -39,6 +49,7 @@
           <span>Sign In</span>
         </a>
       </div>
+
       <button
         class="pms-mobile-btn d-lg-none"
         (click)="isMobileMenuOpen = !isMobileMenuOpen"
@@ -50,6 +61,8 @@
         ></i>
       </button>
     </div>
+
+    <!-- Mobile Menu -->
     <div class="pms-mobile-drawer d-lg-none" *ngIf="isMobileMenuOpen">
       <a
         [routerLink]="['/home']"
@@ -58,41 +71,48 @@
       >
         <i class="fas fa-home me-2"></i> Home
       </a>
+
       <a
         class="pms-drawer-link"
         (click)="scrollToSection('capabilities'); isMobileMenuOpen = false"
       >
-        <i class="fas fa-th-large me-2"></i> Capabilities
+        <i class="fas fa-flask me-2"></i> Capabilities
       </a>
+
       <a
         class="pms-drawer-link"
-        (click)="scrollToSection('portfolio'); isMobileMenuOpen = false"
+        (click)="scrollToSection('services'); isMobileMenuOpen = false"
       >
-        <i class="fas fa-city me-2"></i> Lwipa Puma Plaza
+        <i class="fas fa-vials me-2"></i> Laboratory Services
       </a>
+
       <a
         class="pms-drawer-link"
-        (click)="scrollToSection('enterprise'); isMobileMenuOpen = false"
+        (click)="scrollToSection('about'); isMobileMenuOpen = false"
       >
-        <i class="fas fa-shield-alt me-2"></i> About Puma Group
+        <i class="fas fa-hospital me-2"></i> About Laboratory
       </a>
+
       <a
         class="pms-drawer-link"
         (click)="scrollToSection('contact'); isMobileMenuOpen = false"
       >
-        <i class="fas fa-envelope me-2"></i> Contact & Head Office
+        <i class="fas fa-envelope me-2"></i> Contact
       </a>
+
       <a
         [routerLink]="['/login']"
         class="pms-drawer-link highlight"
         (click)="isMobileMenuOpen = false"
       >
-        <i class="fas fa-sign-in-alt me-2"></i> Access Member Portal
+        <i class="fas fa-sign-in-alt me-2"></i>
+        Access Laboratory Portal
       </a>
     </div>
   </header>
 
   <main>
+    <!-- HERO SECTION -->
     <section class="pms-hero" id="home">
       <div class="pms-hero-bg-overlay"></div>
 
@@ -101,47 +121,49 @@
           <div class="pms-hero-lead">
             <div class="pms-lead-badge">
               <span class="pms-pulse-point"></span>
-              <span class="pms-badge-label"
-                >ENTERPRISE PROPERTY ECOSYSTEM • NDOLA, ZAMBIA</span
-              >
+              <span class="pms-badge-label">
+                ADVANCED DIAGNOSTICS • LABORATORY MANAGEMENT
+              </span>
             </div>
 
             <h1 class="pms-hero-headline">
-              Manage All Your Properties
-              <span class="pms-hero-accent">With Absolute Precision.</span>
+              Precision Diagnostics
+              <span class="pms-hero-accent">
+                For Better Healthcare.
+              </span>
             </h1>
 
             <p class="pms-hero-desc">
-              Engineered exclusively for
-              <strong>Puma Group of Companies Ltd</strong>. From flagship
-              commercial hubs like <strong>Lwipa Puma Plaza</strong> to prime
-              residential developments across the Copperbelt, manage tenant
-              lifecycles, automated rent collections, and facilities in one
-              unified platform.
+              A comprehensive Laboratory Management System designed to
+              streamline patient registration, laboratory testing, result
+              management, and diagnostic reporting through one integrated
+              platform.
             </p>
+
             <ul class="pms-lead-features">
               <li>
                 <i class="fas fa-check-circle"></i>
-                <span>Commercial & Residential Multi-Tier Hierarchy</span>
+                <span>Efficient Patient Registration & Record Management</span>
               </li>
+
               <li>
                 <i class="fas fa-check-circle"></i>
-                <span
-                  >Automated Zambian Kwacha (ZMW) Billing & Digital
-                  Invoices</span
-                >
+                <span>Organized Laboratory Tests & Reference Ranges</span>
               </li>
+
               <li>
                 <i class="fas fa-check-circle"></i>
-                <span>Real-Time Occupancy Metrics & Maintenance Tracking</span>
+                <span>Professional Diagnostic Reports & Result Tracking</span>
               </li>
             </ul>
+
             <div class="pms-hero-footnote">
-              <i class="fas fa-map-marker-alt me-2 text-danger"></i>
-              <span
-                ><strong>Headquarters:</strong> Lwipa Puma Plaza, Plot
-                36179/M/A, Ndola-Kitwe Road, Ndola</span
-              >
+              <i class="fas fa-microscope me-2 text-info"></i>
+              <span>
+                <strong>Laboratory Management:</strong>
+                Accurate records, efficient workflows, and organized diagnostic
+                reporting.
+              </span>
             </div>
           </div>
         </div>
@@ -151,221 +173,292 @@
         class="pms-hero-scroll-hint"
         (click)="scrollToSection('capabilities')"
       >
-        <span>Explore Platform</span>
+        <span>Explore Laboratory Platform</span>
         <i class="fas fa-chevron-down"></i>
       </div>
     </section>
+
+    <!-- CAPABILITIES -->
     <section class="pms-section pms-section-dark" id="capabilities">
       <div class="pms-container">
         <header class="pms-section-header">
-          <span class="pms-section-tag">CORE PLATFORM CAPABILITIES</span>
+          <span class="pms-section-tag">
+            CORE LABORATORY CAPABILITIES
+          </span>
+
           <h2 class="pms-section-title">
-            Engineered For Modern
-            <span class="pms-text-gradient">Real Estate Operations</span>
+            Designed For Modern
+            <span class="pms-text-gradient">
+              Diagnostic Laboratories
+            </span>
           </h2>
+
           <p class="pms-section-desc">
-            A comprehensive property management stack delivering complete
-            portfolio transparency, automated financial controls, and
-            maintenance operations for Puma Group of Companies Ltd.
+            An integrated laboratory platform for managing patients, tests,
+            laboratory workflows, results, and reports with accuracy and
+            operational efficiency.
           </p>
         </header>
 
         <div class="pms-capabilities-grid">
+          <!-- Patient Management -->
           <article class="pms-capability-card">
             <div class="pms-card-top">
               <div class="pms-card-icon icon-blue">
-                <i class="fas fa-city"></i>
+                <i class="fas fa-user-injured"></i>
               </div>
-              <span class="pms-card-category">ASSET MANAGEMENT</span>
+
+              <span class="pms-card-category">
+                PATIENT MANAGEMENT
+              </span>
             </div>
-            <h3 class="pms-card-title">Property & Building Structuring</h3>
+
+            <h3 class="pms-card-title">
+              Patient Registration & Records
+            </h3>
+
             <p class="pms-card-summary">
-              Organize complex portfolios into hierarchical plazas, wings,
-              floors, and individual units with precise square footage, zoning
-              details, and facility amenities.
+              Maintain organized patient information, registration records,
+              demographic details, doctor references, and laboratory history.
             </p>
+
             <ul class="pms-card-points">
               <li>
-                <i class="fas fa-check"></i> Multi-tier building and floor level
-                hierarchies
+                <i class="fas fa-check"></i>
+                Patient registration and unique records
               </li>
+
               <li>
-                <i class="fas fa-check"></i> Commercial suite and residential
-                unit classification
+                <i class="fas fa-check"></i>
+                Patient history and previous investigations
               </li>
+
               <li>
-                <i class="fas fa-check"></i> Real-time vacancy, turnover, and
-                occupancy monitoring
-              </li>
-            </ul>
-          </article>
-          <article class="pms-capability-card">
-            <div class="pms-card-top">
-              <div class="pms-card-icon icon-purple">
-                <i class="fas fa-users-cog"></i>
-              </div>
-              <span class="pms-card-category">LEASING & CONTRACTS</span>
-            </div>
-            <h3 class="pms-card-title">Tenant Lifecycle & Digital Leases</h3>
-            <p class="pms-card-summary">
-              End-to-end tenant onboarding with Zambian NRC/passport
-              verification, digital contract drafting, security deposit
-              tracking, and automated escalation terms.
-            </p>
-            <ul class="pms-card-points">
-              <li>
-                <i class="fas fa-check"></i> Comprehensive tenant KYC and
-                compliance repository
-              </li>
-              <li>
-                <i class="fas fa-check"></i> Configurable lease terms with
-                automated renewal notices
-              </li>
-              <li>
-                <i class="fas fa-check"></i> Centralized digital tenant
-                correspondence & notices
-              </li>
-            </ul>
-          </article>
-          <article class="pms-capability-card">
-            <div class="pms-card-top">
-              <div class="pms-card-icon icon-emerald">
-                <i class="fas fa-money-bill-wave"></i>
-              </div>
-              <span class="pms-card-category">FINANCIAL AUTOMATION</span>
-            </div>
-            <h3 class="pms-card-title">Rent Billing & PDF Payment Receipts</h3>
-            <p class="pms-card-summary">
-              Automated recurring invoicing in Zambian Kwacha (ZMW), instant
-              digital payment receipt generation, automated arrears tracking,
-              and audit-ready reporting.
-            </p>
-            <ul class="pms-card-points">
-              <li>
-                <i class="fas fa-check"></i> Automated monthly ZMW billing
-                schedule dispatch
-              </li>
-              <li>
-                <i class="fas fa-check"></i> Official payment receipts with
-                direct PDF generation
-              </li>
-              <li>
-                <i class="fas fa-check"></i> Arrears penalty calculation and
-                collection tracking
+                <i class="fas fa-check"></i>
+                Doctor reference and patient details
               </li>
             </ul>
           </article>
 
+          <!-- Test Management -->
+          <article class="pms-capability-card">
+            <div class="pms-card-top">
+              <div class="pms-card-icon icon-purple">
+                <i class="fas fa-vials"></i>
+              </div>
+
+              <span class="pms-card-category">
+                TEST MANAGEMENT
+              </span>
+            </div>
+
+            <h3 class="pms-card-title">
+              Laboratory Test Configuration
+            </h3>
+
+            <p class="pms-card-summary">
+              Organize laboratory investigations into test groups and maintain
+              test names, reference ranges, units, and reporting configurations.
+            </p>
+
+            <ul class="pms-card-points">
+              <li>
+                <i class="fas fa-check"></i>
+                Test Groups and Test Master
+              </li>
+
+              <li>
+                <i class="fas fa-check"></i>
+                Male and female reference ranges
+              </li>
+
+              <li>
+                <i class="fas fa-check"></i>
+                Units, result formatting and test configuration
+              </li>
+            </ul>
+          </article>
+
+          <!-- Lab Workflow -->
+          <article class="pms-capability-card">
+            <div class="pms-card-top">
+              <div class="pms-card-icon icon-emerald">
+                <i class="fas fa-flask"></i>
+              </div>
+
+              <span class="pms-card-category">
+                LABORATORY WORKFLOW
+              </span>
+            </div>
+
+            <h3 class="pms-card-title">
+              Investigation & Result Management
+            </h3>
+
+            <p class="pms-card-summary">
+              Manage laboratory investigations from patient registration through
+              test entry, result review, and final report preparation.
+            </p>
+
+            <ul class="pms-card-points">
+              <li>
+                <i class="fas fa-check"></i>
+                Investigation entry and test selection
+              </li>
+
+              <li>
+                <i class="fas fa-check"></i>
+                Result entry and abnormal value highlighting
+              </li>
+
+              <li>
+                <i class="fas fa-check"></i>
+                Organized test-wise and group-wise results
+              </li>
+            </ul>
+          </article>
+
+          <!-- Reporting -->
           <article class="pms-capability-card">
             <div class="pms-card-top">
               <div class="pms-card-icon icon-amber">
-                <i class="fas fa-tools"></i>
+                <i class="fas fa-file-medical-alt"></i>
               </div>
-              <span class="pms-card-category">FACILITY OPERATIONS</span>
+
+              <span class="pms-card-category">
+                DIAGNOSTIC REPORTING
+              </span>
             </div>
-            <h3 class="pms-card-title">Maintenance & Work Orders</h3>
+
+            <h3 class="pms-card-title">
+              Professional Laboratory Reports
+            </h3>
+
             <p class="pms-card-summary">
-              Keep assets in pristine operational condition. Receive tenant
-              repair requests, assign certified maintenance contractors, and
-              monitor completion timelines.
+              Generate clear and professionally formatted laboratory reports
+              with patient details, investigation results, reference ranges, and
+              laboratory information.
             </p>
+
             <ul class="pms-card-points">
               <li>
-                <i class="fas fa-check"></i> Dedicated maintenance ticket
-                logging & tracking
+                <i class="fas fa-check"></i>
+                Print-ready laboratory reports
               </li>
+
               <li>
-                <i class="fas fa-check"></i> Contractor work dispatch and
-                expense monitoring
+                <i class="fas fa-check"></i>
+                Abnormal results highlighting
               </li>
+
               <li>
-                <i class="fas fa-check"></i> Scheduled preventive inspections
-                for commercial complexes
+                <i class="fas fa-check"></i>
+                PDF report generation
               </li>
             </ul>
           </article>
         </div>
       </div>
     </section>
-    <section class="pms-section pms-section-showcase" id="portfolio">
+
+    <!-- LABORATORY SHOWCASE -->
+    <section class="pms-section pms-section-showcase" id="services">
       <div class="pms-container">
         <div class="pms-showcase-split">
           <div class="pms-showcase-imagery">
             <div class="pms-showcase-frame">
               <img
-                src="assets/img/plaza-commercial.jpg"
-                alt="Lwipa Puma Plaza Commercial Complex • Ndola, Zambia"
+                src="assets/img/lab-testing.jpg"
+                alt="Modern diagnostic laboratory testing equipment"
                 class="pms-showcase-photo"
               />
+
               <div class="pms-showcase-scrim"></div>
+
               <div class="pms-showcase-tag">
-                <i class="fas fa-gem text-warning me-2"></i>
-                <span>FLAGSHIP COMMERCIAL ASSET</span>
+                <i class="fas fa-microscope text-warning me-2"></i>
+                <span>DIAGNOSTIC LABORATORY</span>
               </div>
+
               <div class="pms-showcase-details">
-                <h3 class="pms-showcase-asset-name">Lwipa Puma Plaza</h3>
+                <h3 class="pms-showcase-asset-name">
+                  Laboratory Diagnostics
+                </h3>
+
                 <p class="pms-showcase-asset-loc">
-                  Plot No. 36179/M/A, Ndola-Kitwe Road, Ndola
+                  Integrated patient testing and reporting platform
                 </p>
               </div>
             </div>
           </div>
+
           <div class="pms-showcase-article">
-            <span class="pms-section-tag">PREMIER PORTFOLIO SHOWCASE</span>
+            <span class="pms-section-tag">
+              LABORATORY OPERATIONS
+            </span>
+
             <h2 class="pms-showcase-heading">
-              Centralized Oversight for
-              <span class="pms-text-gradient">Lwipa Puma Plaza</span>
+              Complete Control Of
+              <span class="pms-text-gradient">
+                Laboratory Workflows
+              </span>
             </h2>
+
             <p class="pms-showcase-narrative">
-              Positioned along the Ndola-Kitwe economic corridor,
-              <strong>Lwipa Puma Plaza</strong>
-              is one of Ndola’s premier commercial and retail centers. Powered
-              by Puma Group PMS, facility operations, leasing workflows, and
-              tenant services operate in total synergy.
+              A centralized laboratory system brings patient registration, test
+              configuration, investigations, result entry, and reporting
+              together. Designed to simplify daily laboratory operations and
+              maintain organized diagnostic records.
             </p>
 
             <div class="pms-prospectus-features">
               <div class="pms-prospectus-row">
                 <div class="pms-prospectus-icon">
-                  <i class="fas fa-store-alt"></i>
+                  <i class="fas fa-user-plus"></i>
                 </div>
+
                 <div>
                   <h4 class="pms-prospectus-title">
-                    Retail & Corporate Suite Management
+                    Patient Registration
                   </h4>
-                  <p class="pms-prospectus-text">
-                    Dedicated floor-by-floor occupancy and lease terms for
-                    retail and corporate tenants.
+
+                  <p class="pms-prospect-text">
+                    Record patient information, registration details, referring
+                    doctors, and investigation requests.
                   </p>
                 </div>
               </div>
 
               <div class="pms-prospectus-row">
                 <div class="pms-prospectus-icon">
-                  <i class="fas fa-bolt"></i>
+                  <i class="fas fa-vials"></i>
                 </div>
+
                 <div>
                   <h4 class="pms-prospectus-title">
-                    Utility & Service Charge Split Billing
+                    Organized Investigations
                   </h4>
+
                   <p class="pms-prospectus-text">
-                    Automated meter recording and transparent service charge
-                    allocation per tenancy.
+                    Configure tests, test groups, normal ranges, units, and
+                    laboratory reporting requirements.
                   </p>
                 </div>
               </div>
 
               <div class="pms-prospectus-row">
                 <div class="pms-prospectus-icon">
-                  <i class="fas fa-shield-alt"></i>
+                  <i class="fas fa-file-medical"></i>
                 </div>
+
                 <div>
                   <h4 class="pms-prospectus-title">
-                    24/7 Security & Access Operations
+                    Efficient Report Generation
                   </h4>
+
                   <p class="pms-prospectus-text">
-                    Centralized logs for security dispatches, facility
-                    maintenance, and tenant requests.
+                    Prepare clear reports with investigation results, reference
+                    values, and patient information.
                   </p>
                 </div>
               </div>
@@ -375,72 +468,92 @@
       </div>
     </section>
 
-    <section class="pms-section pms-section-enterprise" id="enterprise">
+    <!-- ABOUT LABORATORY -->
+    <section class="pms-section pms-section-enterprise" id="about">
       <div class="pms-container">
         <div class="pms-enterprise-split">
           <div class="pms-enterprise-copy">
-            <span class="pms-section-tag">ABOUT PUMA GROUP</span>
+            <span class="pms-section-tag">
+              ABOUT OUR LABORATORY PLATFORM
+            </span>
+
             <h2 class="pms-enterprise-heading">
-              Dedicated to Real Estate
-              <span class="pms-text-gradient">Excellence in Zambia</span>
+              Technology Supporting
+              <span class="pms-text-gradient">
+                Laboratory Excellence
+              </span>
             </h2>
+
             <p class="pms-enterprise-lead">
-              <strong>Puma Group of Companies Ltd</strong> is committed to
-              setting the benchmark for commercial leasing, property management,
-              and facility excellence in Ndola and across the Copperbelt.
+              A modern Laboratory Management System focused on organized
+              workflows, accurate data management, and efficient diagnostic
+              reporting.
             </p>
+
             <p class="pms-enterprise-body">
-              Our PMS platform provides bank-grade security, automated fiscal
-              compliance, and intuitive operational workflows tailored
-              specifically to the Zambian commercial property landscape.
+              From patient registration to the final laboratory report, the
+              platform provides a centralized environment to manage laboratory
+              information and daily operations.
             </p>
+
             <div class="pms-pillars-grid">
               <div class="pms-pillar-cell">
-                <i class="fas fa-lock text-primary"></i>
+                <i class="fas fa-shield-alt text-primary"></i>
+
                 <div>
-                  <h5>256-Bit Security</h5>
-                  <p>Encrypted cloud data protection</p>
+                  <h5>Data Management</h5>
+                  <p>Organized patient and laboratory records</p>
                 </div>
               </div>
+
               <div class="pms-pillar-cell">
                 <i class="fas fa-cloud text-success"></i>
+
                 <div>
-                  <h5>Cloud Accessibility</h5>
-                  <p>Secure access on any device</p>
+                  <h5>Digital Workflow</h5>
+                  <p>Integrated laboratory operations</p>
                 </div>
               </div>
+
               <div class="pms-pillar-cell">
-                <i class="fas fa-file-contract text-warning"></i>
+                <i class="fas fa-file-medical text-warning"></i>
+
                 <div>
-                  <h5>Zambian Compliance</h5>
-                  <p>Standardized commercial lease formats</p>
+                  <h5>Reporting</h5>
+                  <p>Clear and professional reports</p>
                 </div>
               </div>
+
               <div class="pms-pillar-cell">
-                <i class="fas fa-headset text-info"></i>
+                <i class="fas fa-cogs text-info"></i>
+
                 <div>
-                  <h5>Direct Administration</h5>
-                  <p>Fast corporate operational support</p>
+                  <h5>Easy Management</h5>
+                  <p>Efficient day-to-day laboratory workflows</p>
                 </div>
               </div>
             </div>
           </div>
+
           <div class="pms-enterprise-imagery">
             <div class="pms-executive-card">
               <img
-                src="assets/img/property-keys.jpg"
-                alt="Puma Group Property Handover • Excellence in Zambia"
+                src="assets/img/lab-team.jpg"
+                alt="Laboratory professionals working in a diagnostic laboratory"
                 class="pms-executive-photo"
               />
+
               <div class="pms-executive-badge-box">
                 <div class="pms-executive-pill">
                   <i class="fas fa-award text-warning me-2"></i>
-                  <span>Puma Group of Companies Ltd</span>
+                  <span>LABORATORY MANAGEMENT SYSTEM</span>
                 </div>
+
                 <p class="pms-executive-address">
-                  <strong>Registered Head Office</strong><br />
-                  No. F701, Plot No. 36179/M/A, Lwipa Puma Plaza<br />
-                  Ndola-Kitwe Road, Ndola, Zambia
+                  <strong>Integrated Diagnostic Platform</strong><br />
+                  Patient Management<br />
+                  Laboratory Investigations<br />
+                  Results & Reporting
                 </p>
               </div>
             </div>
@@ -449,88 +562,160 @@
       </div>
     </section>
   </main>
+
+  <!-- FOOTER -->
   <footer class="pms-footer" id="contact">
     <div class="pms-container">
       <div class="pms-footer-grid">
+        <!-- Brand -->
         <div class="pms-footer-brand-pane">
           <div class="pms-footer-logo">
             <div class="pms-footer-emblem">
-              <i class="fas fa-building"></i>
+              <i class="fas fa-microscope"></i>
             </div>
-            <span>PUMA <strong>GROUP</strong></span>
+
+            <span> LAB <strong>DIAGNOSTICS</strong> </span>
           </div>
-          <p class="pms-footer-legal-name">Puma Group of Companies Ltd</p>
-          <p class="pms-footer-mission">
-            A comprehensive property management ecosystem built for modern
-            commercial and residential portfolios. Managing Lwipa Puma Plaza and
-            premier real estate assets across Zambia.
+
+          <p class="pms-footer-legal-name">
+            Laboratory Management System
           </p>
+
+          <p class="pms-footer-mission">
+            A complete digital platform for patient registration, laboratory
+            investigations, result management, and professional diagnostic
+            reporting.
+          </p>
+
           <div class="pms-footer-social">
-            <a href="javascript:void(0)" aria-label="Facebook"
-              ><i class="fab fa-facebook-f"></i
-            ></a>
-            <a href="javascript:void(0)" aria-label="LinkedIn"
-              ><i class="fab fa-linkedin-in"></i
-            ></a>
-            <a href="javascript:void(0)" aria-label="Twitter"
-              ><i class="fab fa-twitter"></i
-            ></a>
-            <a href="mailto:spuma1968@yahoo.com" aria-label="Email"
-              ><i class="fas fa-envelope"></i
-            ></a>
+            <a href="javascript:void(0)" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+
+            <a href="javascript:void(0)" aria-label="LinkedIn">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+
+            <a href="javascript:void(0)" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+
+            <a href="mailto:info@yourlaboratory.com" aria-label="Email">
+              <i class="fas fa-envelope"></i>
+            </a>
           </div>
         </div>
+
+        <!-- Navigation -->
         <div class="pms-footer-nav-pane">
-          <h4 class="pms-footer-heading">Navigation</h4>
-          <ul class="pms-footer-menu">
-            <li><a [routerLink]="['/home']">Home</a></li>
-            <li>
-              <a (click)="scrollToSection('capabilities')"
-                >Platform Capabilities</a
-              >
-            </li>
-            <li>
-              <a (click)="scrollToSection('portfolio')">Lwipa Puma Plaza</a>
-            </li>
-            <li>
-              <a (click)="scrollToSection('enterprise')">About Puma Group</a>
-            </li>
-            <li><a [routerLink]="['/login']">Member Login</a></li>
-          </ul>
-        </div>
-        <div class="pms-footer-nav-pane">
-          <h4 class="pms-footer-heading">PMS Modules</h4>
+          <h4 class="pms-footer-heading">
+            Navigation
+          </h4>
+
           <ul class="pms-footer-menu">
             <li>
-              <a [routerLink]="['/login']">Property & Building Structuring</a>
+              <a [routerLink]="['/home']">Home</a>
             </li>
-            <li><a [routerLink]="['/login']">Tenant Onboarding & KYC</a></li>
-            <li><a [routerLink]="['/login']">Rent Invoicing & Receipts</a></li>
-            <li><a [routerLink]="['/login']">Work Orders & Maintenance</a></li>
-            <li><a [routerLink]="['/login']">Financial Statements (ZMW)</a></li>
+
+            <li>
+              <a (click)="scrollToSection('capabilities')">
+                Platform Capabilities
+              </a>
+            </li>
+
+            <li>
+              <a (click)="scrollToSection('services')">
+                Laboratory Services
+              </a>
+            </li>
+
+            <li>
+              <a (click)="scrollToSection('about')">
+                About Laboratory
+              </a>
+            </li>
+
+            <li>
+              <a [routerLink]="['/login']">
+                Login
+              </a>
+            </li>
           </ul>
         </div>
+
+        <!-- Modules -->
+        <div class="pms-footer-nav-pane">
+          <h4 class="pms-footer-heading">
+            Laboratory Modules
+          </h4>
+
+          <ul class="pms-footer-menu">
+            <li>
+              <a [routerLink]="['/login']">
+                Patient Registration
+              </a>
+            </li>
+
+            <li>
+              <a [routerLink]="['/login']">
+                Doctors Management
+              </a>
+            </li>
+
+            <li>
+              <a [routerLink]="['/login']">
+                Test Groups & Test Names
+              </a>
+            </li>
+
+            <li>
+              <a [routerLink]="['/login']">
+                Laboratory Investigations
+              </a>
+            </li>
+
+            <li>
+              <a [routerLink]="['/login']">
+                Diagnostic Reports
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
         <div class="pms-footer-contact-pane">
-          <h4 class="pms-footer-heading">Puma Group Head Office</h4>
+          <h4 class="pms-footer-heading">
+            Laboratory Contact
+          </h4>
+
           <address class="pms-footer-contact-list">
             <div class="pms-contact-row">
               <i class="fas fa-map-marker-alt text-danger"></i>
+
               <div>
-                <strong>Lwipa Puma Plaza</strong><br />
-                No. F701, Plot No. 36179/M/A<br />
-                Ndola-Kitwe Road, Ndola, Zambia
+                <strong>Laboratory Address</strong><br />
+                Your Laboratory Address<br />
+                Your City, Country
               </div>
             </div>
+
             <div class="pms-contact-row">
               <i class="fas fa-phone-alt text-success"></i>
+
               <div>
-                <a href="tel:+260977872947">+260 977 872 947</a>
+                <a href="tel:+910000000000">
+                  +91 XXXXX XXXXX
+                </a>
               </div>
             </div>
+
             <div class="pms-contact-row">
               <i class="fas fa-envelope text-info"></i>
+
               <div>
-                <a href="mailto:spuma1968@yahoo.com">spuma1968@yahoo.com</a>
+                <a href="mailto:info@yourlaboratory.com">
+                  info@yourlaboratory.com
+                </a>
               </div>
             </div>
           </address>
