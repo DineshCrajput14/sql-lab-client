@@ -7,7 +7,28 @@
         (click)="scrollToTop($event)"
       >
         <div class="pms-brand-emblem">
-          <i class="fas fa-microscope"></i>
+          <svg
+            class="lab-brand-svg"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M9 3h6M10 3v6.2l-5.3 8.1A2.4 2.4 0 0 0 6.7 21h10.6a2.4 2.4 0 0 0 2-3.7L14 9.2V3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7.5 15h9"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
         </div>
 
         <div class="pms-brand-info">
@@ -15,7 +36,7 @@
             <strong>LAB DIAGNOSTICS</strong>
           </span>
           <span class="pms-brand-subtitle">
-            Laboratory Management System
+            DIAGNOSTIC LABORATORY
           </span>
         </div>
       </a>
@@ -25,22 +46,24 @@
           [routerLink]="['/home']"
           class="pms-nav-item active"
           (click)="scrollToTop($event)"
-          >Home</a
+          ><i class="fas fa-home"></i> Home</a
         >
 
         <a (click)="scrollToSection('capabilities')" class="pms-nav-item"
-          >Capabilities</a
+          ><i class="fas fa-layer-group"></i> Capabilities</a
         >
 
         <a (click)="scrollToSection('services')" class="pms-nav-item"
-          >Laboratory Services</a
+          ><i class="fas fa-vials"></i> Laboratory Services</a
         >
 
         <a (click)="scrollToSection('about')" class="pms-nav-item"
-          >About Laboratory</a
+          ><i class="fas fa-info-circle"></i> About Laboratory</a
         >
 
-        <a (click)="scrollToSection('contact')" class="pms-nav-item">Contact</a>
+        <a (click)="scrollToSection('contact')" class="pms-nav-item"
+          ><i class="fas fa-envelope"></i> Contact</a
+        >
       </nav>
 
       <div class="pms-nav-actions d-none d-md-flex">
@@ -121,49 +144,79 @@
           <div class="pms-hero-lead">
             <div class="pms-lead-badge">
               <span class="pms-pulse-point"></span>
-              <span class="pms-badge-label">
-                ADVANCED DIAGNOSTICS • LABORATORY MANAGEMENT
-              </span>
+              <span class="pms-badge-label"
+                >DIAGNOSTIC LABORATORY • DIGITAL WORKFLOW</span
+              >
             </div>
 
             <h1 class="pms-hero-headline">
               Precision Diagnostics
-              <span class="pms-hero-accent">
-                For Better Healthcare.
-              </span>
+              <span class="pms-hero-accent"
+                >Smarter Laboratory Management.</span
+              >
             </h1>
 
             <p class="pms-hero-desc">
-              A comprehensive Laboratory Management System designed to
-              streamline patient registration, laboratory testing, result
-              management, and diagnostic reporting through one integrated
-              platform.
+              An integrated Laboratory Management System for patient
+              registration, test configuration, result management, and
+              professional reporting— organized in one streamlined platform.
             </p>
 
             <ul class="pms-lead-features">
               <li>
-                <i class="fas fa-check-circle"></i>
-                <span>Efficient Patient Registration & Record Management</span>
+                <i class="fas fa-check-circle"></i><span>Patient Records</span>
               </li>
-
               <li>
-                <i class="fas fa-check-circle"></i>
-                <span>Organized Laboratory Tests & Reference Ranges</span>
+                <i class="fas fa-check-circle"></i
+                ><span>Test & Result Workflows</span>
               </li>
-
               <li>
-                <i class="fas fa-check-circle"></i>
-                <span>Professional Diagnostic Reports & Result Tracking</span>
+                <i class="fas fa-check-circle"></i
+                ><span>Clear Diagnostic Reports</span>
               </li>
             </ul>
 
-            <div class="pms-hero-footnote">
-              <i class="fas fa-microscope me-2 text-info"></i>
-              <span>
-                <strong>Laboratory Management:</strong>
-                Accurate records, efficient workflows, and organized diagnostic
-                reporting.
-              </span>
+            <div class="pms-hero-cta">
+              <a [routerLink]="['/login']" class="pms-hero-primary-btn"
+                ><i class="fas fa-lock"></i> Access Lab Portal</a
+              >
+              <a
+                (click)="scrollToSection('capabilities')"
+                class="pms-hero-secondary-btn"
+                >Explore Platform <i class="fas fa-arrow-down"></i
+              ></a>
+            </div>
+          </div>
+
+          <div
+            class="pms-hero-visual"
+            aria-label="Laboratory management overview"
+          >
+            <div class="pms-visual-topline">
+              <span class="pms-visual-dot"></span> LAB OPERATIONS OVERVIEW
+            </div>
+            <div class="pms-visual-main-icon"><i class="fas fa-flask"></i></div>
+            <div class="pms-visual-title">Laboratory Diagnostics</div>
+            <div class="pms-visual-subtitle">
+              Integrated patient testing & reporting
+            </div>
+            <div class="pms-visual-stats">
+              <div class="pms-visual-stat">
+                <i class="fas fa-user-plus"></i><span>Patient</span
+                ><strong>Registration</strong>
+              </div>
+              <div class="pms-visual-stat">
+                <i class="fas fa-vials"></i><span>Laboratory</span
+                ><strong>Investigations</strong>
+              </div>
+              <div class="pms-visual-stat">
+                <i class="fas fa-file-medical-alt"></i><span>Results</span
+                ><strong>Reporting</strong>
+              </div>
+            </div>
+            <div class="pms-visual-foot">
+              <i class="fas fa-shield-alt"></i> Organized • Accurate •
+              Integrated
             </div>
           </div>
         </div>
@@ -571,7 +624,7 @@
         <div class="pms-footer-brand-pane">
           <div class="pms-footer-logo">
             <div class="pms-footer-emblem">
-              <i class="fas fa-microscope"></i>
+              <i class="fas fa-flask"></i>
             </div>
 
             <span> LAB <strong>DIAGNOSTICS</strong> </span>
