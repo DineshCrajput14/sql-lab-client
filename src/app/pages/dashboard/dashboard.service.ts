@@ -12,4 +12,8 @@ export class DashboardService {
   getSummary(): Observable<any> {
     return this.http.get(environment.apiBasePath + "v1/dashboard-summary");
   }
+
+  getLabSummary(): Observable<any> {
+    return this.http.get(environment.apiBasePath + "v1/lab-dashboard-summary");
+  }
 }
