@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  appName: "PMS",
-  apiBasePath: "https://pms-ztxg.onrender.com/api/",
+  appName: "LABMAN",
+  apiBasePath: "https://sql-lab-server.onrender.com/api/",
   env: "prod",
 };
